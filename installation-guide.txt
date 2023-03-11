@@ -1,0 +1,221 @@
+#CMD::
+composer create-project --prefer-dist laravel/laravel .
+composer require laravel/ui
+php artisan ui bootstrap
+npm install
+npm install vue@next
+npm install vue-loader@next
+npm install @aacassandra/vue3-progressbar
+|
+|
+|
+|
+|
+|
+#FILE:: vite.config.js
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue'
+import laravel from 'laravel-vite-plugin';
+export default defineConfig({
+    plugins: [
+        vue(),
+        laravel({
+            input: ['resources/sass/app.scss', 'resources/js/app.js'],
+            refresh: true,
+        }),
+    ],
+});
+|
+|
+|
+|
+|
+|
+#CREATE FILE:: resource/views/app.blade.php
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Laravel</title>
+        @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    </head>
+
+    <body>
+    <div id="app"></div>
+    </body>
+</html>
+|
+|
+|
+|
+|
+|
+#UPDATE:: Routes/web.php
+<?php
+use Illuminate\Support\Facades\Route;
+
+Route::get('{any}', function () {
+    return view('app');
+})->where('any','.*');
+|
+|
+|
+|
+|
+|
+#UPDATE:: resources/js/app.js
+import './bootstrap';
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router.js';
+
+import VueProgressBar from "@aacassandra/vue3-progressbar";
+const options = {
+    color: "red",
+    failedColor: "#874b4b",
+    thickness: "5px",
+    transition: {
+      speed: "0.2s",
+      opacity: "0.9s",
+      termination: 300,
+    },
+    autoRevert: true,
+    location: "top",
+    inverse: false,
+  };
+  
+const app = createApp(App);
+app.use(VueProgressBar, options)
+app.use(router);
+app.mount('#app');
+|
+|
+|
+|
+|
+|
+#CREATE FILE:: resources/js/router.js
+import {createWebHistory, createRouter} from "vue-router";
+import home from './components/Home.vue'
+import contact from './components/Contact.vue'
+
+export const routes = [
+    {
+        name: 'home',
+        path: '/',
+        component: home
+    },
+    {
+        name: 'contact',
+        path: '/contact',
+        component: contact
+    }
+];
+
+const router = createRouter({
+    history: createWebHistory(),
+    routes: routes,
+});
+export default router;
+|
+|
+|
+|
+|
+|
+#CREATE FILE:: resources/js/components/Home.vue
+<template>
+    <div class="home">
+     <h1>{{title}}</h1>
+    </div>
+</template>
+  
+<script>
+  export default {
+    name: 'home',
+    data () {
+      return {
+       title:'Home Page...'
+      }
+    }
+  }
+</script>
+  
+<style scoped>
+  
+</style>
+|
+|
+|
+|
+|
+|
+#CREATE FILE:: resources/js/components/Contact.vue
+<template>
+    <div class="contact">
+     <h1>{{title}}</h1>
+    </div>
+</template>
+  
+<script>
+  export default {
+    name: 'contact',
+    data () {
+      return {
+       title:'Contact Page...'
+      }
+    }
+  }
+</script>
+  
+<style scoped>
+  
+</style>
+|
+|
+|
+|
+|
+|
+#CREATE FILE:: resources/js/App.vue
+<template>
+<router-link to="/" class="nav-item nav-link">Home</router-link> || 
+<router-link to="/contact" class="nav-item nav-link">Contact</router-link>
+<router-view></router-view>
+<vue-progress-bar></vue-progress-bar>
+</template>
+
+ <script>
+  export default {
+    mounted() {
+      this.$Progress.finish();
+    },
+    created() {
+      this.$Progress.start();
+      this.$router.beforeEach((to, from, next) => {
+        if (to.meta.progress !== undefined) {
+          let meta = to.meta.progress;
+          this.$Progress.parseMeta(meta);
+        }
+        this.$Progress.start();
+        next();
+      });
+      this.$router.afterEach((to, from) => {
+        this.$Progress.finish();
+      });
+    },
+  };
+</script>
+|
+|
+|
+|
+|
+|
+#CMD::
+npm i @vitejs/plugin-vue
+npm install vue-axios vue-loader vue-router vue-template-compiler
+
+npm rum dev
+php artisan serve
