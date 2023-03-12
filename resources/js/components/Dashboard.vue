@@ -5,7 +5,7 @@
     <ul class="navbar-nav sidebar sidebar-light accordion" id="accordionSidebar">
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
         <div class="sidebar-brand-icon">
-          <img src="{{ asset('assets/img/logo/logo2.png') }}">
+          <img src="assets/img/logo/logo2.png">
         </div>
         <div class="sidebar-brand-text mx-3">RuangAdmin</div>
       </a>
@@ -181,7 +181,7 @@
                 </h6>
                 <a class="dropdown-item d-flex align-items-center" href="#">
                   <div class="dropdown-list-image mr-3">
-                    <img class="rounded-circle" src="{{ asset('assets/img/man.png') }}" style="max-width: 60px" alt="">
+                    <img class="rounded-circle" src="assets/img/man.png" style="max-width: 60px" alt="">
                     <div class="status-indicator bg-success"></div>
                   </div>
                   <div class="font-weight-bold">
@@ -192,7 +192,7 @@
                 </a>
                 <a class="dropdown-item d-flex align-items-center" href="#">
                   <div class="dropdown-list-image mr-3">
-                    <img class="rounded-circle" src="{{ asset('assets/img/girl.png') }}" style="max-width: 60px" alt="">
+                    <img class="rounded-circle" src="assets/img/girl.png" style="max-width: 60px" alt="">
                     <div class="status-indicator bg-default"></div>
                   </div>
                   <div>
@@ -255,7 +255,7 @@
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-                <img class="img-profile rounded-circle" src="{{ asset('assets/img/boy.png') }}" style="max-width: 60px">
+                <img class="img-profile rounded-circle" src="/assets/img/boy.png" style="max-width: 60px">
                 <span class="ml-2 d-none d-lg-inline text-white small">Maman Ketoprak</span>
               </a>
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
@@ -272,10 +272,12 @@
                   Activity Log
                 </a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="login.html">
+                <router-link to="/logout"  class="dropdown-item" ><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout</router-link>
+                <!-- <a class="dropdown-item" href="login.html">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                   Logout
-                </a>
+                </a> -->
               </div>
             </li>
           </ul>
@@ -605,19 +607,16 @@
     </div>
   </div>
 
-  <!-- Scroll to top -->
-  <a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-  </a>
+ 
     </div>
 </template>
 <script>
 export default {
-  created(){
-      if (!User.loggedIn()) {
-        this.$router.push({name: 'login'})
-      }
+  created() {
+    if (!User.loggedIn()) {
+      this.$router.push({ name: 'login' })
     }
+  }
 }
 </script>
 <style lang="">
