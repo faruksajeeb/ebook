@@ -2,6 +2,7 @@ import {createWebHistory, createRouter} from "vue-router";
 import Login from './components/auth/Login.vue'
 import Register from './components/auth/Register.vue'
 import ForgetPassword from './components/auth/ForgetPassword.vue'
+import Dashboard from './components/Dashboard.vue'
 
 export const routes = [
     {
@@ -20,6 +21,12 @@ export const routes = [
         name: 'forget_password',
         path: '/forget_password',
         component: ForgetPassword
+    }
+    ,
+    {
+        name: 'dashboard',
+        path: '/dashboard',
+        component: Dashboard
     }
 ];
 
