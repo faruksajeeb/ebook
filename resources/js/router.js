@@ -5,6 +5,8 @@ import ForgetPassword from './components/auth/ForgetPassword.vue'
 import Logout from './components/auth/Logout.vue'
 
 import Dashboard from './components/Dashboard.vue'
+import AddEmployee from './components/employee/create.vue'
+import ManageEmployee from './components/employee/index.vue'
 
 export const routes = [
     {
@@ -35,6 +37,17 @@ export const routes = [
         name: 'logout',
         path: '/logout',
         component: Logout
+    },
+    {
+        name: 'add-employee',
+        path: '/add-employee',
+        component: AddEmployee
+    }
+    ,
+    {
+        name: 'manage-employee',
+        path: '/manage-employee',
+        component: ManageEmployee
     }
 ];
 

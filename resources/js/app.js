@@ -6,7 +6,10 @@ import router from './router.js';
  import User from './Helpers/User';
  window.User = User
 
- 
+  // Import Notification Class
+  // import Notification from './Helpers/Notification';
+  // window.Notification = Notification
+
  import Swal from 'sweetalert2'
  window.Swal = Swal
  const Toast = Swal.mixin({
