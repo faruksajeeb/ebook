@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\EmployeeController;
+use App\Http\Controllers\Api\SupplierController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,4 +30,5 @@ Route::group([
     Route::post('me', 'AuthController@me');
 });
 
-Route::apiResource('manage-employee',EmployeeController::class);
+Route::apiResource('/manage-employee',EmployeeController::class);
+Route::apiResource('/manage-supplier',SupplierController::class);

@@ -41,8 +41,8 @@
         <div id="collapseTable" class="collapse" aria-labelledby="headingTable" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Suppliers</h6>
-            <a class="collapse-item" href="simple-tables.html">Add Supplier</a>
-            <a class="collapse-item" href="datatables.html">Manage Supplier</a>
+            <router-link class="collapse-item" to="/add-supplier">Add Supplier</router-link>
+            <router-link class="collapse-item" to="/manage-supplier">Manage Supplier</router-link>
           </div>
         </div>
       </li>

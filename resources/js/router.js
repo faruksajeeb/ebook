@@ -1,13 +1,20 @@
-import {createWebHistory, createRouter} from "vue-router";
+import { createWebHistory, createRouter } from "vue-router";
 import Login from './components/auth/Login.vue'
 import Register from './components/auth/Register.vue'
 import ForgetPassword from './components/auth/ForgetPassword.vue'
 import Logout from './components/auth/Logout.vue'
 
 import Dashboard from './components/Dashboard.vue'
+
+// Employee Files
 import AddEmployee from './components/employee/create.vue'
 import ManageEmployee from './components/employee/index.vue'
 import EditEmployee from './components/employee/edit.vue'
+
+// Suppler Files
+import AddSupplier from './components/supplier/create.vue'
+import ManageSupplier from './components/supplier/index.vue'
+import EditSupplier from './components/supplier/edit.vue'
 
 export const routes = [
     {
@@ -55,7 +62,10 @@ export const routes = [
         name: 'edit-employee',
         path: '/edit-employee/:id',
         component: EditEmployee
-    }
+    },
+    { name: 'add-supplier', path: '/add-supplier', component: AddSupplier },
+    { name: 'manage-supplier', path: '/manage-supplier', component: ManageSupplier },
+    { name: 'edit-supplier', path: '/edit-supplier/:id', component: EditSupplier },
 ];
 
 const router = createRouter({
