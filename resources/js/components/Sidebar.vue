@@ -19,30 +19,41 @@
         Features
       </div> -->
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBootstrap"
-          aria-expanded="true" aria-controls="collapseBootstrap">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEmployee"
+          aria-expanded="true" aria-controls="collapseEmployee">
           <i class="far fa-fw fa-window-maximize"></i>
           <span>Employee</span>
         </a>
-        <div id="collapseBootstrap" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+        <div id="collapseEmployee" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Employees</h6>
             <router-link class="collapse-item" to="/add-employee">Add Employee</router-link>
             <router-link class="collapse-item" to="/manage-employee">Manage Employee</router-link>
           </div>
         </div>
       </li>
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTable" aria-expanded="true"
-          aria-controls="collapseTable">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSupplier" aria-expanded="true"
+          aria-controls="collapseSupplier">
           <i class="fas fa-fw fa-table"></i>
           <span>Suppliers</span>
         </a>
-        <div id="collapseTable" class="collapse" aria-labelledby="headingTable" data-parent="#accordionSidebar">
+        <div id="collapseSupplier" class="collapse" aria-labelledby="headingTable" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Suppliers</h6>
             <router-link class="collapse-item" to="/add-supplier">Add Supplier</router-link>
             <router-link class="collapse-item" to="/manage-supplier">Manage Supplier</router-link>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCustomer"
+          aria-expanded="true" aria-controls="collapseCustomer">
+          <i class="far fa-fw fa-window-maximize"></i>
+          <span>Customers</span>
+        </a>
+        <div id="collapseCustomer" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <router-link class="collapse-item" to="/add-customer">Add Customer</router-link>
+            <router-link class="collapse-item" to="/manage-customer">Manage Customer</router-link>
           </div>
         </div>
       </li>

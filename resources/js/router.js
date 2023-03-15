@@ -16,6 +16,11 @@ import AddSupplier from './components/supplier/create.vue'
 import ManageSupplier from './components/supplier/index.vue'
 import EditSupplier from './components/supplier/edit.vue'
 
+// Customer Files
+import AddCustomer from './components/customer/create.vue'
+import ManageCustomer from './components/customer/index.vue'
+import EditCustomer from './components/customer/edit.vue'
+
 export const routes = [
     {
         name: 'login',
@@ -66,6 +71,9 @@ export const routes = [
     { name: 'add-supplier', path: '/add-supplier', component: AddSupplier },
     { name: 'manage-supplier', path: '/manage-supplier', component: ManageSupplier },
     { name: 'edit-supplier', path: '/edit-supplier/:id', component: EditSupplier },
+    { name: 'add-customer', path: '/add-customer', component: AddCustomer },
+    { name: 'manage-customer', path: '/manage-customer', component: ManageCustomer },
+    { name: 'edit-customer', path: '/edit-customer/:id', component: EditCustomer },
 ];
 
 const router = createRouter({
