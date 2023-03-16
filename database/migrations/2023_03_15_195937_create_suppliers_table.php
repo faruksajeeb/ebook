@@ -16,12 +16,19 @@ class CreateSuppliersTable extends Migration
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id('id');
             $table->string('name');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->string('phone');
-            $table->string('address');
+            $table->string('address')->nullable();
             $table->string('photo')->nullable();
             $table->string('shopname')->nullable();
-            $table->timestamps();
+            $table->boolean('status')->default(true);
+            //$table->timestamps();
+            $table->dateTimeTz('created_at', $precision = 0);
+            $table->dateTimeTz('updated_at', $precision = 0);
+            $table->softDeletesTz('deleted_at', $precision = 0);
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->integer('deleted_by')->nullable();
         });
     }
 

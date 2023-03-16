@@ -114,7 +114,9 @@ class CustomerController extends Controller
             $data['photo'] = $image_url;
             $img = DB::table('customers')->where('id',$id)->first();
             $image_path = $img->photo;
-            $done = unlink($image_path);
+            if($img->photo){
+                $done = unlink($image_path);
+            }
             $user  = DB::table('customers')->where('id',$id)->update($data);
          }
           

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\EmployeeController;
 use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\CustomerController;
+use App\Http\Controllers\Api\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,3 +35,4 @@ Route::group([
 Route::apiResource('/manage-employee',EmployeeController::class);
 Route::apiResource('/manage-supplier',SupplierController::class);
 Route::apiResource('/manage-customer',CustomerController::class);
+Route::apiResource('/manage-category',CategoryController::class);

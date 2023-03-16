@@ -28,7 +28,7 @@
                         <th>Name</th>
                         <th>Photo</th>
                         <th>Phone</th>
-                        <th>Sallery</th>
+                        <th>Salary</th>
                         <th>Joining Date</th>
                         <th>Action</th>
                       </tr>
