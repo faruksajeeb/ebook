@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Category;
+use DB;
 
 class CategoryController extends Controller
 {
@@ -12,7 +14,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $category = Category::all();
+        return response()->json($category);
     }
 
     /**
@@ -28,7 +31,14 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validateData = $request->validate([
+            'category_name' => 'required|unique:categories|max:255',
+        ]);
+
+        $category = new Category;
+        $category->category_name = $request->category_name;
+
+        $category->save();
     }
 
     /**
@@ -36,7 +46,8 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $category = DB::table('categories')->where('id', $id)->first();
+        return response()->json($category);
     }
 
     /**
@@ -52,7 +63,9 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $data = array();
+        $data['category_name'] =  $request->category_name;
+        DB::table('categories')->where('id', $id)->update($data);
     }
 
     /**
@@ -60,6 +73,6 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        DB::table('categories')->where('id', $id)->delete();
     }
 }
