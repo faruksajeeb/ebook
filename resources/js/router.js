@@ -21,6 +21,11 @@ import AddCustomer from './components/customer/create.vue'
 import ManageCustomer from './components/customer/index.vue'
 import EditCustomer from './components/customer/edit.vue'
 
+// Category Files
+import AddCategory from './components/category/create.vue'
+import ManageCategory from './components/category/index.vue'
+import EditCategory from './components/category/edit.vue'
+
 export const routes = [
     {
         name: 'login',
@@ -71,9 +76,14 @@ export const routes = [
     { name: 'add-supplier', path: '/add-supplier', component: AddSupplier },
     { name: 'manage-supplier', path: '/manage-supplier', component: ManageSupplier },
     { name: 'edit-supplier', path: '/edit-supplier/:id', component: EditSupplier },
+
     { name: 'add-customer', path: '/add-customer', component: AddCustomer },
     { name: 'manage-customer', path: '/manage-customer', component: ManageCustomer },
     { name: 'edit-customer', path: '/edit-customer/:id', component: EditCustomer },
+    
+    { name: 'add-category', path: '/add-category', component: AddCategory },
+    { name: 'manage-category', path: '/manage-category', component: ManageCategory },
+    { name: 'edit-category', path: '/edit-category/:id', component: EditCategory },
 ];
 
 const router = createRouter({
