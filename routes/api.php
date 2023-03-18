@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\EmployeeController;
 use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ExpenseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,3 +38,5 @@ Route::apiResource('/manage-employee',EmployeeController::class);
 Route::apiResource('/manage-supplier',SupplierController::class);
 Route::apiResource('/manage-customer',CustomerController::class);
 Route::apiResource('/manage-category',CategoryController::class);
+Route::apiResource('/manage-product',ProductController::class);
+Route::apiResource('/manage-expense',ExpenseController::class);

@@ -26,6 +26,11 @@ import AddCategory from './components/category/create.vue'
 import ManageCategory from './components/category/index.vue'
 import EditCategory from './components/category/edit.vue'
 
+// Product Files
+import AddProduct from './components/product/create.vue'
+import ManageProduct from './components/product/index.vue'
+import EditProduct from './components/product/edit.vue'
+
 export const routes = [
     {
         name: 'login',
@@ -84,6 +89,10 @@ export const routes = [
     { name: 'add-category', path: '/add-category', component: AddCategory },
     { name: 'manage-category', path: '/manage-category', component: ManageCategory },
     { name: 'edit-category', path: '/edit-category/:id', component: EditCategory },
+    
+    { name: 'add-product', path: '/add-product', component: AddProduct },
+    { name: 'manage-product', path: '/manage-product', component: ManageProduct },
+    { name: 'edit-product', path: '/edit-product/:id', component: EditProduct },
 ];
 
 const router = createRouter({
