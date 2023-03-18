@@ -31,6 +31,11 @@ import AddProduct from './components/product/create.vue'
 import ManageProduct from './components/product/index.vue'
 import EditProduct from './components/product/edit.vue'
 
+// Expense Files
+import AddExpense from './components/expense/create.vue'
+import ManageExpense from './components/expense/index.vue'
+import EditExpense from './components/expense/edit.vue'
+
 export const routes = [
     {
         name: 'login',
@@ -93,6 +98,10 @@ export const routes = [
     { name: 'add-product', path: '/add-product', component: AddProduct },
     { name: 'manage-product', path: '/manage-product', component: ManageProduct },
     { name: 'edit-product', path: '/edit-product/:id', component: EditProduct },
+    
+    { name: 'add-expense', path: '/add-expense', component: AddExpense },
+    { name: 'manage-expense', path: '/manage-expense', component: ManageExpense },
+    { name: 'edit-expense', path: '/edit-expense/:id', component: EditExpense },
 ];
 
 const router = createRouter({
