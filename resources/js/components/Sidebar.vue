@@ -14,6 +14,12 @@
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Dashboard</span></router-link>
       </li>
+      
+     <li class="nav-item bg-info">
+        <router-link class="nav-link" to="/pos">
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>POS</span></router-link>
+      </li>
       <hr class="sidebar-divider">
       <!-- <div class="sidebar-heading">
         Features
@@ -96,6 +102,28 @@
           </div>
         </div>
       </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSalary"
+          aria-expanded="true" aria-controls="collapseSalary">
+          <i class="far fa-fw fa-window-maximize"></i>
+          <span>Salary</span>
+        </a>
+        <div id="collapseSalary" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+
+            <router-link class="collapse-item" to="/given-salary">Add Salary</router-link>
+            <router-link class="collapse-item" to="/salary">Manage Salary</router-link>
+
+          </div>
+        </div>
+      </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/stock">
+          <i class="fab fa-fw fa-wpforms"></i>
+          <span>Stock</span>
+        </router-link>
+      </li>
+
       <li class="nav-item">
         <a class="nav-link" href="forms.html">
           <i class="fab fa-fw fa-wpforms"></i>
