@@ -268,9 +268,9 @@ export default {
     this.allCustomer();
     this.cartProduct();
     this.vat();
-    // Reload.$on("AfterAdd", () => {
-    //   this.cartProduct();
-    // });
+    Reload.$on("AfterAdd", () => {
+      this.cartProduct();
+    });
   },
   data() {
     return {
@@ -326,7 +326,11 @@ export default {
         .get("/api/addToCart/" + id)
         .then(() => {
           Reload.$emit("AfterAdd");
-          Notification.cart_success();
+          // Notification.cart_success();
+          Toast.fire({
+              icon: 'success',
+              title: 'Item Added'
+            })
         })
         .catch();
     },
@@ -341,7 +345,11 @@ export default {
         .get("/api/remove/cart/" + id)
         .then(() => {
           Reload.$emit("AfterAdd");
-          Notification.cart_delete();
+          // Notification.cart_delete();
+          Toast.fire({
+              icon: 'success',
+              title: 'Item Revmoved'
+            })
         })
         .catch();
     },
@@ -350,7 +358,11 @@ export default {
         .get("/api/increment/" + id)
         .then(() => {
           Reload.$emit("AfterAdd");
-          Notification.success();
+          // Notification.success();
+          Toast.fire({
+              icon: 'success',
+              title: 'Item Qty Added'
+            })
         })
         .catch();
     },
@@ -359,7 +371,11 @@ export default {
         .get("/api/decrement/" + id)
         .then(() => {
           Reload.$emit("AfterAdd");
-          Notification.success();
+          // Notification.success();
+          Toast.fire({
+              icon: 'success',
+              title: 'Item Qty Added'
+            })
         })
         .catch();
     },
@@ -409,6 +425,7 @@ export default {
         .catch(console.log("error"));
     },
     subproduct(id) {
+      
       axios
         .get("/api/getting/product/" + id)
         .then(({ data }) => (this.getproducts = data))

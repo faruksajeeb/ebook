@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ExpenseController;
 use App\Http\Controllers\Api\SalaryController;
 use App\Http\Controllers\Api\PosController;
+use App\Http\Controllers\Api\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,3 +54,12 @@ Route::post('/salary/update/{id}', [SalaryController::class,'SalaryUpdate']);
 Route::post('/stock/update/{id}', [ProductController::class,'StockUpdate']);
 
 Route::Get('/getting/product/{id}', [PosController::class,'GetProduct']);
+
+// Add to cart Route
+Route::Get('/addToCart/{id}', [CartController::class,'AddToCart']);
+Route::Get('/cart/product',[CartController::class,'CartProduct'] );
+
+Route::Get('/remove/cart/{id}',[CartController::class,'removeCart']);
+
+Route::Get('/increment/{id}', [CartController::class,'increment']);
+Route::Get('/decrement/{id}', [CartController::class,'decrement']);

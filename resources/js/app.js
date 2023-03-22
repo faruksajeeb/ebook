@@ -1,4 +1,5 @@
 import './bootstrap';
+
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router.js';
@@ -24,6 +25,7 @@ import router from './router.js';
   }
 })
 window.Toast = Toast;
+
  
 import VueProgressBar from "@aacassandra/vue3-progressbar";
 const options = {
@@ -41,6 +43,7 @@ const options = {
   };
   
 const app = createApp(App);
+window.Reload = app;
 app.use(VueProgressBar, options)
 app.use(router);
 app.mount('#app');
