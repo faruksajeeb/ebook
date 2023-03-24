@@ -268,9 +268,9 @@ export default {
     this.allCustomer();
     this.cartProduct();
     this.vat();
-    Reload.$on("AfterAdd", () => {
-      this.cartProduct();
-    });
+    // Reload.$on("AfterAdd", () => {
+    //   this.cartProduct();
+    // });
   },
   data() {
     return {
@@ -325,7 +325,12 @@ export default {
       axios
         .get("/api/addToCart/" + id)
         .then(() => {
-          Reload.$emit("AfterAdd");
+          this.$emit("AfterAdd");
+          // this.$emit("AfterAdd", () => {
+          //   this.cartProduct();
+          //   window.location.reload()
+          // });
+          this.cartProduct();
           // Notification.cart_success();
           Toast.fire({
               icon: 'success',
@@ -344,7 +349,8 @@ export default {
       axios
         .get("/api/remove/cart/" + id)
         .then(() => {
-          Reload.$emit("AfterAdd");
+          // this.$emit("AfterAdd");
+          this.cartProduct();
           // Notification.cart_delete();
           Toast.fire({
               icon: 'success',
@@ -357,7 +363,8 @@ export default {
       axios
         .get("/api/increment/" + id)
         .then(() => {
-          Reload.$emit("AfterAdd");
+          // this.$emit("AfterAdd");
+          this.cartProduct();
           // Notification.success();
           Toast.fire({
               icon: 'success',
@@ -370,7 +377,8 @@ export default {
       axios
         .get("/api/decrement/" + id)
         .then(() => {
-          Reload.$emit("AfterAdd");
+          // this.$emit("AfterAdd");
+          this.cartProduct();
           // Notification.success();
           Toast.fire({
               icon: 'success',

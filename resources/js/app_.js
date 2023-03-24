@@ -25,7 +25,7 @@ import router from './router.js';
   }
 })
 window.Toast = Toast;
-// window.Reload = createApp; 
+
  
 import VueProgressBar from "@aacassandra/vue3-progressbar";
 const options = {
@@ -43,7 +43,7 @@ const options = {
   };
   
 const app = createApp(App);
-
+window.Reload = app;
 app.use(VueProgressBar, options)
 app.use(router);
 app.mount('#app');
