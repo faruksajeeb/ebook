@@ -39,7 +39,7 @@ class ExpenseController extends Controller
             $expense = new Expense;
             $expense->details = $request->details;
             $expense->amount = $request->amount;
-            $expense->expense_date = date('d/m/y');
+            $expense->expense_date = date('d/m/Y');
             
             $expense->save(); 
     }

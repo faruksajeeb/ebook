@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\SalaryController;
 use App\Http\Controllers\Api\PosController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,3 +78,12 @@ Route::get('/order/details/{id}', [OrderController::class,'OrderDetails']);
 Route::get('/order/orderdetails/{id}', [OrderController::class,'OrderDetailsAll']);
 
 Route::post('/search/order', [PosController::class,'SearchOrderDate']);
+
+
+// Admin Dashboard Route
+
+Route::get('/today/sell',[DashboardController::class, 'TodaySell']);
+Route::get('/today/income',[DashboardController::class, 'TodayIncome']);
+Route::get('/today/due',[DashboardController::class, 'TodayDue']);
+Route::get('/today/expense',[DashboardController::class, 'TodayExpense']);
+Route::get('/today/stockout',[DashboardController::class, 'Stockout']);

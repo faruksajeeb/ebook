@@ -15,8 +15,8 @@
                   <div class="card-body">
                     <div class="row align-items-center">
                       <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-uppercase mb-1">Earnings (Monthly)</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Today Sell Amount</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">${{ todaysell }}</div>
                         <div class="mt-2 mb-0 text-muted text-xs">
                           <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
                           <span>Since last month</span>
@@ -35,8 +35,8 @@
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-uppercase mb-1">Sales</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">650</div>
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Today Income</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$ {{ income }} </div>
                         <div class="mt-2 mb-0 text-muted text-xs">
                           <span class="text-success mr-2"><i class="fas fa-arrow-up"></i> 12%</span>
                           <span>Since last years</span>
@@ -55,8 +55,8 @@
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-uppercase mb-1">New User</div>
-                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">366</div>
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Today Due</div>
+                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">$ {{ due }} </div>
                         <div class="mt-2 mb-0 text-muted text-xs">
                           <span class="text-success mr-2"><i class="fas fa-arrow-up"></i> 20.4%</span>
                           <span>Since last month</span>
@@ -75,8 +75,8 @@
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-uppercase mb-1">Pending Requests</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Today Expense</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$ {{ expense }} </div>
                         <div class="mt-2 mb-0 text-muted text-xs">
                           <span class="text-danger mr-2"><i class="fas fa-arrow-down"></i> 1.10%</span>
                           <span>Since yesterday</span>
@@ -91,7 +91,7 @@
               </div>
 
               <!-- Area Chart -->
-              <div class="col-xl-8 col-lg-7">
+              <!-- <div class="col-xl-8 col-lg-7">
                 <div class="card mb-4">
                   <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Monthly Recap Report</h6>
@@ -116,8 +116,47 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
               <!-- Pie Chart -->
+              <div class="col-xl-8 col-lg-7 mb-4">
+                <div class="card">
+                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Out of stock</h6>
+                    <!-- <a class="m-0 float-right btn btn-danger btn-sm" href="#">View More <i
+                        class="fas fa-chevron-right"></i></a> -->
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table align-items-center table-flush">
+                      <thead class="thead-light">
+                        <tr>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Photo</th>
+                         
+                        <th>Buying Price</th>
+                        <th>Status</th>
+                        <th>Quantity</th>
+                        
+                      </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="product in products" :key="product.id">
+                        <td> {{ product.product_name }} </td>
+                        <td> {{ product.product_code }} </td>
+                        <td><img :src="product.image" id="em_photo"></td>
+                        
+                        <td>{{ product.buying_price }}</td>
+  <td v-if="product.product_quantity  >= 1 "><span class="badge badge-success">Available </span></td>
+   <td v-else=" "><span class="badge badge-danger">Stock Out </span></td>
+                         <td>{{ product.product_quantity }}</td>
+             
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer"></div>
+                </div>
+              </div>
               <div class="col-xl-4 col-lg-5">
                 <div class="card mb-4">
                   <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -311,7 +350,52 @@ export default {
     if (!User.loggedIn()) {
       this.$router.push({ name: 'login' })
     }
-  }
+  },
+  data(){
+    return{
+      todaysell:'',
+      income:'',
+      due:'',
+      expense:0,
+      products:''
+    }
+  },
+  mounted(){
+    this.TodaySell();
+    this.TodayIncome();
+    this.TodayDue();
+    this.TodayExpense();
+    this.StockOut();
+ },
+  methods:{
+     TodaySell(){
+      axios.get('/api/today/sell')
+        .then(({data}) => (this.todaysell = data))
+        .catch()
+     },
+     TodayIncome(){
+      axios.get('/api/today/income')
+        .then(({data}) => (this.income = data))
+        .catch()
+     },
+     TodayDue(){
+      axios.get('/api/today/due')
+        .then(({data}) => (this.due = data))
+        .catch()
+     },
+     TodayExpense(){
+      axios.get('/api/today/expense')
+        .then(({data}) => (this.expense = data))
+        .catch()
+     },
+
+     StockOut(){
+      axios.get('/api/today/stockout')
+        .then(({data}) => (this.products = data))
+        .catch()
+     },
+
+   }
 }
 </script>
 <style lang="">
