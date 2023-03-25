@@ -50,6 +50,13 @@ import EditStock from  './components/stock/edit.vue'
 // POS Component
 import Pos from  './components/pos/pointofsale.vue'
 
+// Order Component
+import Order from './components/order/order.vue';
+import ViewOrder from './components/order/vieworder.vue';
+import SearchOrder from './components/order/search.vue';
+ 
+   
+
 export const routes = [
     {
         name: 'login',
@@ -131,6 +138,13 @@ export const routes = [
 
     // POS Routes 
     { path: '/pos', component: Pos, name:'pos'},
+
+     // Order Routes
+    { path: '/order', component: Order, name:'order'},
+    { path: '/view-order/:id', component: ViewOrder, name:'view-order'},
+    { path: '/searchorder', component: SearchOrder, name:'searchorder'},
+
+
 
 ];
 

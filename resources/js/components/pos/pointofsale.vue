@@ -38,7 +38,7 @@
                       <input
                         type="text"
                         readonly=""
-                        style="width: 15px"
+                        style="width: 25px"
                         :value="cart.pro_quantity"
                       />
                       <button
@@ -408,7 +408,11 @@ export default {
 
       axios.post("/api/orderdone", data).then(() => {
         // Notification.success()
-        this.$router.push({ name: "home" });
+        Toast.fire({
+              icon: 'success',
+              title: 'Order Done!'
+            })
+        this.$router.push({ name: "dashboard" });
       });
     },
 
