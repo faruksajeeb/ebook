@@ -1,12 +1,18 @@
+
+// import Noty from 'noty';
 class Notification{
 
-  success(){
-  	new Noty({
-    type: 'success',
-    layout: 'topRight',
-    text: 'Successfully Done!',
-    timeout: 1000,
-       }).show();
+  success(msg){
+    Toast.fire({
+      icon: "success",
+      title: msg
+    });
+  	// new Noty({
+    // type: 'success',
+    // layout: 'topRight',
+    // text: 'Successfully Done!',
+    // timeout: 1000,
+    //    }).show();
   } 
 
 
@@ -21,13 +27,11 @@ class Notification{
 
 
 
-  error(){
-  	new Noty({
-    type: 'alert',
-    layout: 'topRight',
-    text: 'Something Went Wrong ! ',
-    timeout: 1000,
-       }).show();
+  error(msg){
+    Toast.fire({
+        icon: "warning",
+        title: msg
+      });
   } 
 
 
