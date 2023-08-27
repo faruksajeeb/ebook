@@ -70,11 +70,9 @@
 </template>
 
 <script type="text/javascript">
-export default {
+export default {  
   created() {
-    if (!User.loggedIn()) {
-      this.$router.push({ name: "/" });
-    }
+    this.allProduct();
   },
   data() {
     return {
@@ -122,9 +120,6 @@ export default {
         }
       });
     },
-  },
-  created() {
-    this.allProduct();
   },
 };
 </script>

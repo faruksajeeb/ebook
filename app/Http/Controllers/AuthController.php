@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use DB;
 
 class AuthController extends Controller
 {
@@ -18,7 +18,7 @@ class AuthController extends Controller
     public function __construct()
     {
         //  $this->middleware('auth:api', ['except' => ['login','register']]);
-        $this->middleware('JWT', ['except' => ['login','register']]);
+        $this->middleware('JWT', ['except' => ['login', 'register']]);
     }
 
     /**
@@ -31,20 +31,27 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validateData = $request->validate([
-            'email' => 'required',
+            'email' => 'required|email',
             'password' => 'required',
-            
-            ]);
-   
+
+        ]);
+
         $credentials = $request->only('email', 'password');
-
-        if ($token = $this->guard()->attempt($credentials)) {
-            return $this->respondWithToken($token);
+        try {
+            if ($token = $this->guard()->attempt($credentials)) {
+                return $this->respondWithToken($token);
+            }
+            return response()->json(
+                [
+                    'error' => 'Unauthorized! Email or Password Invalid.',
+                ], 401);
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'error' => $e->getMessage(),
+                ], 401);
         }
-
-        return response()->json(['error' => 'Unauthorized! Email or Password Invalid.'], 401);
     }
-
 
     /**
      * Get the authenticated User
@@ -107,21 +114,22 @@ class AuthController extends Controller
         return Auth::guard();
     }
 
-    public function register(Request $request){
+    public function register(Request $request)
+    {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users',
-            'password' => 'required|min:5|max:255|confirmed'
-         ]);
+            'password' => 'required|min:5|max:255|confirmed',
+        ]);
 
-         $data = array(
+        $data = array(
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
-         );
+            'password' => Hash::make($request->password),
+        );
 
-         DB::table('users')->insert($data);
+        DB::table('users')->insert($data);
 
-         return $this->login($request);
+        return $this->login($request);
     }
 }

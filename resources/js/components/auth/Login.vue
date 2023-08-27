@@ -7,30 +7,58 @@
             <div class="card-body p-0">
               <div class="row">
                 <div class="col-lg-12">
-                  <div class="login-form">
-                    <div class="text-center">
-                      <h1 class="h4 text-gray-900 mb-4">Login</h1>
+                  <div class="login-form ">
+                    <div class="text-center text-white">
+                      <img src="assets/img/logo/logo.png" width="80">
+                      <h1 class="h4 text-white-900 mb-4">LOGIN</h1>
                     </div>
                     <form class="user" @submit.prevent="login">
                       <div class="form-group">
-                        <input type="email" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp"
-                          placeholder="Enter Email Address" v-model="form.email">
-                          <small class="text-danger" v-if="errors.email">{{ errors.email[0] }}</small>
+                        <input
+                          type="email"
+                          class="form-control"
+                          id="exampleInputEmail"
+                          aria-describedby="emailHelp"
+                          placeholder="Enter Email Address"
+                          v-model="form.email"
+                          :class="{ 'is-invalid': errors.email }"
+                        />
+                        <small class="text-danger" v-if="errors.email">{{
+                          errors.email[0]
+                        }}</small>
                       </div>
                       <div class="form-group">
-                        <input type="password" class="form-control" id="exampleInputPassword" v-model="form.password"
-                          placeholder="Password">
-                          <small class="text-danger" v-if="errors.password">{{ errors.password[0] }}</small>
+                        <input
+                          type="password"
+                          class="form-control"
+                          id="exampleInputPassword"
+                          v-model="form.password"
+                          :class="{ 'is-invalid': errors.password }"
+                          placeholder="Password"
+                        />
+                        <small class="text-danger" v-if="errors.password">{{
+                          errors.password[0]
+                        }}</small>
                       </div>
                       <div class="form-group">
-                        <div class="custom-control custom-checkbox small" style="line-height: 1.5rem;">
-                          <input type="checkbox" class="custom-control-input" id="customCheck">
-                          <label class="custom-control-label" for="customCheck">Remember
-                            Me</label>
+                        <div
+                          class="custom-control custom-checkbox small"
+                          style="line-height: 1.5rem"
+                        >
+                          <input
+                            type="checkbox"
+                            class="custom-control-input"
+                            id="customCheck"
+                          />
+                          <label class="custom-control-label" for="customCheck"
+                            >Remember Me</label
+                          >
                         </div>
                       </div>
                       <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        <button type="submit" class="btn btn-danger btn-block" :disabled="isSubmitting">
+                          <div v-html="submitButtonText" class="text-white"></div>
+                        </button>
                       </div>
                       <!--
                     <hr>
@@ -42,14 +70,18 @@
                     </a>
 					-->
                     </form>
-                    <hr>
-                    <div class="text-center">
-                      <router-link to="/register" class="font-weight-bold small">Create an Account!</router-link>
+                    <hr />
+                    <div class="text-center text-white">
+                      <router-link to="/register" class="font-weight-bold small  text-white"
+                        >Create an Account!</router-link
+                      >
                       <!-- <a class="font-weight-bold small" href="register.html">Create an Account!</a> -->
                     </div>
-                    <hr>
+                    <hr />
                     <div class="text-center">
-                      <router-link to="/forget_password" class="font-weight-bold small">Forget Password</router-link>
+                      <router-link to="/forget_password" class="font-weight-bold small  text-white"
+                        >Forget Password</router-link
+                      >
                     </div>
                   </div>
                 </div>
@@ -61,45 +93,57 @@
     </div>
   </div>
 </template>
-  
+
 <script>
 export default {
-  name: 'Login',
+  name: "Login",
   created() {
     if (User.loggedIn()) {
-      this.$router.push({ name: 'dashboard' })
+      this.$router.push({ name: "dashboard" });
     }
   },
   data() {
     return {
+      submitButtonText: "Log In",
+      isSubmitting: false,
       form: {
-        email: null,
-        password: null
+        email: 'ofsajeeb@gmail.com',
+        password: '12345678',
       },
-      errors: {}
-    }
+      errors: {},
+    };
   },
-  methods:{
-    login(){
-      axios.post('/api/auth/login',this.form)
-      .then(res => {
-        User.responseAfterLogin(res)
-        Toast.fire({
-          icon: 'success',
-          title: 'Signed in successfully'
+  methods: {
+    login() {
+      this.isSubmitting = true;
+      this.submitButtonText = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loging In...</span>';
+      axios.post("/api/auth/login", this.form).then((res) => {
+          User.responseAfterLogin(res);
+          Notification.success("Signed in successfully");
+          this.$router.push({ name: "dashboard" });
         })
-        this.$router.push({ name: 'dashboard'})
-      })
-       .catch(error =>this.errors = error.response.data.errors)
-       .catch(
-            Toast.fire({
-              icon: 'warning',
-              title: 'Invalid Email or Password'
-            })        
-        )
-    }
-  } 
-}
+        .catch((error) => {
+          console.log(error);
+          if(error.response.status===422){
+            this.errors = error.response.data.errors;
+            Notification.error(error.response.statusText);
+          }else if(error.response.status===401){
+           // statusText = "Unauthorized";
+            this.errors = {}
+            Notification.error(error.response.data.error);
+          }else{
+            Notification.error(error.response.statusText);
+          }         
+        })
+        .finally(() => {
+          // always executed;
+         
+          this.isSubmitting = false;
+          this.submitButtonText = "Login";
+        });
+    },
+  },
+};
 </script>
-  
+
 <style scoped></style>

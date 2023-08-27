@@ -1,12 +1,12 @@
 <template lang="">
-    <div>
+    <div >
         <ul v-show="$route.path === '/' || $route.path === '/register' || $route.path === '/forget_password' ? false : true"
       class="navbar-nav sidebar sidebar-light accordion" id="accordionSidebar">
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
         <div class="sidebar-brand-icon">
-          <img src="assets/img/logo/logo2.png">
+          <img src="assets/img/logo/logo.png">
         </div>
-        <div class="sidebar-brand-text mx-3">RuangAdmin</div>
+        <div class="sidebar-brand-text mx-3">Faizaan's Shop</div>
       </a>
       <hr class="sidebar-divider my-0">
       <li class="nav-item active">
@@ -24,6 +24,7 @@
       <!-- <div class="sidebar-heading">
         Features
       </div> -->
+      <div style="max-height: 450px; overflow-y: auto;">
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEmployee"
           aria-expanded="true" aria-controls="collapseEmployee">
@@ -178,6 +179,9 @@
           <span>Charts</span>
         </a>
       </li>
+      
+      
+    </div>
       <hr class="sidebar-divider">
       <div class="version" id="version-ruangadmin"></div>
     </ul>

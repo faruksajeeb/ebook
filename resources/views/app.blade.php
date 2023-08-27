@@ -8,10 +8,26 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link href="{{ asset('assets/img/logo/logo.png') }}" rel="icon">
-    <title>RuangAdmin - Dashboard</title>
+    <title>Faizaan's Shop - Dashboard</title>
     <link href="{{ asset('assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
-    <link href="{{ asset('assets/css/ruang-admin.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/faizaan-admin.min.css') }}" rel="stylesheet">
+    <style>
+        .text-success{
+            color:#67C23A!important;
+        }
+        .text-danger{
+            color:#F56C6C!important;
+        }
+        .bg-success{
+            background-color:#67C23A!important;
+            color: white;
+        }
+        .bg-danger{
+            background-color:#F56C6C!important;
+            color: black;
+        }
+    </style>
 
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
@@ -28,7 +44,7 @@
     <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-    <script src="{{ asset('assets/js/ruang-admin.min.js') }}"></script>
+    <script src="{{ asset('assets/js/faizaan-admin.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/chart.js/Chart.min.js') }}"></script>
     <script src="{{ asset('assets/js/demo/chart-area-demo.js') }}"></script>
 </body>

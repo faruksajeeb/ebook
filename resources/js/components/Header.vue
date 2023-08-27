@@ -4,7 +4,7 @@
           v-show="$route.path === '/' || $route.path === '/register' || $route.path === '/forget_password' ? false : true"
           class="navbar navbar-expand navbar-light bg-navbar topbar mb-4 static-top">
           <button id="sidebarToggleTop" class="btn btn-link rounded-circle mr-3">
-            <i class="fa fa-bars"></i>
+            <i class="fa fa-bars text-white"></i>
           </button>
           <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown no-arrow">
@@ -163,7 +163,7 @@
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
                 <img class="img-profile rounded-circle" src="/assets/img/boy.png" style="max-width: 60px">
-                <span class="ml-2 d-none d-lg-inline text-white small">Maman Ketoprak</span>
+                <span class="ml-2 d-none d-lg-inline text-white small">{{username}}</span>
               </a>
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                 <a class="dropdown-item" href="#">
@@ -195,7 +195,17 @@
 </template>
 <script>
 export default {
-    name: 'Header'
+    name: 'Header',
+    created() {
+      // if (!User.loggedIn()) {
+      //   this.$router.push({ name: 'login' })
+      // }
+    },
+    data() {
+      return {
+        username: User.name()
+      }
+    }
 }
 </script>
 <style lang="">

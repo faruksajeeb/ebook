@@ -1,49 +1,39 @@
 <template>
   <div>
     <div class="row">
-      <router-link to="/manage-category" class="btn btn-primary">All Category </router-link>
-    </div>
-
-    <div class="row justify-content-center">
-      <div class="col-xl-12 col-lg-12 col-md-12">
-        <div class="card shadow-sm my-5">
-          <div class="card-body p-0">
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="login-form">
-                  <div class="text-center">
-                    <h1 class="h4 text-gray-900 mb-4">Add Category</h1>
+      <div class="col-md-6 offset-md-3">
+        <div class="card shadow-sm my-3">
+          <div class="card-header py-2">
+            <h3 class="text-gray-900"><i class="fa fa-plus"></i> Add Category</h3>
+          </div>
+          <div class="card-body p-3">
+            <div class="form">
+              <form class="user" @submit.prevent="categoryInsert">
+                <div class="form-group">
+                  <div class="form-row">
+                    <div class="col-md-12">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="exampleInputFirstName"
+                        placeholder="Enter Your Category Name"
+                        v-model="form.category_name"
+                        :class="{ 'is-invalid': errors.category_name }"
+                      />
+                      <small class="text-danger" v-if="errors.category_name">
+                        {{ errors.category_name[0] }}
+                      </small>
+                    </div>
                   </div>
-
-                  <form class="user" @submit.prevent="categoryInsert">
-                    <div class="form-group">
-                      <div class="form-row">
-                        <div class="col-md-12">
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="exampleInputFirstName"
-                            placeholder="Enter Your Category Name"
-                            v-model="form.category_name"
-                          />
-                          <small class="text-danger" v-if="errors.category_name">
-                            {{ errors.category_name[0] }}
-                          </small>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                      <button type="submit" class="btn btn-primary btn-block">
-                        Submit
-                      </button>
-                    </div>
-                  </form>
-                  <hr />
-                  <div class="text-center"></div>
-                  <div class="text-center"></div>
                 </div>
-              </div>
+                <hr />
+                <div class="form-group">
+                  <router-link to="/manage-category"> Manage Category </router-link>
+                  <button type="submit" class="btn btn-lg btn-danger float-right">
+                    <i class="fa fa-save"></i> Save Data
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -75,13 +65,27 @@ export default {
         .post("/api/manage-category", this.form)
         .then(() => {
           this.$router.push({ name: "manage-category" });
-        //   Notification.success();
-          Toast.fire({
-              icon: 'sucess',
-              title: 'Inserted Successfully!'
-            }) 
+          Notification.success('Category Inserted Successfully!');
         })
-        .catch((error) => (this.errors = error.response.data.errors));
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status === 422) {
+            this.errors = error.response.data.errors;
+            Notification.error(error.response.statusText);
+          } else if (error.response.status === 401) {
+            // statusText = "Unauthorized";
+            this.errors = {};
+            Notification.error(error.response.data.error);
+          } else {
+            Notification.error(error.response.statusText);
+          }
+        })
+        .finally(() => {
+          // always executed;
+
+          this.isSubmitting = false;
+          this.submitButtonText = "Login";
+        });
     },
   },
 };

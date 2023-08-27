@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Category;
 use DB;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -14,8 +14,36 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $category = Category::all();
-        return response()->json($category);
+        // $category = Category::all();
+        // return response()->json($category);
+        $paginate = request('paginate', 5);
+        $searchTerm = request('search', '');
+
+        $sortField = request('sort_field', 'created_at');
+        if (!in_array($sortField, ['id', 'category_name'])) {
+            $sortField = 'created_at';
+        }
+        $sortDirection = request('sort_direction', 'created_at');
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
+
+        $filled = array_filter(request([
+            'category_name'
+        ]));
+
+        $categories = Category::when(count($filled) > 0, function ($query) use ($filled) {
+            foreach ($filled as $column => $value) {
+                $query->where($column, 'LIKE', '%' . $value . '%');
+            }
+
+        })
+            ->when(request('search', '') != '', function ($query) use ($searchTerm) {
+                $query->search(trim($searchTerm));
+            })->orderBy($sortField, $sortDirection)->paginate($paginate);
+
+        // return ProductResource::collection($products);
+        return response()->json($categories);
     }
 
     /**
@@ -64,7 +92,7 @@ class CategoryController extends Controller
     public function update(Request $request, string $id)
     {
         $data = array();
-        $data['category_name'] =  $request->category_name;
+        $data['category_name'] = $request->category_name;
         DB::table('categories')->where('id', $id)->update($data);
     }
 

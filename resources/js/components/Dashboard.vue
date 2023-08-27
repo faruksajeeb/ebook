@@ -347,9 +347,9 @@
 <script>
 export default {
   created() {
-    if (!User.loggedIn()) {
-      this.$router.push({ name: 'login' })
-    }
+    // if (!User.loggedIn()) {
+    //   this.$router.push({ name: 'login' })
+    // }
   },
   data(){
     return{

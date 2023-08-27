@@ -2,14 +2,15 @@ import './bootstrap';
 
 import { createApp } from 'vue'
 import App from './App.vue'
+import { Bootstrap5Pagination } from 'laravel-vue-pagination';
 import router from './router.js';
  // Import User Class
  import User from './Helpers/User';
  window.User = User
 
   // Import Notification Class
-  // import Notification from './Helpers/Notification';
-  // window.Notification = Notification
+  import Notification from './Helpers/Notification';
+  window.Notification = Notification
 
  import Swal from 'sweetalert2'
  window.Swal = Swal
@@ -43,6 +44,8 @@ const options = {
   };
   
 const app = createApp(App);
+
+app.component('pagination', Bootstrap5Pagination);
 
 app.use(VueProgressBar, options)
 app.use(router);
