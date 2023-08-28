@@ -23,9 +23,33 @@
             background-color:#67C23A!important;
             color: white;
         }
+        .my-bg-success{
+            background-color:#67C23A!important;
+            color: white!important;
+        }
+        .my-btn-success{
+            background-color:#67C23A!important;
+            color: #FFFFFF!important;
+        }
+        .my-btn-primary{
+            background-color:#409EFF!important;
+            color: #FFFFFF!important;
+        }
+        .my-btn-danger{
+            background-color:#F56C6C!important;
+            color: #FFFFFF!important;
+        }
+        .my-text-success{
+            background-color:#67C23A!important;
+            color: #67C23A!important;
+        }
         .bg-danger{
             background-color:#F56C6C!important;
             color: black;
+        }
+        .input-group .btn{
+            position: relative;
+            z-index: 1!important;
         }
     </style>
 

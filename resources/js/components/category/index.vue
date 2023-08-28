@@ -23,9 +23,13 @@ export default {
         sort_direction: "desc",
       },
       search: "",
+      isLoading: false,
+      isRefreshing: false,
+      filterFields: {},
     };
   },
   mounted() {
+    this.filterFields = { ...this.params };
     this.getCategories();
   },
   watch: {
@@ -44,6 +48,7 @@ export default {
   computed: {},
   methods: {
     async getCategories(page = 1) {
+      this.isLoading = true;
       await axios
         // .get(`/api/products?page=${page}`)
         // .get(`/api/products?page=${page}&category_id=${this.params.category_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
@@ -56,6 +61,7 @@ export default {
         })
         .then((response) => {
           // console.log(response);
+          this.isLoading = FontFaceSetLoadEvent;
           this.categories = response.data;
           this.paginator.totalRecords = response.data.total;
           if (response.data.total <= 0) {
@@ -65,9 +71,12 @@ export default {
           this.paginator.to = response.data.to;
           this.paginator.current_page = response.data.current_page;
           this.paginator.per_page = response.data.per_page;
+          this.isRefreshing = false;
         });
     },
     refreshData() {
+      this.isRefreshing = true;
+      this.params = { ...this.filterFields };
       this.getCategories();
     },
     changeShort(field) {
@@ -80,62 +89,84 @@ export default {
       }
       // this.getProducts();
     },
+    deleteCategory(id) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.value) {
+          axios
+            .delete("/api/manage-category/" + id)
+            .then(() => {
+              this.getCategories();
+              Notification.success("Data has been deleted successfully.");
+            })
+            .catch((error) => {
+              // console.log(error);
+              if (error.response.status === 422) {
+                this.errors = error.response.data.errors;
+                Notification.error(error.response.statusText);
+              } else if (error.response.status === 401) {
+                // statusText = "Unauthorized";
+                this.errors = {};
+                Notification.error(error.response.data.error);
+              } else {
+                Notification.error(error.response.statusText);
+              }
+            });
+        }
+      });
+    },
+    downloadFile() {
+      let loader =
+        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" ></span> Exporting...';
+      document.querySelector(".export-btn").innerHTML = loader;
+      try {
+        axios
+          // .get("/api/products-export")
+          .get("/api/category-export", { responseType: "arraybuffer" })
+          .then((response) => {
+            if (response.status == 200) {
+              document.querySelector(".export-btn").innerText = "Export to Excel";
+              Notification.success("Exported Successfully");
+              var fileURL = window.URL.createObjectURL(new Blob([response.data]));
+              var fileLink = document.createElement("a");
+              fileLink.href = fileURL;
+              fileLink.setAttribute("download", "product_list.xlsx");
+              document.body.appendChild(fileLink);
+              fileLink.click();
+            } else {
+              this.$swal("ERROR!", `${response.data.message}`, "error");
+            }
+          });
+      } catch (error) {
+        this.$swal("ERROR!", `${error}`, "error");
+        // console.error(error);
+      }
+    },
+    exportPdf() {
+      let loader =
+        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" ></span> PDF Exporting...';
+      document.querySelector(".export-btn-pdf").innerHTML = loader;
+      axios.get("/api/category-export-pdf", { responseType: "blob" }).then((response) => {
+        document.querySelector(".export-btn-pdf").innerText = "Export PDF";
+        Notification.success("Exported Successfully");
+        var fileURL = window.URL.createObjectURL(
+          new Blob([response.data], { type: "application/pdf" })
+        );
+        var fileLink = document.createElement("a");
+        fileLink.href = fileURL;
+        fileLink.setAttribute("download", "category_list.pdf");
+        document.body.appendChild(fileLink);
+        fileLink.click();
+      });
+    },
   },
-  // created() {
-  //   if (!User.loggedIn()) {
-  //     this.$router.push({ name: "/" });
-  //   }
-  // },
-  // data() {
-  //   return {
-  //     categories: [],
-  //     searchTerm: "",
-  //   };
-  // },
-  // computed: {
-  //   filtersearch() {
-  //     return this.categories.filter((category) => {
-  //       return category.category_name.match(this.searchTerm);
-  //     });
-  //   },
-  // },
-
-  // methods: {
-  //   allCategory() {
-  //     axios
-  //       .get("/api/manage-category/")
-  //       .then(({ data }) => (this.categories = data))
-  //       .catch();
-  //   },
-  //   deleteCategory(id) {
-  //     Swal.fire({
-  //       title: "Are you sure?",
-  //       text: "You won't be able to revert this!",
-  //       icon: "warning",
-  //       showCancelButton: true,
-  //       confirmButtonColor: "#3085d6",
-  //       cancelButtonColor: "#d33",
-  //       confirmButtonText: "Yes, delete it!",
-  //     }).then((result) => {
-  //       if (result.value) {
-  //         axios
-  //           .delete("/api/manage-category/" + id)
-  //           .then(() => {
-  //             this.categories = this.categories.filter((category) => {
-  //               return category.id != id;
-  //             });
-  //           })
-  //           .catch(() => {
-  //             this.$router.push({ name: "manage-category" });
-  //           });
-  //         Swal.fire("Deleted!", "Your file has been deleted.", "success");
-  //       }
-  //     });
-  //   },
-  // },
-  // created() {
-  //   this.allCategory();
-  // },
 };
 </script>
 <template>
@@ -147,7 +178,7 @@ export default {
           <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
           >
-            <h3 class="m-0 font-weight-bold text-success">Category List</h3>
+            <h3 class="m-0 font-weight-bold">Category List</h3>
           </div>
           <div class="card-body p-0 m-0">
             <!-- <div class="row p-2">
@@ -170,9 +201,9 @@ export default {
             <!-- <div class="row justify-content-between"> -->
             <div class="row p-2">
               <div class="input-group">
-                <div class="d-flex col-md-2">
-                  <label for="">Per Page: </label>
-                  <select v-model="params.paginate" id="" class="">
+                <div class="col-md-2">
+                  <label for="" class="me-3">Per Page: </label>
+                  <select v-model="params.paginate" id="" class="py-2">
                     <option value="5" selected>5</option>
                     <option value="10">10</option>
                     <option value="20">20</option>
@@ -184,12 +215,34 @@ export default {
                   type="text"
                   class="form-control"
                   placeholder="Search by category. (Type and Enter)"
-                  v-model.lazy="search"
+                  v-model="search"
                 />
+                <button @click="downloadFile" class="btn my-btn-success export-btn">
+                  Export to Excel
+                </button>
+                <button @click="exportPdf" class="btn my-btn-danger export-btn-pdf">
+                  Export PDF
+                </button>
+                <refresh-button
+                  :is-refreshing="isRefreshing"
+                  @refresh-data="refreshData"
+                />
+
+                <router-link
+                  to="/add-category"
+                  class="z-index-1 btn my-btn-primary float-right"
+                >
+                  <i class="fa fa-solid fa-plus"></i>
+                  Add Category
+                </router-link>
               </div>
             </div>
+
             <div class="table-responsive">
-              <table class="table align-items-center table-flush">
+              <table
+                class="table align-items-center table-flush"
+                style="min-height: 250px"
+              >
                 <thead class="thead-light">
                   <tr>
                     <th scope="col" class="text-center">
@@ -232,6 +285,26 @@ export default {
                     </th>
                     <th class="text-right">Action</th>
                   </tr>
+                  <tr>
+                    <th></th>
+                    <th>
+                      <input
+                        type="text"
+                        placeholder="Search By ID"
+                        class="form-control"
+                        v-model="params.id"
+                      />
+                    </th>
+                    <th>
+                      <input
+                        type="text"
+                        placeholder="Search By Name"
+                        class="form-control"
+                        v-model="params.category_name"
+                      />
+                    </th>
+                    <th></th>
+                  </tr>
                 </thead>
                 <tbody v-if="categories && paginator.totalRecords > 0">
                   <tr v-for="category in categories.data" :key="category.id">
@@ -249,12 +322,13 @@ export default {
                     <td class="text-right">
                       <router-link
                         :to="{ name: 'edit-category', params: { id: category.id } }"
-                        class="btn btn-sm btn-primary px-1 mx-1"
+                        class="btn btn-sm btn-primary px-2 mx-1"
                         ><i class="fa fa-edit"></i> Edit</router-link
                       >
-
-                      <a class="btn btn-sm btn-danger px-1 mx-1">
-                        <!-- <a @click="deleteCategory(category.id)" class="btn btn-sm btn-danger px-1 mx-1" > -->
+                      <a
+                        @click="deleteCategory(category.id)"
+                        class="btn btn-sm btn-danger px-2 mx-1"
+                      >
                         <font color="#ffffff"><i class="fa fa-trash"></i> Delete</font></a
                       >
                     </td>
@@ -262,12 +336,8 @@ export default {
                 </tbody>
                 <tbody v-else>
                   <tr>
-                    <td colspan="3" class="text-center loading-section">
-                      <span
-                        class="spinner-border spinner-border-lg"
-                        role="status"
-                        aria-hidden="true"
-                      ></span>
+                    <td colspan="4" class="text-center loading-section">
+                      <loader v-if="isLoading"></loader>
                     </td>
                   </tr>
                 </tbody>

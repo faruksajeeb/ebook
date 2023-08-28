@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use DB;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use PDF;
+use App\Exports\CategoryExport;
+use App\Imports\CategoryImport;
 
 class CategoryController extends Controller
 {
@@ -29,6 +33,7 @@ class CategoryController extends Controller
         }
 
         $filled = array_filter(request([
+            'id',
             'category_name'
         ]));
 
@@ -37,8 +42,7 @@ class CategoryController extends Controller
                 $query->where($column, 'LIKE', '%' . $value . '%');
             }
 
-        })
-            ->when(request('search', '') != '', function ($query) use ($searchTerm) {
+        })->when(request('search', '') != '', function ($query) use ($searchTerm) {
                 $query->search(trim($searchTerm));
             })->orderBy($sortField, $sortDirection)->paginate($paginate);
 
@@ -101,6 +105,56 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        DB::table('categories')->where('id', $id)->delete();
+        try{
+            DB::table('categories')->where('id', $id)->delete();
+        }catch(\Exception $e){
+            return response()->json(
+                [
+                    'error' => $e->getMessage(),
+                ], 401);
+        }
+    }
+
+
+
+    public function export()
+    {
+        try {
+            // dd('hello');
+            ini_set('max_execution_time', 30 * 60); //30 min
+            ini_set('memory_limit', '2048M');
+            return Excel::download(new CategoryExport, 'category.xlsx');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+
+    }
+    public function exportPdf()
+    {
+        try {
+            // dd('hello');
+            ini_set('max_execution_time', 30 * 60); //30 min
+            ini_set('memory_limit', '2048M');
+            $data = [];
+            $pdf = PDF::loadView('pdf-export.category', ['data' => $data]);
+            return $pdf->output();
+            // return $pdf->download('itsolutionstuff.pdf');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+
+    }
+
+    public function import()
+    {
+        Excel::import(new CategoryImport, request()->file('file'));
+
+        return back();
     }
 }

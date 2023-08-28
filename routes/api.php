@@ -46,6 +46,9 @@ Route::apiResource('/manage-category',CategoryController::class);
 Route::apiResource('/manage-product',ProductController::class);
 Route::apiResource('/manage-expense',ExpenseController::class);
 
+Route::get('category-export', [CategoryController::class, 'export'])->name('category.export');
+Route::get('category-export-pdf', [CategoryController::class, 'exportPdf'])->name('category.export.pdf');
+
 Route::post('/salary/paid/{id}', [SalaryController::class,'Paid']);
 Route::get('/salary', [SalaryController::class,'AllSalary']);
 

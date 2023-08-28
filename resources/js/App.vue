@@ -10,7 +10,8 @@
         <!-- End Topbar -->
 
         <!-- Container Fluid-->
-        <div class="container-fluid" id="container-wrapper">
+        <div class="container-fluid" id="container-wrapper">        
+          
           <router-view></router-view>
         </div>
         <!-- End Container Fluid-->
@@ -24,15 +25,21 @@
 </template>
 
 <script>
-import Header from './components/Header.vue'
-import Sidebar from './components/Sidebar.vue'
-import Footer from './components/Footer.vue'
+import Header from './components/Header.vue';
+import Sidebar from './components/Sidebar.vue';
+import Footer from './components/Footer.vue';
 export default {
   components: {
     'header-view': Header,
     'sidebar-view': Sidebar,
     'footer-view': Footer,
   },
+  data() {
+    return {
+      isLoading: false, // Set this to true when loading
+    };
+  },
+  
   mounted() {
     this.$Progress.finish();
   },
@@ -44,10 +51,17 @@ export default {
         this.$Progress.parseMeta(meta);
       }
       this.$Progress.start();
-      next();
+      
+
+      // this.isLoading = true;
+      // setTimeout(function (){    
+      
+          next();
+      // }, 2000);
     });
     this.$router.afterEach((to, from) => {
       this.$Progress.finish();
+      // this.isLoading = false;
     });
   },
 };

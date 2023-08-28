@@ -2,9 +2,9 @@
   <div>
     <div class="row">
       <div class="col-md-6 offset-md-3">
-        <div class="card shadow-sm my-3">
-          <div class="card-header py-2">
-            <h3 class="text-gray-900"><i class="fa fa-plus"></i> Add Category</h3>
+        <div class="card shadow-sm my-4">
+          <div class="card-header py-2 my-bg-success">
+            <h3 class="text-white-900"><i class="fa fa-plus"></i> Add Category</h3>
           </div>
           <div class="card-body p-3">
             <div class="form">
@@ -29,9 +29,7 @@
                 <hr />
                 <div class="form-group">
                   <router-link to="/manage-category"> Manage Category </router-link>
-                  <button type="submit" class="btn btn-lg btn-danger float-right">
-                    <i class="fa fa-save"></i> Save Data
-                  </button>
+                  <save-button :is-submitting="isSubmitting"></save-button>
                 </div>
               </form>
             </div>
@@ -51,7 +49,8 @@ export default {
   },
 
   data() {
-    return {
+    return { 
+      isSubmitting : false,     
       form: {
         category_name: null,
       },
@@ -61,6 +60,7 @@ export default {
 
   methods: {
     categoryInsert() {
+      this.isSubmitting = true;
       axios
         .post("/api/manage-category", this.form)
         .then(() => {
@@ -82,9 +82,7 @@ export default {
         })
         .finally(() => {
           // always executed;
-
           this.isSubmitting = false;
-          this.submitButtonText = "Login";
         });
     },
   },

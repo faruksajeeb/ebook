@@ -28,7 +28,12 @@ import router from './router.js';
 window.Toast = Toast;
 // window.Reload = createApp; 
  
+// Import components
 import VueProgressBar from "@aacassandra/vue3-progressbar";
+import Loader from './components/Loader.vue';
+import SaveButton from './components/SaveButton.vue';
+import SaveChangesButton from './components/SaveChangesButton.vue';
+import RefreshButton from './components/RefreshButton.vue';
 const options = {
     color: "red",
     failedColor: "#874b4b",
@@ -45,7 +50,14 @@ const options = {
   
 const app = createApp(App);
 
+
+app.component('loader', Loader);
 app.component('pagination', Bootstrap5Pagination);
+app.component('save-button', SaveButton);
+app.component('save-changes-button', SaveChangesButton);
+app.component('refresh-button', RefreshButton);
+
+
 
 app.use(VueProgressBar, options)
 app.use(router);
