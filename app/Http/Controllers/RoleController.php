@@ -1,0 +1,295 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\PermissionGroup;
+use DB;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Spatie\Permission\Models\Role;
+
+class RoleController extends Controller
+{
+    protected $role;
+    protected $roles;
+    protected $roleid;
+    public $tableName;
+
+    public function __construct(Role $roles)
+    {
+        $this->roles = $roles;
+        $this->tableName = 'roles';
+        $this->middleware(function ($request, $next) {
+            //    $this->user = Auth::user();
+            $this->user = Auth::guard('web')->user();
+            return $next($request);
+        });
+    }
+
+    public function index()
+    {
+        #permission verfy
+        // $this->webspice->permissionVerify('role.view');
+
+        // $fileTag = '';
+        // if ($request->get('status') == 'archived') {
+        //     $fileTag = 'Archived ';
+        //     $query = $this->roles->orderBy('deleted_at', 'desc');
+        //     $query->onlyTrashed();
+        // } else {
+        //     $query = $this->roles->orderBy('created_at', 'desc');
+        // }
+
+        // if ($request->search_status != null) {
+        //     $query->where('status', $request->search_status);
+        // }
+        // $searchText = $request->search_text;
+        // if ($searchText != null) {
+        //     // $query = $query->search($request->search_text); // search by value
+        //     $query->where(function ($query) use ($searchText) {
+        //         $query->where('name', 'LIKE', '%' . $searchText . '%')
+        //             ->orWhere('guard_name', 'LIKE', '%' . $searchText . '%');
+        //     });
+        // }
+        // if ($request->submit_btn == 'export') {
+        //     $title = $fileTag . 'Role List';
+        //     $fileName = str_replace(' ', '_', strtolower($title));
+        //     return Excel::download(new RoleExport($query->get(), $title), $fileName . '_' . time() . '.xlsx');
+        // }
+
+        // $roles = $query->paginate(5);
+        // return view('role.index', compact('roles'));
+
+        $paginate = request('paginate', 5);
+        $searchTerm = request('search', '');
+
+        $sortField = request('sort_field', 'created_at');
+        if (!in_array($sortField, ['id', 'name'])) {
+            $sortField = 'created_at';
+        }
+        $sortDirection = request('sort_direction', 'created_at');
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
+
+        $filled = array_filter(request([
+            'id',
+            'name',
+        ]));
+
+        $categories = Role::when(count($filled) > 0, function ($query) use ($filled) {
+            foreach ($filled as $column => $value) {
+                $query->where($column, 'LIKE', '%' . $value . '%');
+            }
+
+        })->when(request('search', '') != '', function ($query) use ($searchTerm) {
+            $query->search(trim($searchTerm));
+        })->orderBy($sortField, $sortDirection)->paginate($paginate);
+
+        // return ProductResource::collection($products);
+        return response()->json($categories);
+    }
+
+    public function create()
+    {
+        #permission verfy
+        $this->webspice->permissionVerify('role.create');
+
+        $permission_groups = PermissionGroup::with('activePermissions')->where('status', 1)->orderBy('order')->get();
+
+        return view('role.create', [
+            'permission_groups' => $permission_groups,
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+
+        #permission verfy
+        // $this->webspice->permissionVerify('role.create');
+
+        $request->validate(
+            [
+                'name' => 'required|regex:/^[a-zA-Z ]+$/u|min:3|max:20|unique:roles',
+            ],
+            [
+                'name.required' => 'Role Name field is required.',
+                'name.unique' => 'The role name has already been taken.',
+                'name.regex' => 'The role name format is invalid. Please enter alpabatic text.',
+                'name.min' => 'The role name must be at least 3 characters.',
+                'name.max' => 'The role name may not be greater than 20 characters.',
+            ]
+        );
+
+        $data = array(
+            'name' => $request->name,
+        );
+        try {
+            $role = $this->roles->create($data);
+            // $permissions = $request->permissions;
+            // if (!empty($permissions)) {
+            //     for ($i = 0; $i < count($permissions); $i++) {
+            //         $role->givePermissionTo($permissions[$i]);
+            //     }
+            // }
+        } catch (Exception $e) {
+            // $this->webspice->message('error', $e->getMessage());
+            return response()->json(
+                [
+                    'error' => $e->getMessage(),
+                ], 401);
+        }
+
+        // return redirect()->back();
+    }
+
+    public function show(string $id)
+    {
+        try {
+          
+            $role = DB::table('roles')->where('id', $id)->first();
+          
+            return response()->json($role);
+        } catch (Exception $e) {
+            // $this->webspice->message('error', $e->getMessage());
+            return response()->json(
+                [
+                    'error' => $e->getMessage(),
+                ], 401);
+        }
+    }
+
+    public function edit($id)
+    {
+        #permission verfy
+        $this->webspice->permissionVerify('role.edit');
+        try {
+            # decrypt value
+            $id = $this->webspice->encryptDecrypt('decrypt', $id);
+
+            $roleInfo = $this->roles->findById($id);
+
+            $permission_groups = PermissionGroup::with('activePermissions')->where('status', 1)->orderBy('order')->get();
+        } catch (Exception $e) {
+            $this->webspice->message('error', $e->getMessage());
+        }
+        return view('role.edit', [
+            'roleInfo' => $roleInfo,
+            'permission_groups' => $permission_groups,
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+
+        #permission verfy
+        // $this->webspice->permissionVerify('role.edit');
+
+        # decrypt value
+        // $id = $this->webspice->encryptDecrypt('decrypt', $id);
+
+        $request->validate(
+            [
+                'name' => 'required|regex:/^[a-zA-Z ]+$/u|min:3|max:20|unique:roles,name,' . $id,
+            ],
+            [
+                'name.required' => 'Role Name field is required.',
+                'name.unique' => '"' . $request->name . '" The role name has already been taken.',
+                'name.regex' => 'The role name format is invalid. Please enter alpabatic text.',
+                'name.min' => 'The role name must be at least 3 characters.',
+                'name.max' => 'The role name may not be greater than 20 characters.',
+            ]
+        );
+        try {
+            $role = $this->roles->findById($id);
+            // $permissions = $request->input('permissions');
+            // if (!empty($permissions)) {
+            //     $role->syncPermissions($permissions);
+            // }
+            // if (!in_array($role->name, ['superadmin', 'developer'])) {
+            //     $role->name = $role->name;
+            // } else {
+            $role->name = $request->name;
+            // }
+            $role->save();
+        } catch (Exception $e) {
+            // $this->webspice->message('error', $e->getMessage());
+            return response()->json(
+                [
+                    'error' => $e->getMessage(),
+                ], 401);
+        }
+        // return redirect()->route('roles.index');
+    }
+
+    public function destroy($id)
+    {
+        #permission verfy
+        $this->webspice->permissionVerify('role.delete');
+        try {
+            # decrypt value
+            $id = $this->webspice->encryptDecrypt('decrypt', $id);
+
+            $role = $this->roles->findById($id);
+            $role->delete();
+        } catch (Exception $e) {
+            $this->webspice->message('error', $e->getMessage());
+        }
+        return back();
+    }
+
+    public function forceDelete($id)
+    {
+        return response()->json(['error' => 'Unauthenticated.'], 401);
+        #permission verfy
+        $this->webspice->permissionVerify('role.force_delete');
+        try {
+            #decrypt value
+            $id = $this->webspice->encryptDecrypt('decrypt', $id);
+            $role = Role::withTrashed()->findOrFail($id);
+            $role->forceDelete();
+        } catch (Exception $e) {
+            $this->webspice->message('error', $e->getMessage());
+        }
+        return redirect()->back();
+    }
+    public function restore($id)
+    {
+        #permission verfy
+        $this->webspice->permissionVerify('role.restore');
+        try {
+            $id = $this->webspice->encryptDecrypt('decrypt', $id);
+            $role = Role::withTrashed()->findOrFail($id);
+            $role->restore();
+        } catch (Exception $e) {
+            $this->webspice->message('error', $e->getMessage());
+        }
+        // return redirect()->route('roles.index', ['status' => 'archived'])->withSuccess(__('User restored successfully.'));
+        return redirect()->route('roles.index');
+    }
+
+    public function restoreAll()
+    {
+        #permission verfy
+        $this->webspice->permissionVerify('role.restore');
+        try {
+            $roles = Role::onlyTrashed()->get();
+            foreach ($roles as $role) {
+                $role->restore();
+            }
+        } catch (Exception $e) {
+            $this->webspice->message('error', $e->getMessage());
+        }
+        return redirect()->route('roles.index');
+        // return redirect()->route('roles.index')->withSuccess(__('All roles restored successfully.'));
+    }
+
+    public function clearPermissionCache()
+    {
+        app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        Session::flash('success', 'Permission cache cleared Successfully.');
+        return back();
+    }
+}

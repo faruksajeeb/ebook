@@ -9,9 +9,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+use Spatie\Permission\Traits\HasRoles;
+
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -64,5 +67,37 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+
+
+    static function roleHasPermissions($role,$permissions){
+        $result = true;
+      
+        foreach($permissions as $permission){
+           
+            if(!$role->hasPermissionTo($permission->name)){
+                $result = false;
+            }
+        }
+        return $result; 
+    }
+
+
+    public static function insertUser($request){
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password =Hash::make($request->password);
+        $user->save();
+        if($request->roles){
+            $user->assignRole($request->roles);
+        }
+        return $user->id; // return insert id
+    }
+    
+
+    public static function menuByGroupName($groupName){
+        return DB::table('permissions')->where('group_name',$groupName)->get();
     }
 }

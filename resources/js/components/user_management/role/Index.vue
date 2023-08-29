@@ -8,7 +8,7 @@
           <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
           >
-            <h3 class="m-0 font-weight-bold">Category List</h3>
+            <h3 class="m-0 font-weight-bold">Role List</h3>
           </div>
           <div class="card-body p-0 m-0">
             <!-- <div class="row p-2">
@@ -22,9 +22,9 @@
                 />
               </div>
               <div class="col-md-6">
-                <router-link to="/add-category" class="btn btn-primary float-right">
+                <router-link to="/add-role" class="btn btn-primary float-right">
                   <i class="fa fa-solid fa-plus"></i>
-                  Add Category
+                  Add role
                 </router-link>
               </div>
             </div> -->
@@ -44,7 +44,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Search by category. (Type and Enter)"
+                  placeholder="Search by role. (Type and Enter)"
                   v-model="search"
                 />
                 <button @click="downloadFile" class="btn my-btn-success export-btn">
@@ -59,11 +59,11 @@
                 />
 
                 <router-link
-                  to="/add-category"
+                  to="/add-role"
                   class="z-index-1 btn my-btn-primary float-right"
                 >
                   <i class="fa fa-solid fa-plus"></i>
-                  Add Category
+                  Add role
                 </router-link>
               </div>
             </div>
@@ -96,23 +96,24 @@
                       >
                     </th>
                     <th scope="col">
-                      <a href="#" @click.prevent="changeShort('category_name')">Name</a>
+                      <a href="#" @click.prevent="changeShort('name')">Name</a>
                       <!-- <a href="#">Name</a> -->
                       <span
                         v-if="
-                          this.params.sort_field == 'category_name' &&
+                          this.params.sort_field == 'name' &&
                           this.params.sort_direction == 'asc'
                         "
                         >↑</span
                       >
                       <span
                         v-if="
-                          this.params.sort_field == 'category_name' &&
+                          this.params.sort_field == 'name' &&
                           this.params.sort_direction == 'desc'
                         "
                         >↓</span
                       >
                     </th>
+                    <th class="text-right">Permissions</th>
                     <th class="text-right">Action</th>
                   </tr>
                   <tr>
@@ -130,33 +131,34 @@
                         type="text"
                         placeholder="Search By Name"
                         class="form-control"
-                        v-model="params.category_name"
+                        v-model="params.name"
                       />
                     </th>
                     <th></th>
+                    <th></th>
                   </tr>
                 </thead>
-                <tbody v-if="categories && paginator.totalRecords > 0">
-                  <tr v-for="category in categories.data" :key="category.id">
+                <tbody v-if="roles && paginator.totalRecords > 0">
+                  <tr v-for="role in roles.data" :key="role.id">
                     <td class="text-center">
                       <input
                         type="checkbox"
-                        :value="category.id"
+                        :value="role.id"
                         v-model="checked"
                         class="form-check-input"
                       />
                     </td>
-                    <td class="text-nowrap">{{ category.id }}</td>
-                    <td>{{ category.category_name }}</td>
-
+                    <td class="text-nowrap">{{ role.id }}</td>
+                    <td>{{ role.name }}</td>
+                    <td></td>
                     <td class="text-right">
                       <router-link
-                        :to="{ name: 'edit-category', params: { id: category.id } }"
+                        :to="{ name: 'edit-role', params: { id: role.id } }"
                         class="btn btn-sm btn-primary px-2 mx-1"
                         ><i class="fa fa-edit"></i> Edit</router-link
                       >
                       <a
-                        @click="deleteCategory(category.id)"
+                        @click="deleterole(role.id)"
                         class="btn btn-sm btn-danger px-2 mx-1"
                       >
                         <font color="#ffffff"><i class="fa fa-trash"></i> Delete</font></a
@@ -166,7 +168,7 @@
                 </tbody>
                 <tbody v-else>
                   <tr>
-                    <td colspan="4" class="text-center loading-section">
+                    <td colspan="5" class="text-center loading-section">
                       <loader v-if="isLoading"></loader>
                     </td>
                   </tr>
@@ -186,9 +188,9 @@
               <div class="col-md-6">
                 <pagination
                   align="right"
-                  :data="categories"
+                  :data="roles"
                   :limit="5"
-                  @pagination-change-page="getCategories"
+                  @pagination-change-page="getRoles"
                 ></pagination>
               </div>
             </div>
@@ -201,7 +203,7 @@
 </template>
 <script type="text/javascript">
 export default {
-  name: "Category",
+  name: "role",
   data() {
     return {
       checked: [],
@@ -212,14 +214,14 @@ export default {
         current_page: "",
         per_page: "",
       },
-      categories: {
+      roles: {
         type: Object,
         default: null,
       },
       params: {
         paginate: 5,
         id: "",
-        category_name: "",
+        name: "",
         sort_field: "created_at",
         sort_direction: "desc",
       },
@@ -231,29 +233,29 @@ export default {
   },
   mounted() {
     this.filterFields = { ...this.params };
-    this.getCategories();
+    this.getRoles();
   },
   watch: {
     params: {
       handler() {
-        this.getCategories();
+        this.getRoles();
       },
       deep: true,
     },
     search(val, old) {
       if (val.length >= 3 || old.length >= 3) {
-        this.getCategories();
+        this.getRoles();
       }
     },
   },
   computed: {},
   methods: {
-    async getCategories(page = 1) {
+    async getRoles(page = 1) {
       this.isLoading = true;
       await axios
         // .get(`/api/products?page=${page}`)
-        // .get(`/api/products?page=${page}&category_id=${this.params.category_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
-        .get("/api/manage-category", {
+        // .get(`/api/products?page=${page}&role_id=${this.params.role_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
+        .get("/api/manage-role", {
           params: {
             page,
             search: this.search.length >= 3 ? this.search : "",
@@ -263,7 +265,7 @@ export default {
         .then((response) => {
           // console.log(response);
           this.isLoading = FontFaceSetLoadEvent;
-          this.categories = response.data;
+          this.roles = response.data;
           this.paginator.totalRecords = response.data.total;
           if (response.data.total <= 0) {
             document.querySelector(".loading-section").innerText = "No Record Found!.";
@@ -278,7 +280,7 @@ export default {
     refreshData() {
       this.isRefreshing = true;
       this.params = { ...this.filterFields };
-      this.getCategories();
+      this.getRoles();
     },
     changeShort(field) {
       if (this.params.sort_field === field) {
@@ -290,7 +292,7 @@ export default {
       }
       // this.getProducts();
     },
-    deleteCategory(id) {
+    deleterole(id) {
       Swal.fire({
         allowOutsideClick: false,
         title: "Are you sure?",
@@ -303,9 +305,9 @@ export default {
       }).then((result) => {
         if (result.value) {
           axios
-            .delete("/api/manage-category/" + id)
+            .delete("/api/manage-role/" + id)
             .then(() => {
-              this.getCategories();
+              this.getRoles();
               Notification.success("Data has been deleted successfully.");
             })
             .catch((error) => {
@@ -331,7 +333,7 @@ export default {
       try {
         axios
           // .get("/api/products-export")
-          .get("/api/category-export", { responseType: "arraybuffer" })
+          .get("/api/role-export", { responseType: "arraybuffer" })
           .then((response) => {
             if (response.status == 200) {
               document.querySelector(".export-btn").innerText = "Export to Excel";
@@ -355,7 +357,7 @@ export default {
       let loader =
         '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" ></span>  Exporting...PDF';
       document.querySelector(".export-btn-pdf").innerHTML = loader;
-      axios.get("/api/category-export-pdf", { responseType: "blob" }).then((response) => {
+      axios.get("/api/role-export-pdf", { responseType: "blob" }).then((response) => {
         document.querySelector(".export-btn-pdf").innerText = "Export PDF";
         Notification.success("Exported Successfully");
         var fileURL = window.URL.createObjectURL(
@@ -363,7 +365,7 @@ export default {
         );
         var fileLink = document.createElement("a");
         fileLink.href = fileURL;
-        fileLink.setAttribute("download", "category_list.pdf");
+        fileLink.setAttribute("download", "role_list.pdf");
         document.body.appendChild(fileLink);
         fileLink.click();
       });

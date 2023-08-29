@@ -21,10 +21,57 @@
           <span>POS</span></router-link>
       </li>
       <hr class="sidebar-divider">
-      <!-- <div class="sidebar-heading">
-        Features
-      </div> -->
       <div style="max-height: 450px; overflow-y: auto;">
+        
+<li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUserMgt"
+          aria-expanded="true" aria-controls="collapseUserMgt">
+          <i class="far fa-fw fa-window-maximize"></i>
+          <span>User Management</span>
+        </a>
+        <div id="collapseUserMgt" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+          <ul id="accordionUserMgtBar" class="navbar-nav accordion px-3" >
+            <li class="nav-item py-2">
+                  <a class="collapsed" href="#" data-toggle="collapse" data-target="#collapseUserRole"
+                    aria-expanded="true" aria-controls="collapseUserRole">                   
+                    <span>Roles</span>
+                  </a>
+                  <div id="collapseUserRole" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionUserMgtBar">
+                    <div class="bg-white py-2  rounded">
+                      <router-link class="collapse-item px-3" to="/add-role">Add Role</router-link>
+                      <router-link class="collapse-item px-3" to="/manage-role">Manage Role</router-link>
+                    </div>
+                </div>
+          </li>
+          <li class="nav-item py-2">
+                  <a class="collapsed" href="#" data-toggle="collapse" data-target="#collapseUserLevel"
+                    aria-expanded="true" aria-controls="collapseUserLevel">                   
+                    <span>Users</span>
+                  </a>
+                  <div id="collapseUserLevel" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionUserMgtBar">
+                    <div class="bg-white py-2  rounded">
+                      <router-link class="collapse-item px-3" to="/add-category">Add User</router-link>
+                      <router-link class="collapse-item px-3" to="/manage-category">Manage User</router-link>
+                    </div>
+                </div>
+          </li>
+          <li class="nav-item py-2">
+                  <a class="collapsed" href="#" data-toggle="collapse" data-target="#collapseUserPermission"
+                    aria-expanded="true" aria-controls="collapseUserPermission">                   
+                    <span>Permissions</span>
+                  </a>
+                  <div id="collapseUserPermission" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionUserMgtBar">
+                    <div class="bg-white py-2  rounded">
+                      <router-link class="collapse-item px-3" to="/add-category">Add Permission</router-link>
+                      <router-link class="collapse-item px-3" to="/manage-category">Manage Permission</router-link>
+                    </div>
+                </div>
+          </li>
+          </ul>           
+          </div>
+        </div>
+      </li>
         <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCategory"
           aria-expanded="true" aria-controls="collapseCategory">

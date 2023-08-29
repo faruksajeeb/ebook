@@ -6,6 +6,11 @@ import Logout from "./components/auth/Logout.vue";
 
 import Dashboard from "./components/Dashboard.vue";
 
+// Role Files
+import AddRole from "./components/user_management/role/Create.vue";
+import ManageRole from "./components/user_management/role/Index.vue";
+import EditRole from "./components/user_management/role/Edit.vue";
+
 // Employee Files
 import AddEmployee from "./components/employee/create.vue";
 import ManageEmployee from "./components/employee/index.vue";
@@ -119,6 +124,11 @@ export const routes = [
         path: "/edit-customer/:id",
         component: EditCustomer,
     },
+
+    // Role Paths
+    { name: "add-role", path: "/add-role", component: AddRole },
+    { name: "edit-role", path: "/edit-role/:id", component: EditRole },
+    { name: "manage-role", path: "/manage-role", component: ManageRole },
 
     { name: "add-category", path: "/add-category", component: AddCategory },
     {
