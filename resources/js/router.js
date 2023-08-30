@@ -11,6 +11,11 @@ import AddRole from "./components/user_management/role/Create.vue";
 import ManageRole from "./components/user_management/role/Index.vue";
 import EditRole from "./components/user_management/role/Edit.vue";
 
+// Permission Files
+import AddPermission from "./components/user_management/permission/Create.vue";
+import ManagePermission from "./components/user_management/permission/Index.vue";
+import EditPermission from "./components/user_management/permission/Edit.vue";
+
 // Employee Files
 import AddEmployee from "./components/employee/create.vue";
 import ManageEmployee from "./components/employee/index.vue";
@@ -129,6 +134,11 @@ export const routes = [
     { name: "add-role", path: "/add-role", component: AddRole },
     { name: "edit-role", path: "/edit-role/:id", component: EditRole },
     { name: "manage-role", path: "/manage-role", component: ManageRole },
+    
+    // Role Paths
+    { name: "add-permission", path: "/add-permission", component: AddPermission },
+    { name: "edit-permission", path: "/edit-permission/:id", component: EditPermission },
+    { name: "manage-permission", path: "/manage-permission", component: ManagePermission },
 
     { name: "add-category", path: "/add-category", component: AddCategory },
     {

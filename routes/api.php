@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Api\EmployeeController;
 use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\CustomerController;
@@ -41,6 +42,7 @@ Route::group([
 });
 
 Route::apiResource('/manage-role',RoleController::class);
+Route::apiResource('/manage-permission',PermissionController::class);
 Route::apiResource('/manage-employee',EmployeeController::class);
 Route::apiResource('/manage-supplier',SupplierController::class);
 Route::apiResource('/manage-customer',CustomerController::class);

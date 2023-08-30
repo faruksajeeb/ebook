@@ -170,6 +170,7 @@
                   <tr>
                     <td colspan="5" class="text-center loading-section">
                       <loader v-if="isLoading"></loader>
+                      <p v-else>No Record Found!</p>
                     </td>
                   </tr>
                 </tbody>
@@ -264,12 +265,12 @@ export default {
         })
         .then((response) => {
           // console.log(response);
-          this.isLoading = FontFaceSetLoadEvent;
+          this.isLoading = false;
           this.roles = response.data;
           this.paginator.totalRecords = response.data.total;
-          if (response.data.total <= 0) {
-            document.querySelector(".loading-section").innerText = "No Record Found!.";
-          }
+          // if (response.data.total <= 0) {
+          //   document.querySelector(".loading-section").innerText = "No Record Found!.";
+          // }
           this.paginator.from = response.data.from;
           this.paginator.to = response.data.to;
           this.paginator.current_page = response.data.current_page;

@@ -51,8 +51,8 @@
                   </a>
                   <div id="collapseUserLevel" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionUserMgtBar">
                     <div class="bg-white py-2  rounded">
-                      <router-link class="collapse-item px-3" to="/add-category">Add User</router-link>
-                      <router-link class="collapse-item px-3" to="/manage-category">Manage User</router-link>
+                      <router-link class="collapse-item px-3" to="/add-user">Add User</router-link>
+                      <router-link class="collapse-item px-3" to="/manage-user">Manage User</router-link>
                     </div>
                 </div>
           </li>
@@ -63,8 +63,8 @@
                   </a>
                   <div id="collapseUserPermission" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionUserMgtBar">
                     <div class="bg-white py-2  rounded">
-                      <router-link class="collapse-item px-3" to="/add-category">Add Permission</router-link>
-                      <router-link class="collapse-item px-3" to="/manage-category">Manage Permission</router-link>
+                      <router-link class="collapse-item px-3" to="/add-permission">Add Permission</router-link>
+                      <router-link class="collapse-item px-3" to="/manage-permission">Manage Permission</router-link>
                     </div>
                 </div>
           </li>
