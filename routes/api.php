@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Api\EmployeeController;
@@ -41,7 +42,10 @@ Route::group([
     Route::post('me', 'AuthController@me');
 });
 
-Route::apiResource('/manage-role',RoleController::class);
+Route::get('get-pemissions', [PermissionController::class, 'getPermissions']);
+
+Route::apiResource('/manage-user',UserController::class);
+Route::apiResource('/roles',RoleController::class);
 Route::apiResource('/manage-permission',PermissionController::class);
 Route::apiResource('/manage-employee',EmployeeController::class);
 Route::apiResource('/manage-supplier',SupplierController::class);

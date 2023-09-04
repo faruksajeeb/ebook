@@ -15,10 +15,10 @@
           <span>Dashboard</span></router-link>
       </li>
       
-     <li class="nav-item bg-info">
-        <router-link class="nav-link" to="/pos">
+     <li class="nav-item my-bg-primary">
+        <router-link class="nav-link  text-light" to="/pos">
           <i class="fas fa-fw fa-tachometer-alt"></i>
-          <span>POS</span></router-link>
+          <span >POS</span></router-link>
       </li>
       <hr class="sidebar-divider">
       <div style="max-height: 450px; overflow-y: auto;">
@@ -39,8 +39,8 @@
                   </a>
                   <div id="collapseUserRole" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionUserMgtBar">
                     <div class="bg-white py-2  rounded">
-                      <router-link class="collapse-item px-3" to="/add-role">Add Role</router-link>
-                      <router-link class="collapse-item px-3" to="/manage-role">Manage Role</router-link>
+                      <router-link class="collapse-item px-3" to="/roles/create">Add Role</router-link>
+                      <router-link class="collapse-item px-3" to="/roles">Manage Role</router-link>
                     </div>
                 </div>
           </li>
@@ -51,8 +51,8 @@
                   </a>
                   <div id="collapseUserLevel" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionUserMgtBar">
                     <div class="bg-white py-2  rounded">
-                      <router-link class="collapse-item px-3" to="/add-user">Add User</router-link>
-                      <router-link class="collapse-item px-3" to="/manage-user">Manage User</router-link>
+                      <router-link class="collapse-item px-3" to="/roles/create">Add User</router-link>
+                      <router-link class="collapse-item px-3" to="/roles">Manage User</router-link>
                     </div>
                 </div>
           </li>

@@ -321,4 +321,10 @@ class PermissionController extends Controller
         Session::flash('success', 'Permission cache cleared Successfully.');
         return back();
     }
+
+
+    public function getPermissions(){
+        $data = Permission::where('status',1)->get();   
+        return response()->json($data);
+    }
 }

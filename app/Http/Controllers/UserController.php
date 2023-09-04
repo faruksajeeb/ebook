@@ -36,40 +36,68 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        #permission verfy
-        $this->webspice->permissionVerify('user.view');
+        // #permission verfy
+        // $this->webspice->permissionVerify('user.view');
 
-        # Query Start
-        $fileTag = '';
-        if ($request->get('status') == 'archived') {
-            $fileTag = 'Archived ';
-            $query = $this->users->orderBy('deleted_at', 'desc');
-            $query->onlyTrashed();
-        } else {
-            $query = $this->users->orderBy('created_at', 'desc');
-        }
-        if ($request->search_status != null) {
-            $query->where('status', $request->search_status);
-        }
-        $searchText = $request->search_text;
-        if ($searchText != null) {
-            // $query = $query->search($request->search_text); // search by value     
+        // # Query Start
+        // $fileTag = '';
+        // if ($request->get('status') == 'archived') {
+        //     $fileTag = 'Archived ';
+        //     $query = $this->users->orderBy('deleted_at', 'desc');
+        //     $query->onlyTrashed();
+        // } else {
+        //     $query = $this->users->orderBy('created_at', 'desc');
+        // }
+        // if ($request->search_status != null) {
+        //     $query->where('status', $request->search_status);
+        // }
+        // $searchText = $request->search_text;
+        // if ($searchText != null) {
+        //     // $query = $query->search($request->search_text); // search by value     
 
-            $query->where(function ($query) use ($searchText) {
-                $query->where('name', 'LIKE', '%' . $searchText . '%')
-                    ->orWhere('email', 'LIKE', '%' . $searchText . '%');
-            });
+        //     $query->where(function ($query) use ($searchText) {
+        //         $query->where('name', 'LIKE', '%' . $searchText . '%')
+        //             ->orWhere('email', 'LIKE', '%' . $searchText . '%');
+        //     });
+        // }
+
+        // if ($request->submit_btn == 'export') {
+        //     $title = $fileTag . 'User List';
+        //     $fileName = str_replace(' ', '_', strtolower($title));
+        //     return Excel::download(new UserExport($query->get(), $title), $fileName . '_' . time() . '.xlsx');
+        // }
+        // $users = $query->paginate(5);
+
+        // #Query End
+        // return view('users.index', compact('users'));
+
+        $paginate = request('paginate', 5);
+        $searchTerm = request('search', '');
+
+        $sortField = request('sort_field', 'created_at');
+        if (!in_array($sortField, ['id', 'name'])) {
+            $sortField = 'created_at';
+        }
+        $sortDirection = request('sort_direction', 'created_at');
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
         }
 
-        if ($request->submit_btn == 'export') {
-            $title = $fileTag . 'User List';
-            $fileName = str_replace(' ', '_', strtolower($title));
-            return Excel::download(new UserExport($query->get(), $title), $fileName . '_' . time() . '.xlsx');
-        }
-        $users = $query->paginate(5);
+        $filled = array_filter(request([
+            'id',
+            'name',
+        ]));
 
-        #Query End
-        return view('users.index', compact('users'));
+        $users = User::when(count($filled) > 0, function ($query) use ($filled) {
+            foreach ($filled as $column => $value) {
+                $query->where($column, 'LIKE', '%' . $value . '%');
+            }
+
+        })->when(request('search', '') != '', function ($query) use ($searchTerm) {
+            $query->search(trim($searchTerm));
+        })->orderBy($sortField, $sortDirection)->paginate($paginate);
+
+        return response()->json($users);
     }
 
 
@@ -87,7 +115,7 @@ class UserController extends Controller
     {
 
         #permission verfy
-        $this->webspice->permissionVerify('user.create');
+        // $this->webspice->permissionVerify('user.create');
 
         $request->validate(
             [
@@ -111,29 +139,37 @@ class UserController extends Controller
 
             $user->password = Hash::make($request->password);
             $user->created_at = $this->webspice->now('datetime24');
-            $user->created_by = $this->webspice->getUserId();
-            $user->save();
-            if ($request->roles) {
-                $user->assignRole($request->roles);
+            // $user->created_by = $this->webspice->getUserId();
+
+            if ($request->hasFile('file')) {
+                $destinationPath = 'assets/img/user/';
+                $file = $request->file('file');
+                $filename = $file->getClientOriginalName();
+                // $file->storeAs('uploads/product', $filename, 'public');
+                $file->move(public_path($destinationPath), $filename);
+                $user->file = $destinationPath.$filename;
             }
 
-            $permissions = $request->permissions;
-            // $user = $this->users->find($insertId);
-            if (!empty($permissions)) {
-                $user->syncPermissions($permissions);
-            }
+            $user->save();
+
+            // if ($request->roles) {
+            //     $user->assignRole($request->roles);
+            // }
+
+            // $permissions = $request->permissions;
+
             // if (!empty($permissions)) {
-            //     for ($i = 0; $i < count($permissions); $i++) {
-            //         $insertId->givePermissionTo($permissions[$i]);
-            //     }
+            //     $user->syncPermissions($permissions);
             // }
 
             # Success Message & Log into Observers
         } catch (Exception $e) {
-            $this->webspice->message('error', $e->getMessage());
+            // $this->webspice->message('error', $e->getMessage());
+            return response()->json(
+                [
+                    'error' => $e->getMessage(),
+                ], 401);
         }
-
-        return redirect('users');
     }
 
 

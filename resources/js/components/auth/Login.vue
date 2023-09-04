@@ -7,25 +7,28 @@
             <div class="card-body p-0">
               <div class="row">
                 <div class="col-lg-12">
-                  <div class="login-form ">
+                  <div class="login-form">
                     <div class="text-center text-white">
-                      <img src="assets/img/logo/logo.png" width="80">
+                      <img src="assets/img/logo/logo.png" width="80" />
                       <h1 class="h4 text-white-900 mb-4">LOGIN</h1>
                     </div>
-                    <form class="user" @submit.prevent="login">
+                    <form class="login" @submit.prevent="login"  @keydown="form.onKeydown($event)">
+                      <AlertError :form="form" message="There were some problems with your input." />
                       <div class="form-group">
                         <input
-                          type="email"
+                          type="text"
                           class="form-control"
                           id="exampleInputEmail"
                           aria-describedby="emailHelp"
                           placeholder="Enter Email Address"
                           v-model="form.email"
-                          :class="{ 'is-invalid': errors.email }"
+                          :class="{ 'is-invalid': form.errors.has('email') }"
                         />
-                        <small class="text-danger" v-if="errors.email">{{
+                        <HasError :form="form" field="email" />
+                        <!-- <small class="text-danger" v-if="errors.email">{{
                           errors.email[0]
-                        }}</small>
+                        }}</small> -->
+                        <!-- <div v-if="form.errors.has('email')" v-html="form.errors.get('email')" /> -->
                       </div>
                       <div class="form-group">
                         <input
@@ -33,12 +36,15 @@
                           class="form-control"
                           id="exampleInputPassword"
                           v-model="form.password"
-                          :class="{ 'is-invalid': errors.password }"
+                          :class="{ 'is-invalid': form.errors.has('password') }"
                           placeholder="Password"
                         />
-                        <small class="text-danger" v-if="errors.password">{{
+                        <HasError :form="form" field="password" />
+                        <!-- <div v-if="form.errors.has('password')" v-html="form.errors.get('password')" /> -->
+                     
+                        <!-- <small class="text-danger" v-if="errors.password">{{
                           errors.password[0]
-                        }}</small>
+                        }}</small> -->
                       </div>
                       <div class="form-group">
                         <div
@@ -56,7 +62,14 @@
                         </div>
                       </div>
                       <div class="form-group">
-                        <button type="submit" class="btn btn-danger btn-block" :disabled="isSubmitting">
+                        <!-- <Button :form="form" class="btn btn-primary">
+                        Log In
+                      </Button> -->
+                        <button
+                          type="submit"
+                          class="btn my-btn-primary btn-block"
+                          :disabled="isSubmitting"
+                        >
                           <div v-html="submitButtonText" class="text-white"></div>
                         </button>
                       </div>
@@ -72,14 +85,18 @@
                     </form>
                     <hr />
                     <div class="text-center text-white">
-                      <router-link to="/register" class="font-weight-bold small  text-white"
+                      <router-link
+                        to="/register"
+                        class="font-weight-bold small text-white"
                         >Create an Account!</router-link
                       >
                       <!-- <a class="font-weight-bold small" href="register.html">Create an Account!</a> -->
                     </div>
                     <hr />
                     <div class="text-center">
-                      <router-link to="/forget_password" class="font-weight-bold small  text-white"
+                      <router-link
+                        to="/forget_password"
+                        class="font-weight-bold small text-white"
                         >Forget Password</router-link
                       >
                     </div>
@@ -95,6 +112,7 @@
 </template>
 
 <script>
+
 export default {
   name: "Login",
   created() {
@@ -102,42 +120,41 @@ export default {
       this.$router.push({ name: "dashboard" });
     }
   },
-  data() {
-    return {
-      submitButtonText: "Log In",
-      isSubmitting: false,
-      form: {
-        email: 'ofsajeeb@gmail.com',
-        password: '12345678',
-      },
-      errors: {},
-    };
-  },
+  data: () => ({
+    submitButtonText: "Log In",
+    isSubmitting: false,
+    form: new Form({
+      email: "ofsajeeb@gmail.com",
+      password: "12345678",
+    }),
+  }),
   methods: {
-    login() {
+    async login() {
       this.isSubmitting = true;
-      this.submitButtonText = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loging In...</span>';
-      axios.post("/api/auth/login", this.form).then((res) => {
+      this.submitButtonText =
+        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loging In...</span>';
+        await this.form.post("/api/auth/login", this.form)
+        .then((res) => {
           User.responseAfterLogin(res);
           Notification.success("Signed in successfully");
           this.$router.push({ name: "dashboard" });
         })
         .catch((error) => {
           console.log(error);
-          if(error.response.status===422){
+          if (error.response.status === 422) {
             this.errors = error.response.data.errors;
             Notification.error(error.response.statusText);
-          }else if(error.response.status===401){
-           // statusText = "Unauthorized";
-            this.errors = {}
+          } else if (error.response.status === 401) {
+            // statusText = "Unauthorized";
+            this.errors = {};
             Notification.error(error.response.data.error);
-          }else{
+          } else {
             Notification.error(error.response.statusText);
-          }         
+          }
         })
         .finally(() => {
           // always executed;
-         
+
           this.isSubmitting = false;
           this.submitButtonText = "Login";
         });

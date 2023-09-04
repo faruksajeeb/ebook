@@ -8,37 +8,48 @@
           </div>
           <div class="card-body p-3">
             <div class="form">
-              <form class="user" @submit.prevent="roleUpdate">
+              <form
+                class="user"
+                @submit.prevent="submitForm"
+                @keydown="form.onKeydown($event)"
+              >
+                <!-- <AlertError :form="form" /> -->
                 <div class="form-group">
-                  <div class="form-row">
-                    <div class="col-md-12">
-                    <label for="">Role Name:</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="exampleInputFirstName"
-                        placeholder="Enter Your role Name"
-                        v-model="form.name"
-                        :class="{ 'is-invalid': errors.name }"
-                      />
-                      <small class="text-danger" v-if="errors.name">
-                        {{ errors.name[0] }}
-                      </small>
-                    </div>
-                  </div>
+                  <label for="">Role Name:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter Your role Name"
+                    v-model="form.name"
+                    
+                  />
+                  <!-- <HasError :form="form" field="name" /> -->
                 </div>
-                <div class="form-group">
-                  <div class="form-row">
-                    <div class="col-md-12">
-                    <label for="">Permissions</label>
-                      
-                    </div>
-                  </div>
+                <div class="form-group mt-3">
+                  <!-- List of available permissions -->
+                  <!-- <div class="available-permissions">
+                    <h5>Available Permissions</h5>
+                    <ul>
+                      <li v-for="permission in permissions" :key="permission.id">
+                        <input
+                          type="checkbox"
+                          :id="permission.id"
+                          v-model="form.selectedPermissions"
+                          :value="permission.id"
+                        />
+                        <label :for="permission.id">{{
+                          permission.permission_name
+                        }}</label>
+                      </li>
+                    </ul>
+                  </div> -->
                 </div>
                 <hr />
                 <div class="form-group">
                   <router-link to="/manage-role"> Manage role </router-link>
-                  <save-changes-button :is-submitting="isSubmitting"></save-changes-button>
+                  <save-changes-button
+                    :is-submitting="isSubmitting"
+                  ></save-changes-button>
                 </div>
               </form>
             </div>
@@ -51,48 +62,49 @@
 
 <script type="text/javascript">
 export default {
+  data: () => ({
+    isSubmitting: false,
+    form: new Form({
+      name: "",
+      selectedPermissions: [], // Store selected permissions
+    }),
+  }),
   created() {
     if (!User.loggedIn()) {
       this.$router.push({ name: "/" });
     }
-  },
 
-  data() {
-    return {
-      isSubmitting: false,
-      form: {
-        name: "",
-      },
-      errors: {},
-    };
-  },
-  created() {
     let id = this.$route.params.id;
-   
+
     axios
       .get("/api/manage-role/" + id)
       .then(({ data }) => (this.form = data))
       .catch((error) => {
-          console.log(error);
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors;
-            Notification.error(error.response.statusText);
-          } else if (error.response.status === 401) {
-            // statusText = "Unauthorized";
-            this.errors = {};
-            Notification.error(error.response.data.error);
-          } else {
-            Notification.error(error.response.statusText);
-          }
-        });
+        console.log(error);
+        if (error.response.status === 422) {
+          this.errors = error.response.data.errors;
+          Notification.error(error.response.statusText);
+        } else if (error.response.status === 401) {
+          // statusText = "Unauthorized";
+          this.errors = {};
+          Notification.error(error.response.data.error);
+        } else {
+          Notification.error(error.response.statusText);
+        }
+      });
   },
-
+  computed: {
+    permissions() {
+      // console.log(this.$store.getters.getPemissions);
+      // return this.$store.state.permissions;
+      return this.$store.getters.getPemissions;
+    },
+  },
   methods: {
-    roleUpdate() {
+    async submitForm() {
       this.isSubmitting = true;
       let id = this.$route.params.id;
-      axios
-        .patch("/api/manage-role/" + id, this.form)
+      await axios.patch("/api/manage-role/" + id, this.form)
         .then(() => {
           this.$router.push({ name: "manage-role" });
           Notification.success("Data Updated Successfully!");
@@ -118,5 +130,10 @@ export default {
   },
 };
 </script>
-
-<style type="text/css"></style>
+<style type="text/css" scoped>
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+</style>

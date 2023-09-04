@@ -2,7 +2,18 @@ import './bootstrap';
 
 import { createApp } from 'vue'
 import App from './App.vue'
+
+// pagination
 import { Bootstrap5Pagination } from 'laravel-vue-pagination';
+
+// form validation
+import {Form} from "vform";
+window.Form = Form
+import { Button, HasError, AlertError } from 'vform/src/components/bootstrap5'
+
+// vuex
+import store from './store/index.js';
+// routes 
 import router from './router.js';
  // Import User Class
  import User from './Helpers/User';
@@ -56,9 +67,13 @@ app.component('pagination', Bootstrap5Pagination);
 app.component('save-button', SaveButton);
 app.component('save-changes-button', SaveChangesButton);
 app.component('refresh-button', RefreshButton);
+app.component('Button', Button);
+app.component('HasError', HasError);
+app.component('AlertError', AlertError);
 
 
 
 app.use(VueProgressBar, options)
 app.use(router);
+app.use(store);
 app.mount('#app');

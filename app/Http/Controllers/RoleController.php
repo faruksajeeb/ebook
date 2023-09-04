@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\PermissionGroup;
+use App\Models\Role;
 use DB;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use App\Models\Role;
+
+// use Spatie\Permission\Models\Role;
+// use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
@@ -61,35 +64,42 @@ class RoleController extends Controller
 
         // $roles = $query->paginate(5);
         // return view('role.index', compact('roles'));
+        try {
+            $paginate = request('paginate', 5);
+            $searchTerm = request('search', '');
 
-        $paginate = request('paginate', 5);
-        $searchTerm = request('search', '');
-
-        $sortField = request('sort_field', 'created_at');
-        if (!in_array($sortField, ['id', 'name'])) {
-            $sortField = 'created_at';
-        }
-        $sortDirection = request('sort_direction', 'created_at');
-        if (!in_array($sortDirection, ['asc', 'desc'])) {
-            $sortDirection = 'desc';
-        }
-
-        $filled = array_filter(request([
-            'id',
-            'name',
-        ]));
-
-        $categories = Role::when(count($filled) > 0, function ($query) use ($filled) {
-            foreach ($filled as $column => $value) {
-                $query->where($column, 'LIKE', '%' . $value . '%');
+            $sortField = request('sort_field', 'created_at');
+            if (!in_array($sortField, ['id', 'name'])) {
+                $sortField = 'created_at';
+            }
+            $sortDirection = request('sort_direction', 'created_at');
+            if (!in_array($sortDirection, ['asc', 'desc'])) {
+                $sortDirection = 'desc';
             }
 
-        })->when(request('search', '') != '', function ($query) use ($searchTerm) {
-            $query->search(trim($searchTerm));
-        })->orderBy($sortField, $sortDirection)->paginate($paginate);
+            $filled = array_filter(request([
+                'id',
+                'name',
+            ]));
 
-        // return ProductResource::collection($products);
-        return response()->json($categories);
+            $roles = Role::when(count($filled) > 0, function ($query) use ($filled) {
+                foreach ($filled as $column => $value) {
+                    $query->where($column, 'LIKE', '%' . $value . '%');
+                }
+
+            })->when(request('search', '') != '', function ($query) use ($searchTerm) {
+                $query->search(trim($searchTerm));
+            })->orderBy($sortField, $sortDirection)->paginate($paginate);
+
+            // return ProductResource::collection($products);
+            return response()->json($roles);
+        } catch (Exception $e) {
+            // $this->webspice->message('error', $e->getMessage());
+            return response()->json(
+                [
+                    'error' => $e->getMessage(),
+                ], 401);
+        }
     }
 
     public function create()
@@ -126,14 +136,23 @@ class RoleController extends Controller
         $data = array(
             'name' => $request->name,
         );
+        if (count($request->selectedPermissions) == 0) {
+            return response()->json(
+                [
+                    'error' => 'Please select at least one permission',
+                ], 401);
+        }
         try {
+            // Reset cached roles and permissions
+            app()['cache']->forget('spatie.permission.cache');
+
             $role = $this->roles->create($data);
-            // $permissions = $request->permissions;
-            // if (!empty($permissions)) {
-            //     for ($i = 0; $i < count($permissions); $i++) {
-            //         $role->givePermissionTo($permissions[$i]);
-            //     }
-            // }
+            $permissions = $request->selectedPermissions;
+            if (!empty($permissions)) {
+                for ($i = 0; $i < count($permissions); $i++) {
+                    $role->givePermissionTo($permissions[$i]);
+                }
+            }
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -145,13 +164,10 @@ class RoleController extends Controller
         // return redirect()->back();
     }
 
-    public function show(string $id)
+    public function show(Role $role)
     {
         try {
-          
-            $role = DB::table('roles')->where('id', $id)->first();
-          
-            return response()->json($role);
+            return $role;
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -160,6 +176,11 @@ class RoleController extends Controller
                 ], 401);
         }
     }
+
+    // public function show(Role $role)
+    // {
+    //     return $role;
+    // }
 
     public function edit($id)
     {

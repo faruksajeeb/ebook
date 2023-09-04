@@ -6,10 +6,15 @@ import Logout from "./components/auth/Logout.vue";
 
 import Dashboard from "./components/Dashboard.vue";
 
+// User Files
+import AddUser from "./components/user_management/user/Create.vue";
+import ManageUser from "./components/user_management/user/Index.vue";
+import EditUser from "./components/user_management/user/Edit.vue";
+
 // Role Files
-import AddRole from "./components/user_management/role/Create.vue";
-import ManageRole from "./components/user_management/role/Index.vue";
-import EditRole from "./components/user_management/role/Edit.vue";
+import RoleForm from "./components/user_management/role/RoleForm.vue";
+import ManageRole from "./components/user_management/role/ManageRole.vue";
+import Role from "./components/user_management/role/Role.vue";
 
 // Permission Files
 import AddPermission from "./components/user_management/permission/Create.vue";
@@ -131,9 +136,18 @@ export const routes = [
     },
 
     // Role Paths
-    { name: "add-role", path: "/add-role", component: AddRole },
-    { name: "edit-role", path: "/edit-role/:id", component: EditRole },
-    { name: "manage-role", path: "/manage-role", component: ManageRole },
+    // { name: "add-role", path: "/add-role", component: AddRole },
+    // { name: "edit-role", path: "/edit-role/:id", component: EditRole },
+
+    { path: '/roles', component: ManageRole },
+    { path: '/roles/create', component: RoleForm },
+    { path: '/roles/:id/edit', component: RoleForm },
+    { path: '/roles/:id', component: Role },
+    
+    // User Paths
+    { name: "add-user", path: "/add-user", component: AddUser },
+    { name: "edit-user", path: "/edit-user/:id", component: EditUser },
+    { name: "manage-user", path: "/manage-user", component: ManageUser },
     
     // Role Paths
     { name: "add-permission", path: "/add-permission", component: AddPermission },

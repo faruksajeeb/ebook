@@ -2,7 +2,7 @@
   <button
     type="submit"
     :disabled="isSubmitting"
-    class="btn btn-lg my-btn-success float-right"
+    class="btn btn-lg my-btn-primary float-right"
   >
     <div v-if="isSubmitting">
       <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true">

@@ -32,7 +32,11 @@
             color: #FFFFFF!important;
         }
         .my-btn-primary{
-            background-color:#409EFF!important;
+            background-color:#974EC3!important;
+            color: #FFFFFF!important;
+        }
+        .my-bg-primary{
+            background-color:#974EC3!important;
             color: #FFFFFF!important;
         }
         .my-btn-danger{
@@ -66,11 +70,11 @@
     </a>
   
     <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    {{-- <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script> --}}
     <script src="{{ asset('assets/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
     <script src="{{ asset('assets/js/faizaan-admin.min.js') }}"></script>
-    <script src="{{ asset('assets/vendor/chart.js/Chart.min.js') }}"></script>
-    <script src="{{ asset('assets/js/demo/chart-area-demo.js') }}"></script>
+    {{-- <script src="{{ asset('assets/vendor/chart.js/Chart.min.js') }}"></script>
+    <script src="{{ asset('assets/js/demo/chart-area-demo.js') }}"></script> --}}
 </body>
 
 </html>

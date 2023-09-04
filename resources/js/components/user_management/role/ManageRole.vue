@@ -59,7 +59,7 @@
                 />
 
                 <router-link
-                  to="/add-role"
+                  to="/roles/create"
                   class="z-index-1 btn my-btn-primary float-right"
                 >
                   <i class="fa fa-solid fa-plus"></i>
@@ -153,7 +153,7 @@
                     <td></td>
                     <td class="text-right">
                       <router-link
-                        :to="{ name: 'edit-role', params: { id: role.id } }"
+                        :to="`/roles/${role.id}/edit`"
                         class="btn btn-sm btn-primary px-2 mx-1"
                         ><i class="fa fa-edit"></i> Edit</router-link
                       >
@@ -170,7 +170,7 @@
                   <tr>
                     <td colspan="5" class="text-center loading-section">
                       <loader v-if="isLoading"></loader>
-                      <p v-else>No Record Found!</p>
+                      <p id="resMessage" v-else>No Record Found!</p>
                     </td>
                   </tr>
                 </tbody>
@@ -256,7 +256,7 @@ export default {
       await axios
         // .get(`/api/products?page=${page}`)
         // .get(`/api/products?page=${page}&role_id=${this.params.role_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
-        .get("/api/manage-role", {
+        .get("/api/roles", {
           params: {
             page,
             search: this.search.length >= 3 ? this.search : "",
@@ -276,6 +276,11 @@ export default {
           this.paginator.current_page = response.data.current_page;
           this.paginator.per_page = response.data.per_page;
           this.isRefreshing = false;
+        }).catch((error)=>{    
+          this.isLoading = false;   
+          document.querySelector(".loading-section").innerText = error.response.data.error;
+        }).finally(()=>{
+          this.isLoading = false;
         });
     },
     refreshData() {
