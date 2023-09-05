@@ -150,8 +150,18 @@
                     </td>
                     <td class="text-nowrap">{{ role.id }}</td>
                     <td>{{ role.name }}</td>
-                    <td></td>
-                    <td class="text-right">
+                    <td>
+                        <span class=" badge bg-info text-dark text-start p-1 m-1" v-for="permission in role.permissions" :key="permission.id">
+                          {{ permission.name }}
+                        </span>
+                    </td>
+                    <td class="text-right text-nowrap">
+                      <div  class="btn-group" role="group" >
+                      <router-link
+                  :to="`/roles/${role.id}`"
+                  class="btn btn-sm my-btn-primary"
+                  ><i class="fa fa-eye"></i> View</router-link
+                >
                       <router-link
                         :to="`/roles/${role.id}/edit`"
                         class="btn btn-sm btn-primary px-2 mx-1"
@@ -163,6 +173,7 @@
                       >
                         <font color="#ffffff"><i class="fa fa-trash"></i> Delete</font></a
                       >
+                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -311,7 +322,7 @@ export default {
       }).then((result) => {
         if (result.value) {
           axios
-            .delete("/api/manage-role/" + id)
+            .delete("/api/roles/" + id)
             .then(() => {
               this.getRoles();
               Notification.success("Data has been deleted successfully.");

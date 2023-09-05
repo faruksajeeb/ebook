@@ -82,7 +82,7 @@ class RoleController extends Controller
                 'name',
             ]));
 
-            $roles = Role::when(count($filled) > 0, function ($query) use ($filled) {
+            $roles = Role::with('permissions')->when(count($filled) > 0, function ($query) use ($filled) {
                 foreach ($filled as $column => $value) {
                     $query->where($column, 'LIKE', '%' . $value . '%');
                 }
@@ -164,9 +164,10 @@ class RoleController extends Controller
         // return redirect()->back();
     }
 
-    public function show(Role $role)
+    public function show($id)
     {
         try {
+            $role =Role::with('permissions')->find($id);
             return $role;
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
@@ -225,15 +226,15 @@ class RoleController extends Controller
         );
         try {
             $role = $this->roles->findById($id);
-            // $permissions = $request->input('permissions');
-            // if (!empty($permissions)) {
-            //     $role->syncPermissions($permissions);
-            // }
-            // if (!in_array($role->name, ['superadmin', 'developer'])) {
-            //     $role->name = $role->name;
-            // } else {
+            $permissions = $request->input('selectedPermissions');
+            if (!empty($permissions)) {
+                $role->syncPermissions($permissions);
+            }
+            if (!in_array($role->name, ['superadmin', 'developer'])) {
+                $role->name = $role->name;
+            } else {
             $role->name = $request->name;
-            // }
+            }
             $role->save();
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
@@ -248,17 +249,21 @@ class RoleController extends Controller
     public function destroy($id)
     {
         #permission verfy
-        $this->webspice->permissionVerify('role.delete');
+        // $this->webspice->permissionVerify('role.delete');
         try {
             # decrypt value
-            $id = $this->webspice->encryptDecrypt('decrypt', $id);
+            // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 
             $role = $this->roles->findById($id);
             $role->delete();
         } catch (Exception $e) {
-            $this->webspice->message('error', $e->getMessage());
+            // $this->webspice->message('error', $e->getMessage());
+            return response()->json(
+                [
+                    'error' => $e->getMessage(),
+                ], 401);
         }
-        return back();
+        // return back();
     }
 
     public function forceDelete($id)
@@ -313,4 +318,15 @@ class RoleController extends Controller
         Session::flash('success', 'Permission cache cleared Successfully.');
         return back();
     }
+
+    public function getRoleData($roleId)
+{
+    $role = Role::with('permissions')->find($roleId);
+
+    if (!$role) {
+        return response()->json(['message' => 'Role not found'], 404);
+    }
+
+    return response()->json(['role' => $role]);
+}
 }

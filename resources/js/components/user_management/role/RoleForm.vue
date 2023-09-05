@@ -1,9 +1,9 @@
-
 <script type="text/javascript">
 // import {Form} from "vform";
-export default {  
+export default {
   data: () => ({
-    isSubmitting: false,    
+    isSubmitting: false,
+    role: null,
     form: new Form({
       name: "",
       selectedPermissions: [], // Store selected permissions
@@ -23,11 +23,12 @@ export default {
     if (!User.loggedIn()) {
       // this.$router.push({ name: "/" });
     }
-    if (!this.isNew) {      
+    if (!this.isNew) {
       const response = await axios.get(`/api/roles/${this.$route.params.id}`);
       // alert(response.data);
-      this.form = response.data;   
-      // console.log(this.form);  
+      this.form.name = response.data.name;
+      console.log(response.data.permissions);
+      this.form.selectedPermissions = response.data.permissions.map((permission) => permission.id);
     }
   },
   methods: {
@@ -63,10 +64,15 @@ export default {
         await this.form.put(`/api/roles/${this.$route.params.id}`, this.form).then((response) => {
               Notification.success("Role info Updated");
               this.$router.push("/roles");
-            });
-          } catch (error) {
+          }).catch((error) => {
             Notification.error(error);
-}
+          }).finally(() => {
+              // always executed;
+              this.isSubmitting = false;
+            })
+          }catch (error){
+            Notification.error(error);
+          }
       }
     },
   },
@@ -79,7 +85,9 @@ export default {
       <div class="col-md-6 offset-md-3">
         <div class="card shadow-sm my-4">
           <div class="card-header py-2 my-bg-success">
-            <h3 class="text-white-900" v-if="isNew"><i class="fa fa-plus" ></i> Add Role</h3>
+            <h3 class="text-white-900" v-if="isNew">
+              <i class="fa fa-plus"></i> Add Role
+            </h3>
             <h3 class="text-white-900" v-else><i class="fa fa-pencil"></i> Edit Role</h3>
           </div>
           <div class="card-body p-3">
@@ -100,7 +108,6 @@ export default {
                         id="exampleInputFirstName"
                         placeholder="Enter Your role Name"
                         v-model="form.name"
-                      
                       />
                       <HasError :form="form" field="name" />
                     </div>
@@ -117,7 +124,7 @@ export default {
                             v-model="form.selectedPermissions"
                             :value="permission.id"
                           />
-                           <label :for="permission.id">{{
+                          <label :for="permission.id">{{
                             permission.permission_name
                           }}</label>
                         </li>
@@ -140,7 +147,6 @@ export default {
 </template>
 
 <style type="text/css" scoped>
-
 ul {
   list-style-type: none;
   margin: 0;

@@ -327,4 +327,14 @@ class PermissionController extends Controller
         $data = Permission::where('status',1)->get();   
         return response()->json($data);
     }
+    public function getUserPermissions()
+{
+    // Get the authenticated user
+    $user = Auth::user();
+
+    // Get the user's permissions
+    $permissions = $user->permissions;
+
+    return response()->json(['permissions' => $permissions]);
+}
 }

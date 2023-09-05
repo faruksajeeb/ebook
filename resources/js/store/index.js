@@ -1,18 +1,21 @@
 import { createStore } from "vuex";
-import axios from "axios";
+import api from "../api"  // Import your API service
 // Create a new store instance.
 const store = createStore({
     state() {
         return {
             message: "welcome",
             permissions: [],
+            user: {
+                permissions: [],
+              },
         };
     },
     getters: {
         getPemissions: (state) => {
-            axios.get("/api/get-pemissions").then(function (response) {
+            api.fetchPermissions().then( (permissions) => {
                 // console.log(state.permissions);
-                state.permissions = response.data;
+                state.permissions = permissions;
             });
             // console.log(state.permissions);
             let formatedPermission = state.permissions.map((permission) => {
@@ -27,10 +30,18 @@ const store = createStore({
         },
     },
     mutations: {
-        // increment (state) {
-        //   state.count++
-        // }
+        setUserPermissions(state, permissions) {
+            state.user.permissions = permissions;
+          },
     },
-    actions: {},
+    actions: {
+        fetchUserPermissions({ commit }) {
+            // Replace this with the actual API call to fetch user permissions
+            // e.g., using axios or fetch
+            api.fetchUserPermissions().then((permissions) => {
+              commit('setUserPermissions', permissions);
+            });
+          },
+    },
 });
 export default store;

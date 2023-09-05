@@ -43,6 +43,7 @@ Route::group([
 });
 
 Route::get('get-pemissions', [PermissionController::class, 'getPermissions']);
+Route::get('/user/permissions', [PermissionController::class, 'getUserPermissions']);
 
 Route::apiResource('/manage-user',UserController::class);
 Route::apiResource('/roles',RoleController::class);
