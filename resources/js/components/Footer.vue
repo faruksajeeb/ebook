@@ -8,6 +8,7 @@
             <span>copyright &copy; - developed by
               <b><a href="#" target="_blank">OmarFarukSajeeb</a></b>
             </span>
+             
           </div>
         </div>
       </footer>

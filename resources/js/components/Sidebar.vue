@@ -51,8 +51,8 @@
                   </a>
                   <div id="collapseUserLevel" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionUserMgtBar">
                     <div class="bg-white py-2  rounded">
-                      <router-link class="collapse-item px-3" to="/roles/create">Add User</router-link>
-                      <router-link class="collapse-item px-3" to="/roles">Manage User</router-link>
+                      <router-link class="collapse-item px-3" to="/users/create">Add User</router-link>
+                      <router-link class="collapse-item px-3" to="/users">Manage User</router-link>
                     </div>
                 </div>
           </li>

@@ -16,5 +16,9 @@ export default {
         return apiClient.get("/get-pemissions").then(function (response) {
             return response.data;
         });
+    },fetchRoles() {
+        return apiClient.get("/get-roles").then(function (response) {
+            return response.data;
+        });
     },
 };

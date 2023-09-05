@@ -88,7 +88,7 @@ class UserController extends Controller
             'name',
         ]));
 
-        $users = User::when(count($filled) > 0, function ($query) use ($filled) {
+        $users = User::with(['roles', 'permissions'])->when(count($filled) > 0, function ($query) use ($filled) {
             foreach ($filled as $column => $value) {
                 $query->where($column, 'LIKE', '%' . $value . '%');
             }
@@ -96,7 +96,7 @@ class UserController extends Controller
         })->when(request('search', '') != '', function ($query) use ($searchTerm) {
             $query->search(trim($searchTerm));
         })->orderBy($sortField, $sortDirection)->paginate($paginate);
-
+       
         return response()->json($users);
     }
 
@@ -122,8 +122,10 @@ class UserController extends Controller
                 'name' => 'required|regex:/^[a-zA-Z0-9_ ]+$/u|min:3|max:20',
                 'email' => 'required|min:3|email|max:20|unique:users',
                 'password' => 'required|min:6|confirmed',
+                'selectedRoles' => 'required',
             ],
             [
+                'selectedRoles.required' => 'Please assign at least one role',
                 'name.required' => 'User Name field is required.',
                 'name.unique' => 'The User name has already been taken.',
                 'name.regex' => 'The User name format is invalid. Please enter alpabatic text.',
@@ -152,9 +154,9 @@ class UserController extends Controller
 
             $user->save();
 
-            // if ($request->roles) {
-            //     $user->assignRole($request->roles);
-            // }
+            if ($request->selectedRoles) {
+                $user->assignRole($request->selectedRoles);
+            }
 
             // $permissions = $request->permissions;
 
@@ -201,9 +203,9 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         #permission verfy
-        $this->webspice->permissionVerify('user.edit');
+        // $this->webspice->permissionVerify('user.edit');
         # decrypt value
-        $id = $this->webspice->encryptDecrypt('decrypt', $id);
+        // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 
         $user = $this->users->find($id);
         $request->validate(
@@ -211,8 +213,10 @@ class UserController extends Controller
                 'name'     => 'required|regex:/^[a-zA-Z0-9_ ]+$/u|min:3|max:50',
                 'email'    => 'required|min:3|email|max:20|unique:users,email,' . $id,
                 'password' => 'nullable|min:6|confirmed',
+                'selectedRoles' => 'required',
             ],
             [
+                'selectedRoles.required' => 'Please assign at least one role',
                 'name.required' => 'User Name field is required.',
                 'name.unique'   => 'The User name has already been taken.',
                 'name.regex'    => 'The User name format is invalid. Please enter alpabatic text.',
@@ -233,14 +237,14 @@ class UserController extends Controller
             $user->save();
 
             $user->roles()->detach(); // delete from model table
-            if ($request->roles) {
-                $user->assignRole($request->roles);
+            if ($request->selectedRoles) {
+                $user->assignRole($request->selectedRoles);
             }
 
-            $permissions = $request->permissions;
-            if (!empty($permissions)) {
-                $user->syncPermissions($permissions);
-            }
+            // $permissions = $request->permissions;
+            // if (!empty($permissions)) {
+            //     $user->syncPermissions($permissions);
+            // }
             # Success Message & Log into UserObservers
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());

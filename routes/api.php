@@ -42,10 +42,11 @@ Route::group([
     Route::post('me', 'AuthController@me');
 });
 
+Route::get('get-roles', [RoleController::class, 'getRoles']);
 Route::get('get-pemissions', [PermissionController::class, 'getPermissions']);
 Route::get('/user/permissions', [PermissionController::class, 'getUserPermissions']);
 
-Route::apiResource('/manage-user',UserController::class);
+Route::apiResource('/users',UserController::class);
 Route::apiResource('/roles',RoleController::class);
 Route::apiResource('/manage-permission',PermissionController::class);
 Route::apiResource('/manage-employee',EmployeeController::class);

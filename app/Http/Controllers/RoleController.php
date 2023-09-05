@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\PermissionGroup;
 use App\Models\Role;
-use DB;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -123,8 +122,10 @@ class RoleController extends Controller
         $request->validate(
             [
                 'name' => 'required|regex:/^[a-zA-Z ]+$/u|min:3|max:20|unique:roles',
+                'selectedPermissions' => 'required'
             ],
             [
+                'selectedPermissions.required' => 'Please assign at least one permission.',
                 'name.required' => 'Role Name field is required.',
                 'name.unique' => 'The role name has already been taken.',
                 'name.regex' => 'The role name format is invalid. Please enter alpabatic text.',
@@ -167,7 +168,7 @@ class RoleController extends Controller
     public function show($id)
     {
         try {
-            $role =Role::with('permissions')->find($id);
+            $role = Role::with('permissions')->find($id);
             return $role;
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
@@ -233,7 +234,7 @@ class RoleController extends Controller
             if (!in_array($role->name, ['superadmin', 'developer'])) {
                 $role->name = $role->name;
             } else {
-            $role->name = $request->name;
+                $role->name = $request->name;
             }
             $role->save();
         } catch (Exception $e) {
@@ -320,13 +321,20 @@ class RoleController extends Controller
     }
 
     public function getRoleData($roleId)
-{
-    $role = Role::with('permissions')->find($roleId);
+    {
+        $role = Role::with('permissions')->find($roleId);
 
-    if (!$role) {
-        return response()->json(['message' => 'Role not found'], 404);
+        if (!$role) {
+            return response()->json(['message' => 'Role not found'], 404);
+        }
+
+        return response()->json(['role' => $role]);
     }
 
-    return response()->json(['role' => $role]);
-}
+    public function getRoles()
+    {
+        $data = Role::where('status', 1)->get();
+        return response()->json($data);
+    }
+
 }

@@ -11,24 +11,6 @@
             <h3 class="m-0 font-weight-bold">User List</h3>
           </div>
           <div class="card-body p-0 m-0">
-            <!-- <div class="row p-2">
-              <div class="col-md-6">
-                <input
-                  type="text"
-                  v-model="searchTerm"
-                  class="form-control"
-                  style="width: 300px"
-                  placeholder="Search Here"
-                />
-              </div>
-              <div class="col-md-6">
-                <router-link to="/add-user" class="btn btn-primary float-right">
-                  <i class="fa fa-solid fa-plus"></i>
-                  Add user
-                </router-link>
-              </div>
-            </div> -->
-            <!-- <div class="row justify-content-between"> -->
             <div class="row p-2">
               <div class="input-group">
                 <div class="col-md-2">
@@ -59,11 +41,11 @@
                 />
 
                 <router-link
-                  to="/add-user"
+                  to="/users/create"
                   class="z-index-1 btn my-btn-primary float-right"
                 >
                   <i class="fa fa-solid fa-plus"></i>
-                  Add user
+                  Add User
                 </router-link>
               </div>
             </div>
@@ -113,7 +95,7 @@
                         >↓</span
                       >
                     </th>
-                    <th class="text-right">Permissions</th>
+                    <th class="text-right">Roles</th>
                     <th class="text-right">Action</th>
                   </tr>
                   <tr>
@@ -150,10 +132,20 @@
                     </td>
                     <td class="text-nowrap">{{ user.id }}</td>
                     <td>{{ user.name }}</td>
-                    <td></td>
-                    <td class="text-right">
+                    <td>
+                        <span class=" badge bg-info text-dark text-start p-1 m-1" v-for="role in user.roles" :key="role.id">
+                          {{ role.name }}
+                        </span>
+                    </td>
+                    <td class="text-right text-nowrap">
+                      <div  class="btn-group" user="group" >
                       <router-link
-                        :to="{ name: 'edit-user', params: { id: user.id } }"
+                  :to="`/users/${user.id}`"
+                  class="btn btn-sm my-btn-primary"
+                  ><i class="fa fa-eye"></i> View</router-link
+                >
+                      <router-link
+                        :to="`/users/${user.id}/edit`"
                         class="btn btn-sm btn-primary px-2 mx-1"
                         ><i class="fa fa-edit"></i> Edit</router-link
                       >
@@ -163,6 +155,7 @@
                       >
                         <font color="#ffffff"><i class="fa fa-trash"></i> Delete</font></a
                       >
+                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -170,7 +163,7 @@
                   <tr>
                     <td colspan="5" class="text-center loading-section">
                       <loader v-if="isLoading"></loader>
-                      <p v-else>No Record Found!</p>
+                      <p id="resMessage" v-else>No Record Found!</p>
                     </td>
                   </tr>
                 </tbody>
@@ -256,7 +249,7 @@ export default {
       await axios
         // .get(`/api/products?page=${page}`)
         // .get(`/api/products?page=${page}&user_id=${this.params.user_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
-        .get("/api/manage-user", {
+        .get("/api/users", {
           params: {
             page,
             search: this.search.length >= 3 ? this.search : "",
@@ -267,6 +260,7 @@ export default {
           // console.log(response);
           this.isLoading = false;
           this.users = response.data;
+          console.log(this.users);
           this.paginator.totalRecords = response.data.total;
           // if (response.data.total <= 0) {
           //   document.querySelector(".loading-section").innerText = "No Record Found!.";
@@ -276,6 +270,11 @@ export default {
           this.paginator.current_page = response.data.current_page;
           this.paginator.per_page = response.data.per_page;
           this.isRefreshing = false;
+        }).catch((error)=>{    
+          this.isLoading = false;   
+          document.querySelector(".loading-section").innerText = error.response.data.error;
+        }).finally(()=>{
+          this.isLoading = false;
         });
     },
     refreshData() {
@@ -306,7 +305,7 @@ export default {
       }).then((result) => {
         if (result.value) {
           axios
-            .delete("/api/manage-user/" + id)
+            .delete("/api/users/" + id)
             .then(() => {
               this.getusers();
               Notification.success("Data has been deleted successfully.");

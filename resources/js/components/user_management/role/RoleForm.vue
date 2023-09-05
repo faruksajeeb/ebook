@@ -4,6 +4,7 @@ export default {
   data: () => ({
     isSubmitting: false,
     role: null,
+    permissions: [],
     form: new Form({
       name: "",
       selectedPermissions: [], // Store selected permissions
@@ -13,13 +14,10 @@ export default {
     isNew() {
       return !this.$route.path.includes("edit");
     },
-    permissions() {
-      // console.log(this.$store.getters.getPemissions);
-      // return this.$store.state.permissions;
-      return this.$store.getters.getPemissions;
-    },
   },
   async created() {
+    this.permissions = this.$store.getters.getPemissions;
+    console.log(this.permissions);
     if (!User.loggedIn()) {
       // this.$router.push({ name: "/" });
     }
@@ -101,7 +99,7 @@ export default {
                 <div class="form-group">
                   <div class="form-row">
                     <div class="col-md-12">
-                      <label for="">Role Name</label>
+                      <label for="">Role Name <span class="text-danger">*</span></label>
                       <input
                         type="text"
                         class="form-control"
@@ -115,7 +113,7 @@ export default {
                   <div class="form-group mt-3">
                     <!-- List of available permissions -->
                     <div class="available-permissions">
-                      <h5>Available Permissions</h5>
+                      <h5>Available Permissions <span class="text-danger">*</span></h5>
                       <ul>
                         <li v-for="permission in permissions" :key="permission.id">
                           <input
@@ -124,7 +122,7 @@ export default {
                             v-model="form.selectedPermissions"
                             :value="permission.id"
                           />
-                          <label :for="permission.id">{{
+                          <label :for="permission.id" class="mx-2">{{
                             permission.permission_name
                           }}</label>
                         </li>

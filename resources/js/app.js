@@ -45,6 +45,7 @@ import Loader from './components/Loader.vue';
 import SaveButton from './components/SaveButton.vue';
 import SaveChangesButton from './components/SaveChangesButton.vue';
 import RefreshButton from './components/RefreshButton.vue';
+import ResetButton from './components/ResetButton.vue';
 const options = {
     color: "red",
     failedColor: "#874b4b",
@@ -67,6 +68,7 @@ app.component('pagination', Bootstrap5Pagination);
 app.component('save-button', SaveButton);
 app.component('save-changes-button', SaveChangesButton);
 app.component('refresh-button', RefreshButton);
+app.component('reset-button', ResetButton);
 app.component('Button', Button);
 app.component('HasError', HasError);
 app.component('AlertError', AlertError);

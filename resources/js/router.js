@@ -7,9 +7,9 @@ import Logout from "./components/auth/Logout.vue";
 import Dashboard from "./components/Dashboard.vue";
 
 // User Files
-import AddUser from "./components/user_management/user/Create.vue";
-import ManageUser from "./components/user_management/user/Index.vue";
-import EditUser from "./components/user_management/user/Edit.vue";
+import UserForm from "./components/user_management/user/UserForm.vue";
+import ManageUser from "./components/user_management/user/ManageUser.vue";
+import User from "./components/user_management/user/User.vue";
 
 // Role Files
 import RoleForm from "./components/user_management/role/RoleForm.vue";
@@ -136,20 +136,18 @@ export const routes = [
     },
 
     // Role Paths
-    // { name: "add-role", path: "/add-role", component: AddRole },
-    // { name: "edit-role", path: "/edit-role/:id", component: EditRole },
-
-    { path: '/roles', component: ManageRole },
-    { path: '/roles/create', component: RoleForm },
-    { path: '/roles/:id/edit', component: RoleForm },
-    { path: '/roles/:id', component: Role },
+    { name: "roles", path: '/roles', component: ManageRole },
+    { name: "role.create", path: '/roles/create', component: RoleForm },
+    { name: "role.edit", path: '/roles/:id/edit', component: RoleForm },
+    { name: "role.view", path: '/roles/:id', component: Role },
     
     // User Paths
-    { name: "add-user", path: "/add-user", component: AddUser },
-    { name: "edit-user", path: "/edit-user/:id", component: EditUser },
-    { name: "manage-user", path: "/manage-user", component: ManageUser },
+    { name: "users", path: '/users', component: ManageUser },
+    { name: "user.created", path: '/users/create', component: UserForm },
+    { name: "user.edit", path: '/users/:id/edit', component: UserForm },
+    { name: "user.view", path: '/users/:id', component: User },
     
-    // Role Paths
+    // Permission Paths
     { name: "add-permission", path: "/add-permission", component: AddPermission },
     { name: "edit-permission", path: "/edit-permission/:id", component: EditPermission },
     { name: "manage-permission", path: "/manage-permission", component: ManagePermission },
