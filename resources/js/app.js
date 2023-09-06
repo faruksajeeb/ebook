@@ -10,14 +10,21 @@ import { Bootstrap5Pagination } from 'laravel-vue-pagination';
 import {Form} from "vform";
 window.Form = Form
 import { Button, HasError, AlertError } from 'vform/src/components/bootstrap5'
+ // Import User Class
+//  import User from './Helpers/User';
+//  window.User = User
 
 // vuex
 import store from './store/index.js';
 // routes 
 import router from './router.js';
- // Import User Class
- import User from './Helpers/User';
- window.User = User
+const appName = window.env.APP_NAME;
+router.beforeEach((to, from, next) => {
+  // Update the page title based on the route's meta field
+  document.title = appName+' - '+ to.meta.title || 'Home';
+  next();
+});
+
 
   // Import Notification Class
   import Notification from './Helpers/Notification';
@@ -46,6 +53,7 @@ import SaveButton from './components/SaveButton.vue';
 import SaveChangesButton from './components/SaveChangesButton.vue';
 import RefreshButton from './components/RefreshButton.vue';
 import ResetButton from './components/ResetButton.vue';
+import LoadingSpinner from './components/LoadingSpinner.vue';
 const options = {
     color: "red",
     failedColor: "#874b4b",
@@ -64,6 +72,7 @@ const app = createApp(App);
 
 
 app.component('loader', Loader);
+app.component('LoadingSpinner', LoadingSpinner);
 app.component('pagination', Bootstrap5Pagination);
 app.component('save-button', SaveButton);
 app.component('save-changes-button', SaveChangesButton);

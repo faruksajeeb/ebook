@@ -175,10 +175,21 @@ class UserController extends Controller
     }
 
 
+    
     public function show($id)
     {
-        #permission verfy
-        $this->webspice->permissionVerify('user.view');
+         #permission verfy
+        //  $this->webspice->permissionVerify('user.view');
+        try {
+            $role = User::with('roles')->find($id);
+            return $role;
+        } catch (Exception $e) {
+            // $this->webspice->message('error', $e->getMessage());
+            return response()->json(
+                [
+                    'error' => $e->getMessage(),
+                ], 401);
+        }
     }
 
     public function edit($id)
@@ -202,12 +213,13 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
+      
         #permission verfy
         // $this->webspice->permissionVerify('user.edit');
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 
-        $user = $this->users->find($id);
+      
         $request->validate(
             [
                 'name'     => 'required|regex:/^[a-zA-Z0-9_ ]+$/u|min:3|max:50',
@@ -225,6 +237,7 @@ class UserController extends Controller
             ]
         );
         try {
+            // $user = $this->users->find($id);
             $user = User::find($id);
             $user->name = $request->name;
             $user->email = $request->email;
@@ -233,7 +246,7 @@ class UserController extends Controller
                 $user->password = Hash::make($request->password);
             }
             $user->updated_at = $this->webspice->now('datetime24');
-            $user->updated_by = $this->webspice->getUserId();
+            // $user->updated_by = $this->webspice->getUserId();
             $user->save();
 
             $user->roles()->detach(); // delete from model table
@@ -247,9 +260,13 @@ class UserController extends Controller
             // }
             # Success Message & Log into UserObservers
         } catch (Exception $e) {
-            $this->webspice->message('error', $e->getMessage());
+            // $this->webspice->message('error', $e->getMessage());
+            return response()->json(
+                [
+                    'error' => $e->getMessage(),
+                ], 401);
         }
-        return redirect('users');
+        // return redirect('users');
     }
 
     public function changePassword(Request $request)

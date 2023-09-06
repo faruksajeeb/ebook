@@ -241,6 +241,11 @@ export default {
       filterFields: {},
     };
   },
+  created(){
+    if (!User.loggedIn()) {
+      this.$router.push("/");
+    }
+  },
   mounted() {
     this.filterFields = { ...this.params };
     this.getPermissions();

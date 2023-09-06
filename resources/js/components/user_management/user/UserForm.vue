@@ -50,7 +50,8 @@
                         class="form-control"
                         id="exampleInputPassword"
                         placeholder="Enter Your User Password"
-                        v-model="form.password" name="password" 
+                        v-model="form.password"
+                        name="password"
                         :class="{ 'is-invalid': form.errors.has('password') }"
                       />
                       <HasError :form="form" field="password" />
@@ -61,7 +62,8 @@
                       >
                       <input
                         type="password"
-                        v-model="form.password_confirmation" name="password_confirmation" 
+                        v-model="form.password_confirmation"
+                        name="password_confirmation"
                         class="form-control"
                         :class="{
                           'is-invalid': form.errors.has('password_confirmation'),
@@ -76,18 +78,23 @@
                       <div class="available-roles">
                         <h5>Available Roles <span class="text-danger">*</span></h5>
                         <HasError :form="form" field="selectedRoles" />
-                        <ul>
-                          <li v-for="role in roles" :key="role.id">
-                            <input
-                              type="checkbox"
-                              :id="role.id"
-                              v-model="form.selectedRoles"
-                              :value="role.id"
-                              :key="role.id"
-                            />
-                            <label :for="role.id" class="mx-2">{{ role.name }}</label>
-                          </li>
-                        </ul>
+                        <div v-if="roles.length > 0">
+                          <ul>
+                            <li v-for="role in roles" :key="role.id">
+                              <input
+                                type="checkbox"
+                                :id="role.id"
+                                v-model="form.selectedRoles"
+                                :value="role.id"
+                                :key="role.id"
+                              />
+                              <label :for="role.id" class="mx-2">{{ role.name }}</label>
+                            </li>
+                          </ul>
+                        </div>
+                        <div v-else>
+                           <LoadingSpinner/>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -127,14 +134,28 @@ export default {
     },
   },
   async created() {
-    this.roles = this.$store.getters.getRoles;
+    if (!User.loggedIn()) {
+      this.$router.push("/");
+    }
+    
+    try {
+      this.roles = this.$store.getters.getRoles;
+      if (this.roles.length == 0) {
+        const response = await axios.get("/api/get-roles");
+        this.roles = response.data;
+      }
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    }
     if (!User.loggedIn()) {
       // this.$router.push({ name: "/" });
     }
     if (!this.isNew) {
       const response = await axios.get(`/api/users/${this.$route.params.id}`);
-      // alert(response.data);
+      //  alert(response.data);
       this.form.name = response.data.name;
+      this.form.email = response.data.email;
+      this.form.password = response.data.password;
       this.form.selectedRoles = response.data.roles.map((role) => role.id);
     }
   },
@@ -153,11 +174,9 @@ export default {
           .catch((error) => {
             // console.log(error);
             if (error.response.status === 422) {
-              this.errors = error.response.data.errors;
-              Notification.error(error.response.statusText);
+              Notification.error("Validation Errors!");
             } else if (error.response.status === 401) {
               // statusText = "Unauthorized";
-              this.errors = {};
               Notification.error(error.response.data.error);
             } else {
               Notification.error(error.response.statusText);
@@ -169,15 +188,25 @@ export default {
           });
       } else {
         try {
-          console.log(this.form);
+          // alert(this.$route.params.id);
+          // console.log(this.form);
           await this.form
             .put(`/api/users/${this.$route.params.id}`, this.form)
             .then((response) => {
-              Notification.success("user info Updated");
+              // await this.form.put("/api/users/10", this.form).then((response) => {
+              Notification.success("User info Updated");
               this.$router.push("/users");
             })
             .catch((error) => {
-              Notification.error(error);
+              // Notification.error(error);
+              if (error.response.status === 422) {
+                Notification.error("Validation Errors!");
+              } else if (error.response.status === 401) {
+                // statusText = "Unauthorized";
+                Notification.error(error.response.data.error);
+              } else {
+                Notification.error(error.response.statusText);
+              }
             })
             .finally(() => {
               // always executed;

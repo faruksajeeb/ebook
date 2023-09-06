@@ -1,82 +1,3 @@
-<script type="text/javascript">
-// import {Form} from "vform";
-export default {
-  data: () => ({
-    isSubmitting: false,
-    role: null,
-    permissions: [],
-    form: new Form({
-      name: "",
-      selectedPermissions: [], // Store selected permissions
-    }),
-  }),
-  computed: {
-    isNew() {
-      return !this.$route.path.includes("edit");
-    },
-  },
-  async created() {
-    this.permissions = this.$store.getters.getPemissions;
-    console.log(this.permissions);
-    if (!User.loggedIn()) {
-      // this.$router.push({ name: "/" });
-    }
-    if (!this.isNew) {
-      const response = await axios.get(`/api/roles/${this.$route.params.id}`);
-      // alert(response.data);
-      this.form.name = response.data.name;
-      console.log(response.data.permissions);
-      this.form.selectedPermissions = response.data.permissions.map((permission) => permission.id);
-    }
-  },
-  methods: {
-    async submitForm() {
-      this.isSubmitting = true;
-      if (this.isNew) {
-        await this.form
-        .post("/api/roles", this.form)
-        .then(() => {
-          this.$router.push({ name: "roles" });
-          Notification.success(`Create role & Assigned permissions to role ${this.form.name}`);
-        })
-        .catch((error) => {
-          // console.log(error);
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors;
-            Notification.error(error.response.statusText);
-          } else if (error.response.status === 401) {
-            // statusText = "Unauthorized";
-            this.errors = {};
-            Notification.error(error.response.data.error);
-          } else {
-            Notification.error(error.response.statusText);
-          }
-        })
-        .finally(() => {
-          // always executed;
-          this.isSubmitting = false;
-        });
-      }else{
-        try {
-          console.log(this.form);
-        await this.form.put(`/api/roles/${this.$route.params.id}`, this.form).then((response) => {
-              Notification.success("Role info Updated");
-              this.$router.push("/roles");
-          }).catch((error) => {
-            Notification.error(error);
-          }).finally(() => {
-              // always executed;
-              this.isSubmitting = false;
-            })
-          }catch (error){
-            Notification.error(error);
-          }
-      }
-    },
-  },
-};
-</script>
-
 <template>
   <div>
     <div class="row">
@@ -114,19 +35,25 @@ export default {
                     <!-- List of available permissions -->
                     <div class="available-permissions">
                       <h5>Available Permissions <span class="text-danger">*</span></h5>
-                      <ul>
-                        <li v-for="permission in permissions" :key="permission.id">
-                          <input
-                            type="checkbox"
-                            :id="permission.id"
-                            v-model="form.selectedPermissions"
-                            :value="permission.id"
-                          />
-                          <label :for="permission.id" class="mx-2">{{
-                            permission.permission_name
-                          }}</label>
-                        </li>
-                      </ul>
+                      <div v-if="permissions.length > 0">
+                        <ul>
+                          <li v-for="permission in permissions" :key="permission.id">
+                            <input
+                              type="checkbox"
+                              :id="permission.id"
+                              v-model="form.selectedPermissions"
+                              :value="permission.id"
+                            />
+                            <label :for="permission.id" class="mx-2">{{
+                              permission.name
+                            }}</label>
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div v-else>
+                        <LoadingSpinner />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -143,6 +70,103 @@ export default {
     </div>
   </div>
 </template>
+<script type="text/javascript">
+// import {Form} from "vform";
+export default {
+  data: () => ({
+    isSubmitting: false,
+    role: null,
+    permissions: [],
+    form: new Form({
+      name: "",
+      selectedPermissions: [], // Store selected permissions
+    }),
+  }),
+  computed: {
+    isNew() {
+      return !this.$route.path.includes("edit");
+    },
+  },
+  async created() {
+    if (!User.loggedIn()) {
+      this.$router.push("/");
+    }
+    try {
+      this.permissions = this.$store.getters.getPemissions;
+      if (this.permissions.length == 0) {
+        const response = await axios.get("/api/get-permissions");
+        this.permissions = response.data;
+        // console.log(this.permissions);
+      }
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    }
+    if (!User.loggedIn()) {
+      // this.$router.push({ name: "/" });
+    }
+    if (!this.isNew) {
+      const response = await axios.get(`/api/roles/${this.$route.params.id}`);
+      // alert(response.data);
+      this.form.name = response.data.name;
+      // console.log(response.data.permissions);
+      this.form.selectedPermissions = response.data.permissions.map(
+        (permission) => permission.id
+      );
+    }
+  },
+  methods: {
+    async submitForm() {
+      this.isSubmitting = true;
+      if (this.isNew) {
+        await this.form
+          .post("/api/roles", this.form)
+          .then(() => {
+            this.$router.push({ name: "roles" });
+            Notification.success(
+              `Create role & Assigned permissions to role ${this.form.name}`
+            );
+          })
+          .catch((error) => {
+            // console.log(error);
+            if (error.response.status === 422) {
+              this.errors = error.response.data.errors;
+              Notification.error("Validation Errors!");
+            } else if (error.response.status === 401) {
+              // statusText = "Unauthorized";
+              this.errors = {};
+              Notification.error(error.response.data.error);
+            } else {
+              Notification.error(error.response.statusText);
+            }
+          })
+          .finally(() => {
+            // always executed;
+            this.isSubmitting = false;
+          });
+      } else {
+        try {
+          console.log(this.form);
+          await this.form
+            .put(`/api/roles/${this.$route.params.id}`, this.form)
+            .then((response) => {
+              Notification.success("Role info Updated");
+              this.$router.push("/roles");
+            })
+            .catch((error) => {
+              Notification.error(error);
+            })
+            .finally(() => {
+              // always executed;
+              this.isSubmitting = false;
+            });
+        } catch (error) {
+          Notification.error(error);
+        }
+      }
+    },
+  },
+};
+</script>
 
 <style type="text/css" scoped>
 ul {

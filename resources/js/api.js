@@ -8,12 +8,13 @@ const apiClient = axios.create({
 
 export default {
     fetchUserPermissions() {
-        return apiClient.get("/user/permissions").then((response) => {
+        const userId = User.id();
+        return apiClient.get(`/user/${userId}/permissions`).then((response) => {
             return response.data.permissions;
         });
     },
     fetchPermissions() {
-        return apiClient.get("/get-pemissions").then(function (response) {
+        return apiClient.get("/get-permissions").then(function (response) {
             return response.data;
         });
     },fetchRoles() {

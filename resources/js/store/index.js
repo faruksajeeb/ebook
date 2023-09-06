@@ -8,7 +8,9 @@ const store = createStore({
             permissions: [],
             roles: [],
             user: {
-                permissions: [],               
+                permissions: [
+                   
+                ],               
               },
         };
     },
@@ -18,16 +20,17 @@ const store = createStore({
                 // console.log(state.permissions);
                 state.permissions = permissions;
             });
+            return state.permissions;
             // console.log(state.permissions);
-            let formatedPermission = state.permissions.map((permission) => {
-                const str = `${permission.name}`;
-                const formatedName = str.charAt(0).toUpperCase() + str.slice(1);
-                return {
-                    id: permission.id,
-                    permission_name: formatedName,
-                };
-            });
-            return formatedPermission;
+            // let formatedPermission = state.permissions.map((permission) => {
+            //     const str = `${permission.name}`;
+            //     const formatedName = str.charAt(0).toUpperCase() + str.slice(1);
+            //     return {
+            //         id: permission.id,
+            //         name: formatedName,
+            //     };
+            // });
+            // return formatedPermission;
         },
         getRoles: (state) => {
             api.fetchRoles().then( (roles) => {               

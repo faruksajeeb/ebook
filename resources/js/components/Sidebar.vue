@@ -51,8 +51,10 @@
                   </a>
                   <div id="collapseUserLevel" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionUserMgtBar">
                     <div class="bg-white py-2  rounded">
-                      <router-link class="collapse-item px-3" to="/users/create">Add User</router-link>
-                      <router-link class="collapse-item px-3" to="/users">Manage User</router-link>
+                      <router-link v-if="userPermissions.includes('user.create')" class="collapse-item px-3" to="/users/create">Add User</router-link>
+                     
+                      <router-link v-if="userPermissions.includes('user.manage')"   class="collapse-item px-3" to="/users">Manage User</router-link>
+                     
                     </div>
                 </div>
           </li>
@@ -237,8 +239,21 @@
     </div>
 </template>
 <script>
+import { mapActions } from 'vuex';
 export default {
-    name: 'Sidebar'
+    name: 'Sidebar',
+    mounted() {
+    this.fetchUserPermissions(); // Fetch user permissions when the component is mounted
+    },
+    methods: {
+      ...mapActions(['fetchUserPermissions']),
+    },
+    computed: {
+      userPermissions() {
+        // Fetch user permissions from Vuex store or component data
+        return this.$store.state.user.permissions; 
+      }
+    }
 }
 </script>
 <style lang="">

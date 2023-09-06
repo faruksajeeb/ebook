@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -324,16 +326,23 @@ class PermissionController extends Controller
 
 
     public function getPermissions(){
-        $data = Permission::where('status',1)->get();   
+        $data = Permission::where('status',1)->orderBy('group_name')->get();   
         return response()->json($data);
     }
-    public function getUserPermissions()
+    public function getUserPermissions($userId)
 {
+   
     // Get the authenticated user
-    $user = Auth::user();
+    $user = User::find(1);
+   
+    $roles = $user->getRoleNames();
+        $permissions = [];
+        foreach ($roles as $role) {
+            $rolePermissions = Role::where('name', $role)->first()->permissions;
+            $permissions = array_merge($permissions, $rolePermissions->pluck('name')->toArray());
+        }
 
-    // Get the user's permissions
-    $permissions = $user->permissions;
+        $permissions = array_unique($permissions);
 
     return response()->json(['permissions' => $permissions]);
 }

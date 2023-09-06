@@ -75,6 +75,11 @@
     <script src="{{ asset('assets/js/faizaan-admin.min.js') }}"></script>
     {{-- <script src="{{ asset('assets/vendor/chart.js/Chart.min.js') }}"></script>
     <script src="{{ asset('assets/js/demo/chart-area-demo.js') }}"></script> --}}
+    <script>
+        window.env = <?php echo json_encode([
+            'APP_NAME' => env('APP_NAME'),
+        ]); ?>
+    </script>
 </body>
 
 </html>

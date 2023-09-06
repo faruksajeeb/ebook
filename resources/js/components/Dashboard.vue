@@ -345,7 +345,7 @@
     </div>
 </template>
 <script>
-export default {
+export default {  
   created() {
     // if (!User.loggedIn()) {
     //   this.$router.push({ name: 'login' })

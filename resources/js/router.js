@@ -1,4 +1,7 @@
 import { createWebHistory, createRouter } from "vue-router";
+import User from "./Helpers/User";
+window.User = User;
+
 import Login from "./components/auth/Login.vue";
 import Register from "./components/auth/Register.vue";
 import ForgetPassword from "./components/auth/ForgetPassword.vue";
@@ -9,7 +12,7 @@ import Dashboard from "./components/Dashboard.vue";
 // User Files
 import UserForm from "./components/user_management/user/UserForm.vue";
 import ManageUser from "./components/user_management/user/ManageUser.vue";
-import User from "./components/user_management/user/User.vue";
+import ViewUser from "./components/user_management/user/User.vue";
 
 // Role Files
 import RoleForm from "./components/user_management/role/RoleForm.vue";
@@ -75,21 +78,36 @@ export const routes = [
         name: "login",
         path: "/",
         component: Login,
+        meta: { title: "Login" },
     },
     {
         name: "register",
         path: "/register",
         component: Register,
+        meta: { title: "Register" },
     },
     {
         name: "forget_password",
         path: "/forget_password",
         component: ForgetPassword,
+        meta: { title: "Forget Password" },
     },
     {
         name: "dashboard",
         path: "/dashboard",
         component: Dashboard,
+        meta: { title: "Dashboard" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // if (User) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                // next('/logout');
+                next("/");
+            }
+        },
     },
     {
         name: "logout",
@@ -100,22 +118,69 @@ export const routes = [
         name: "add-employee",
         path: "/add-employee",
         component: AddEmployee,
+        meta: { title: "Add Employee" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // if (User) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                // next('/logout');
+                next("/");
+            }
+        },
     },
     {
         name: "manage-employee",
         path: "/manage-employee",
         component: ManageEmployee,
+        meta: { title: "Manage Employee" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // if (User) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                // next('/logout');
+                next("/");
+            }
+        },
     },
     {
         name: "edit-employee",
         path: "/edit-employee/:id",
         component: EditEmployee,
+        meta: { title: "Edit Employee" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // if (User) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                // next('/logout');
+                next("/");
+            }
+        },
     },
     { name: "add-supplier", path: "/add-supplier", component: AddSupplier },
     {
         name: "manage-supplier",
         path: "/manage-supplier",
         component: ManageSupplier,
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // if (User) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                // next('/logout');
+                next("/");
+            }
+        },
     },
     {
         name: "edit-supplier",
@@ -128,40 +193,264 @@ export const routes = [
         name: "manage-customer",
         path: "/manage-customer",
         component: ManageCustomer,
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // if (User) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                // next('/logout');
+                next("/");
+            }
+        },
     },
     {
         name: "edit-customer",
         path: "/edit-customer/:id",
         component: EditCustomer,
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // if (User) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                // next('/logout');
+                next("/");
+            }
+        },
     },
 
     // Role Paths
-    { name: "roles", path: '/roles', component: ManageRole },
-    { name: "role.create", path: '/roles/create', component: RoleForm },
-    { name: "role.edit", path: '/roles/:id/edit', component: RoleForm },
-    { name: "role.view", path: '/roles/:id', component: Role },
-    
-    // User Paths
-    { name: "users", path: '/users', component: ManageUser },
-    { name: "user.created", path: '/users/create', component: UserForm },
-    { name: "user.edit", path: '/users/:id/edit', component: UserForm },
-    { name: "user.view", path: '/users/:id', component: User },
-    
-    // Permission Paths
-    { name: "add-permission", path: "/add-permission", component: AddPermission },
-    { name: "edit-permission", path: "/edit-permission/:id", component: EditPermission },
-    { name: "manage-permission", path: "/manage-permission", component: ManagePermission },
+    {
+        name: "roles",
+        path: "/roles",
+        component: ManageRole,
+        meta: { title: "Manage Roles" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
+    {
+        name: "role.create",
+        path: "/roles/create",
+        component: RoleForm,
+        meta: { title: "Create Role" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // if (User) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                // next('/logout');
+                next("/");
+            }
+        },
+    },
+    {
+        name: "role.edit",
+        path: "/roles/:id/edit",
+        component: RoleForm,
+        meta: { title: "Edit Role" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // if (User) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                // next('/logout');
+                next("/");
+            }
+        },
+    },
+    {
+        name: "role.view",
+        path: "/roles/:id",
+        component: Role,
+        meta: { title: "View Role" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // if (User) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                // next('/logout');
+                next("/");
+            }
+        },
+    },
 
-    { name: "add-category", path: "/add-category", component: AddCategory },
+    // User Paths
+    {
+        name: "users",
+        path: "/users",
+        component: ManageUser,
+        meta: { title: "Manage Users" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // if (User) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                // next('/logout');
+                next("/");
+            }
+        },
+    },
+    {
+        name: "user.create",
+        path: "/users/create",
+        component: UserForm,
+        meta: { title: "Add User" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // if (User) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                // next('/logout');
+                next("/");
+            }
+        },
+    },
+    {
+        name: "user.edit",
+        path: "/users/:id/edit",
+        component: UserForm,
+        meta: { title: "Edit User" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // if (User) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                // next('/logout');
+                next("/");
+            }
+        },
+    },
+    {
+        name: "user.view",
+        path: "/users/:id",
+        component: ViewUser,
+        meta: { title: "View User" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // if (User) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                // next('/logout');
+                next("/");
+            }
+        },
+    },
+
+    // Permission Paths
+    {
+        name: "add-permission",
+        path: "/add-permission",
+        component: AddPermission,
+        meta: { title: "Add Permission" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
+    {
+        name: "edit-permission",
+        path: "/edit-permission/:id",
+        component: EditPermission,
+        meta: { title: "Edit Permission" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
+    {
+        name: "manage-permission",
+        path: "/manage-permission",
+        component: ManagePermission,
+        meta: { title: "Manage Permission" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
+
+    {
+        name: "add-category",
+        path: "/add-category",
+        component: AddCategory,
+        meta: { title: "Add Category" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
     {
         name: "manage-category",
         path: "/manage-category",
         component: ManageCategory,
+        meta: { title: "Manage Category" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
     },
     {
         name: "edit-category",
         path: "/edit-category/:id",
         component: EditCategory,
+        meta: { title: "Edit Category" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
     },
 
     { name: "add-product", path: "/add-product", component: AddProduct },
@@ -169,42 +458,244 @@ export const routes = [
         name: "manage-product",
         path: "/manage-product",
         component: ManageProduct,
+        meta: { title: "Add Product" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
     },
-    { name: "edit-product", path: "/edit-product/:id", component: EditProduct },
+    {
+        name: "edit-product",
+        path: "/edit-product/:id",
+        component: EditProduct,
+        meta: { title: "Edit Product" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
 
-    { name: "add-expense", path: "/add-expense", component: AddExpense },
+    {
+        name: "add-expense",
+        path: "/add-expense",
+        component: AddExpense,
+        meta: { title: "Add Expense" },
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
     {
         name: "manage-expense",
         path: "/manage-expense",
         component: ManageExpense,
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
     },
-    { name: "edit-expense", path: "/edit-expense/:id", component: EditExpense },
+    {
+        name: "edit-expense",
+        path: "/edit-expense/:id",
+        component: EditExpense,
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
 
     // Salary Routes
-    { path: "/given-salary", component: Salary, name: "given-salary" },
-    { path: "/pay-salary/:id", component: PaySalary, name: "pay-salary" },
+    {
+        path: "/given-salary",
+        component: Salary,
+        name: "given-salary",
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
+    {
+        path: "/pay-salary/:id",
+        component: PaySalary,
+        name: "pay-salary",
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
 
-    { path: "/salary", component: AllSalary, name: "salary" },
-    { path: "/view-salary/:id", component: ViewSalary, name: "view-salary" },
-    { path: "/edit-salary/:id", component: EditSalary, name: "edit-salary" },
+    {
+        path: "/salary",
+        component: AllSalary,
+        name: "salary",
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
+    {
+        path: "/view-salary/:id",
+        component: ViewSalary,
+        name: "view-salary",
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
+    {
+        path: "/edit-salary/:id",
+        component: EditSalary,
+        name: "edit-salary",
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
 
     // Stock Routes
-    { path: "/stock", component: Stock, name: "stock" },
-    { path: "/edit-stock/:id", component: EditStock, name: "edit-stock" },
+    {
+        path: "/stock",
+        component: Stock,
+        name: "stock",
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
+    {
+        path: "/edit-stock/:id",
+        component: EditStock,
+        name: "edit-stock",
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
 
     // POS Routes
-    { path: "/pos", component: Pos, name: "pos" },
+    {
+        path: "/pos",
+        component: Pos,
+        name: "pos",
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
 
     // Order Routes
-    { path: "/order", component: Order, name: "order" },
-    { path: "/view-order/:id", component: ViewOrder, name: "view-order" },
-    { path: "/searchorder", component: SearchOrder, name: "searchorder" },
+    {
+        path: "/order",
+        component: Order,
+        name: "order",
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
+    {
+        path: "/view-order/:id",
+        component: ViewOrder,
+        name: "view-order",
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
+    {
+        path: "/searchorder",
+        component: SearchOrder,
+        name: "searchorder",
+        beforeEnter: (to, from, next) => {
+            if (User.loggedIn()) {
+                // User is authenticated, allow access
+                next();
+            } else {
+                // User is not authenticated, redirect to login
+                next("/");
+            }
+        },
+    },
 ];
 
 const router = createRouter({
     history: createWebHistory(),
     routes: routes,
 });
-
 
 export default router;
