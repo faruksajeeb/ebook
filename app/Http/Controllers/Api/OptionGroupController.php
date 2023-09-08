@@ -4,24 +4,24 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Lib\Webspice;
-use App\Models\Category;
+use App\Models\OptionGroup;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class CategoryController extends Controller
+class OptionGroupController extends Controller
 {
     public $webspice;
-    protected $category;
-    protected $categories;
-    protected $categoryid;
+    protected $option_group;
+    protected $option_groups;
+    protected $option_groupid;
     public $tableName;
 
-    public function __construct(Category $category, Webspice $webspice)
+    public function __construct(OptionGroup $option_group, Webspice $webspice)
     {
         $this->webspice = $webspice;
-        $this->categories = $category;
-        $this->tableName = 'categories';
+        $this->option_groups = $option_group;
+        $this->tableName = 'option_groups';
         $this->middleware(function ($request, $next) {
             //    $this->user = Auth::user();
             $this->user = Auth::guard('web')->user();
@@ -37,7 +37,7 @@ class CategoryController extends Controller
             $searchTerm = request('search', '');
 
             $sortField = request('sort_field', 'created_at');
-            if (!in_array($sortField, ['id', 'category_name'])) {
+            if (!in_array($sortField, ['id', 'name'])) {
                 $sortField = 'created_at';
             }
             $sortDirection = request('sort_direction', 'created_at');
@@ -47,10 +47,10 @@ class CategoryController extends Controller
 
             $filled = array_filter(request([
                 'id',
-                'category_name',
+                'name',
             ]));
 
-            $categories = Category::when(count($filled) > 0, function ($query) use ($filled) {
+            $optionGroups = OptionGroup::when(count($filled) > 0, function ($query) use ($filled) {
                 foreach ($filled as $column => $value) {
                     $query->where($column, 'LIKE', '%' . $value . '%');
                 }
@@ -60,7 +60,7 @@ class CategoryController extends Controller
             })->orderBy($sortField, $sortDirection)->paginate($paginate);
 
             // return ProductResource::collection($products);
-            return response()->json($categories);
+            return response()->json($optionGroups);
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -74,28 +74,27 @@ class CategoryController extends Controller
     {
 
         #permission verfy
-        // $this->webspice->permissionVerify('category.create');
+        // $this->webspice->permissionVerify('option_group.create');
 
         $request->validate(
             [
-                'category_name' => 'required|regex:/^[a-zA-Z 0-9]+$/u|min:3|max:20|unique:categories',
+                'name' => 'required|regex:/^[a-zA-Z ]+$/u|min:3|max:20|unique:option_groups',
             ],
             [
-                'category_name.required' => 'category name field is required.',
-                'category_name.unique' => 'The category name has already been taken.',
-                'category_name.regex' => 'The category name format is invalid. Please enter alpabatic text.',
-                'category_name.min' => 'The category name must be at least 3 characters.',
-                'category_name.max' => 'The category name may not be greater than 20 characters.',
+                'name.required' => 'option group Name field is required.',
+                'name.unique' => 'The option group name has already been taken.',
+                'name.regex' => 'The option group name format is invalid. Please enter alpabatic text.',
+                'name.min' => 'The option group name must be at least 3 characters.',
+                'name.max' => 'The option group name may not be greater than 20 characters.',
             ]
         );
 
         try {
-            // $this->categories->create($data);
+            // $this->option_groups->create($data);
             $input = $request->all();
-           
             $input['created_by'] = $this->webspice->getUserId();
-          
-            $this->categories->create($input);
+
+            $this->option_groups->create($input);
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -110,8 +109,8 @@ class CategoryController extends Controller
     public function show($id)
     {
         try {
-            $category = Category::find($id);
-            return $category;
+            $option_group = OptionGroup::find($id);
+            return $option_group;
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -123,51 +122,49 @@ class CategoryController extends Controller
 
     public function update(Request $request, $id)
     {
-       
 
         #permission verfy
-        // $this->webspice->permissionVerify('category.edit');
+        // $this->webspice->permissionVerify('option_group.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 
         $request->validate(
             [
-                'category_name' => 'required|regex:/^[a-zA-Z 0-9]+$/u|min:3|max:20|unique:categories,category_name,' . $id,
+                'name' => 'required|regex:/^[a-zA-Z ]+$/u|min:3|max:20|unique:option_groups,name,' . $id,
             ],
             [
-                'category_name.required' => 'category Name field is required.',
-                'category_name.unique' => '"' . $request->category_name . '" The category name has already been taken.',
-                'category_name.regex' => 'The category name format is invalid. Please enter alpabatic text.',
-                'category_name.min' => 'The category name must be at least 3 characters.',
-                'category_name.max' => 'The category name may not be greater than 20 characters.',
+                'name.required' => 'option_group Name field is required.',
+                'name.unique' => '"' . $request->name . '" The option_group name has already been taken.',
+                'name.regex' => 'The option_group name format is invalid. Please enter alpabatic text.',
+                'name.min' => 'The option_group name must be at least 3 characters.',
+                'name.max' => 'The option_group name may not be greater than 20 characters.',
             ]
         );
-        // try {  
-            $category = Category::find($id);         
-            $category->category_name = $request->category_name;
-            $category->updated_by = $this->webspice->getUserId();
-            $category->save();
-        // } catch (Exception $e) {
-        //     // $this->webspice->message('error', $e->getMessage());
-        //     return response()->json(
-        //         [
-        //             'error' => $e->getMessage(),
-        //         ], 401);
-        // }
-        // return redirect()->route('categories.index');
+        try {
+            $option_group = $this->option_groups->find($id);          
+            $option_group->name = $request->name;
+            $option_group->save();
+        } catch (Exception $e) {
+            // $this->webspice->message('error', $e->getMessage());
+            return response()->json(
+                [
+                    'error' => $e->getMessage(),
+                ], 401);
+        }
+        // return redirect()->route('option_groups.index');
     }
 
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('category.delete');
+        // $this->webspice->permissionVerify('option_group.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 
-            $category = $this->categories->findById($id);
-            $category->delete();
+            $option_group = $this->option_groups->findById($id);
+            $option_group->delete();
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -182,12 +179,12 @@ class CategoryController extends Controller
     {
         return response()->json(['error' => 'Unauthenticated.'], 401);
         #permission verfy
-        $this->webspice->permissionVerify('category.force_delete');
+        // $this->webspice->permissionVerify('option_group.force_delete');
         try {
             #decrypt value
             $id = $this->webspice->encryptDecrypt('decrypt', $id);
-            $category = category::withTrashed()->findOrFail($id);
-            $category->forceDelete();
+            $option_group = OptionGroup::withTrashed()->findOrFail($id);
+            $option_group->forceDelete();
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
@@ -196,38 +193,38 @@ class CategoryController extends Controller
     public function restore($id)
     {
         #permission verfy
-        $this->webspice->permissionVerify('category.restore');
+        $this->webspice->permissionVerify('option_group.restore');
         try {
             $id = $this->webspice->encryptDecrypt('decrypt', $id);
-            $category = category::withTrashed()->findOrFail($id);
-            $category->restore();
+            $option_group = OptionGroup::withTrashed()->findOrFail($id);
+            $option_group->restore();
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
-        // return redirect()->route('categories.index', ['status' => 'archived'])->withSuccess(__('User restored successfully.'));
-        return redirect()->route('categories.index');
+        // return redirect()->route('option_groups.index', ['status' => 'archived'])->withSuccess(__('User restored successfully.'));
+        return redirect()->route('option_groups.index');
     }
 
     public function restoreAll()
     {
         #permission verfy
-        $this->webspice->permissionVerify('category.restore');
+        $this->webspice->permissionVerify('option_group.restore');
         try {
-            $categories = category::onlyTrashed()->get();
-            foreach ($categories as $category) {
-                $category->restore();
+            $option_groups = OptionGroup::onlyTrashed()->get();
+            foreach ($option_groups as $option_group) {
+                $option_group->restore();
             }
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
-        return redirect()->route('categories.index');
-        // return redirect()->route('categories.index')->withSuccess(__('All categories restored successfully.'));
+        return redirect()->route('option_groups.index');
+        // return redirect()->route('option_groups.index')->withSuccess(__('All option_groups restored successfully.'));
     }
 
 
-    public function getCategories()
+    public function getOptionGroups()
     {
-        $data = Category::where('status', 1)->get();
+        $data = OptionGroup::where('status', 1)->get();
         return response()->json($data);
     }
 

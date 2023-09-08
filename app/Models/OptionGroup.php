@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Category extends Model
+class OptionGroup extends Model
 {
     use HasFactory,SoftDeletes;
-    protected $table = 'categories';
+    protected $table = 'option_groups';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'category_name',
+        'name',
         'created_by',
         'updated_at',
         'created_at',
@@ -32,7 +32,7 @@ class Category extends Model
         $term = "%$term%";
         $query->where(function ($q) use ($term) {
             // $q->where('id','LIKE',$term);
-            $q->where('category_name', 'LIKE', $term);
+            $q->where('name', 'LIKE', $term);
             // $q->orWhere('description','LIKE',$term);
             // $q->orWhereHas('categories',function($q) use($term){
             //     $q->where('category_name','LIKE',$term);

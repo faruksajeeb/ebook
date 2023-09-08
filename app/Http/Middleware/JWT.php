@@ -15,7 +15,7 @@ class JWT
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
-    {
+    {      
         JWTAuth::parseToken()->authenticate();
         return $next($request);
     }

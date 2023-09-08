@@ -1,7 +1,15 @@
 <?php
 
-use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
+
+use App\Http\Controllers\Api\OptionGroupController;
+use App\Http\Controllers\Api\OptionController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\SubCategoryController;
+
+use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\EmployeeController;
@@ -11,9 +19,7 @@ use App\Http\Controllers\Api\PosController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SalaryController;
 use App\Http\Controllers\Api\SupplierController;
-use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\UserController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,12 +44,20 @@ Route::group([
     Route::post('login', 'AuthController@login');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me');
+    Route::get('me', 'AuthController@me');
 });
-Route::middleware('api')->group(function () {
+
+Route::middleware('JWT')->group(function () {
+    Route::get('get-categories', [CategoryController::class, 'getCategories']);
+    Route::get('get-option-groups', [OptionGroupController::class, 'getOptionGroups']);
     Route::get('get-roles', [RoleController::class, 'getRoles']);
     Route::get('get-permissions', [PermissionController::class, 'getPermissions']);
     Route::get('/user/{id}/permissions', [PermissionController::class, 'getUserPermissions']);
+
+    Route::apiResource('/option-groups', OptionGroupController::class);
+    Route::apiResource('/options', OptionController::class);
+    Route::apiResource('/categories', CategoryController::class);
+    Route::apiResource('/sub-categories', SubCategoryController::class);
 
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/roles', RoleController::class);

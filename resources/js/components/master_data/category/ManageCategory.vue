@@ -8,9 +8,11 @@
           <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
           >
-            <h3 class="m-0 font-weight-bold">User List</h3>
+            <h3 class="m-0 font-weight-bold">Category List</h3>
           </div>
           <div class="card-body p-0 m-0">
+            
+            <!-- <div class="row justify-content-between"> -->
             <div class="row p-2">
               <div class="input-group">
                 <div class="col-md-2">
@@ -26,7 +28,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Search by user. (Type and Enter)"
+                  placeholder="Search by category. (Type and Enter)"
                   v-model="search"
                 />
                 <button @click="downloadFile" class="btn my-btn-success export-btn">
@@ -41,11 +43,11 @@
                 />
 
                 <router-link
-                  to="/users/create"
+                  to="/categories/create"
                   class="z-index-1 btn my-btn-primary float-right"
                 >
                   <i class="fa fa-solid fa-plus"></i>
-                  Add User
+                  Add category
                 </router-link>
               </div>
             </div>
@@ -78,24 +80,23 @@
                       >
                     </th>
                     <th scope="col">
-                      <a href="#" @click.prevent="changeShort('name')">Name</a>
+                      <a href="#" @click.prevent="changeShort('category_name')">Name</a>
                       <!-- <a href="#">Name</a> -->
                       <span
                         v-if="
-                          this.params.sort_field == 'name' &&
+                          this.params.sort_field == 'category_name' &&
                           this.params.sort_direction == 'asc'
                         "
                         >↑</span
                       >
                       <span
                         v-if="
-                          this.params.sort_field == 'name' &&
+                          this.params.sort_field == 'category_name' &&
                           this.params.sort_direction == 'desc'
                         "
                         >↓</span
                       >
                     </th>
-                    <th class="text-right">Roles</th>
                     <th class="text-right">Action</th>
                   </tr>
                   <tr>
@@ -113,44 +114,38 @@
                         type="text"
                         placeholder="Search By Name"
                         class="form-control"
-                        v-model="params.name"
+                        v-model="params.category_name"
                       />
                     </th>
                     <th></th>
-                    <th></th>
                   </tr>
                 </thead>
-                <tbody v-if="users && paginator.totalRecords > 0">
-                  <tr v-for="user in users.data" :key="user.id">
+                <tbody v-if="categories && paginator.totalRecords > 0">
+                  <tr v-for="category in categories.data" :key="category.id">
                     <td class="text-center">
                       <input
                         type="checkbox"
-                        :value="user.id"
+                        :value="category.id"
                         v-model="checked"
                         class="form-check-input"
                       />
                     </td>
-                    <td class="text-nowrap">{{ user.id }}</td>
-                    <td>{{ user.name }}</td>
-                    <td>
-                        <span class=" badge bg-info text-dark text-start p-1 m-1" v-for="role in user.roles" :key="role.id">
-                          {{ role.name }}
-                        </span>
-                    </td>
+                    <td class="text-nowrap">{{ category.id }}</td>
+                    <td>{{ category.category_name }}</td>
                     <td class="text-right text-nowrap">
-                      <div  class="btn-group" user="group" >
+                      <div  class="btn-group" category="group" >
                       <router-link
-                  :to="`/users/${user.id}`"
+                  :to="`/categories/${category.id}`"
                   class="btn btn-sm my-btn-primary"
                   ><i class="fa fa-eye"></i> View</router-link
                 >
                       <router-link
-                        :to="`/users/${user.id}/edit`"
+                        :to="`/categories/${category.id}/edit`"
                         class="btn btn-sm btn-primary px-2 mx-1"
                         ><i class="fa fa-edit"></i> Edit</router-link
                       >
                       <a
-                        @click="deleteuser(user.id)"
+                        @click="deletecategory(category.id)"
                         class="btn btn-sm btn-danger px-2 mx-1"
                       >
                         <font color="#ffffff"><i class="fa fa-trash"></i> Delete</font></a
@@ -182,9 +177,9 @@
               <div class="col-md-6">
                 <pagination
                   align="right"
-                  :data="users"
+                  :data="categories"
                   :limit="5"
-                  @pagination-change-page="getusers"
+                  @pagination-change-page="getCategories"
                 ></pagination>
               </div>
             </div>
@@ -197,7 +192,7 @@
 </template>
 <script type="text/javascript">
 export default {
-  name: "user",
+  name: "category",
   data() {
     return {
       checked: [],
@@ -208,14 +203,14 @@ export default {
         current_page: "",
         per_page: "",
       },
-      users: {
+      categories: {
         type: Object,
         default: null,
       },
       params: {
         paginate: 5,
         id: "",
-        name: "",
+        category_name: "",
         sort_field: "created_at",
         sort_direction: "desc",
       },
@@ -225,54 +220,46 @@ export default {
       filterFields: {},
     };
   },
-  created(){
+  create(){
     if (!User.loggedIn()) {
       this.$router.push("/");
     }
   },
   mounted() {
     this.filterFields = { ...this.params };
-    this.getusers();
+    this.getCategories();
   },
   watch: {
     params: {
       handler() {
-        this.getusers();
+        this.getCategories();
       },
       deep: true,
     },
     search(val, old) {
       if (val.length >= 3 || old.length >= 3) {
-        this.getusers();
+        this.getCategories();
       }
     },
   },
   computed: {},
   methods: {
-    
-    async getusers(page = 1) {
-      const token = localStorage.getItem("token");
+    async getCategories(page = 1) {
       this.isLoading = true;
       await axios
         // .get(`/api/products?page=${page}`)
-        // .get(`/api/products?page=${page}&user_id=${this.params.user_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
-        .get("/api/users", {
+        // .get(`/api/products?page=${page}&category_id=${this.params.category_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
+        .get("/api/categories", {
           params: {
             page,
             search: this.search.length >= 3 ? this.search : "",
             ...this.params,
           },
-        }, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          })
+        })
         .then((response) => {
           // console.log(response);
           this.isLoading = false;
-          this.users = response.data;
-          console.log(this.users);
+          this.categories = response.data;
           this.paginator.totalRecords = response.data.total;
           // if (response.data.total <= 0) {
           //   document.querySelector(".loading-section").innerText = "No Record Found!.";
@@ -292,7 +279,7 @@ export default {
     refreshData() {
       this.isRefreshing = true;
       this.params = { ...this.filterFields };
-      this.getusers();
+      this.getCategories();
     },
     changeShort(field) {
       if (this.params.sort_field === field) {
@@ -304,7 +291,7 @@ export default {
       }
       // this.getProducts();
     },
-    deleteuser(id) {
+    deletecategory(id) {
       Swal.fire({
         allowOutsideClick: false,
         title: "Are you sure?",
@@ -317,9 +304,9 @@ export default {
       }).then((result) => {
         if (result.value) {
           axios
-            .delete("/api/users/" + id)
+            .delete("/api/categories/" + id)
             .then(() => {
-              this.getusers();
+              this.getCategories();
               Notification.success("Data has been deleted successfully.");
             })
             .catch((error) => {
@@ -340,12 +327,12 @@ export default {
     },
     downloadFile() {
       let loader =
-        '<span class="spinner-border spinner-border-sm" user="status" aria-hidden="true" ></span> Exporting...';
+        '<span class="spinner-border spinner-border-sm" category="status" aria-hidden="true" ></span> Exporting...';
       document.querySelector(".export-btn").innerHTML = loader;
       try {
         axios
           // .get("/api/products-export")
-          .get("/api/user-export", { responseType: "arraybuffer" })
+          .get("/api/category-export", { responseType: "arraybuffer" })
           .then((response) => {
             if (response.status == 200) {
               document.querySelector(".export-btn").innerText = "Export to Excel";
@@ -367,9 +354,9 @@ export default {
     },
     exportPdf() {
       let loader =
-        '<span class="spinner-border spinner-border-sm" user="status" aria-hidden="true" ></span>  Exporting...PDF';
+        '<span class="spinner-border spinner-border-sm" category="status" aria-hidden="true" ></span>  Exporting...PDF';
       document.querySelector(".export-btn-pdf").innerHTML = loader;
-      axios.get("/api/user-export-pdf", { responseType: "blob" }).then((response) => {
+      axios.get("/api/category-export-pdf", { responseType: "blob" }).then((response) => {
         document.querySelector(".export-btn-pdf").innerText = "Export PDF";
         Notification.success("Exported Successfully");
         var fileURL = window.URL.createObjectURL(
@@ -377,7 +364,7 @@ export default {
         );
         var fileLink = document.createElement("a");
         fileLink.href = fileURL;
-        fileLink.setAttribute("download", "user_list.pdf");
+        fileLink.setAttribute("download", "category_list.pdf");
         document.body.appendChild(fileLink);
         fileLink.click();
       });

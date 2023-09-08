@@ -24,6 +24,27 @@ import AddPermission from "./components/user_management/permission/Create.vue";
 import ManagePermission from "./components/user_management/permission/Index.vue";
 import EditPermission from "./components/user_management/permission/Edit.vue";
 
+// OptionGroup Files
+import OptionGroupForm from "./components/master_data/option_group/OptionGroupForm.vue";
+import ManageOptionGroup from "./components/master_data/option_group/ManageOptionGroup.vue";
+import ViewOptionGroup from "./components/master_data/option_group/OptionGroup.vue";
+
+// Option Files
+import OptionForm from "./components/master_data/option/OptionForm.vue";
+import ManageOption from "./components/master_data/option/ManageOption.vue";
+import ViewOption from "./components/master_data/option/Option.vue";
+
+// Category Files
+import CategoryForm from "./components/master_data/category/CategoryForm.vue";
+import ManageCategory from "./components/master_data/category/ManageCategory.vue";
+import ViewCategory from "./components/master_data/category/Category.vue";
+
+
+// SubCategory Files
+import SubCategoryForm from "./components/master_data/sub-category/SubCategoryForm.vue";
+import ManageSubCategory from "./components/master_data/sub-category/ManageSubCategory.vue";
+import ViewSubCategory from "./components/master_data/sub-category/SubCategory.vue";
+
 // Employee Files
 import AddEmployee from "./components/employee/create.vue";
 import ManageEmployee from "./components/employee/index.vue";
@@ -38,11 +59,6 @@ import EditSupplier from "./components/supplier/edit.vue";
 import AddCustomer from "./components/customer/create.vue";
 import ManageCustomer from "./components/customer/index.vue";
 import EditCustomer from "./components/customer/edit.vue";
-
-// Category Files
-import AddCategory from "./components/category/create.vue";
-import ManageCategory from "./components/category/index.vue";
-import EditCategory from "./components/category/edit.vue";
 
 // Product Files
 import AddProduct from "./components/product/create.vue";
@@ -72,7 +88,15 @@ import Pos from "./components/pos/pointofsale.vue";
 import Order from "./components/order/order.vue";
 import ViewOrder from "./components/order/vieworder.vue";
 import SearchOrder from "./components/order/search.vue";
+function guard(to, from, next){
+    if(User.loggedIn()) {
+        // or however you store your logged in state
+        next(); // allow to enter route
+    } else{
+        next('/'); // go to '/login';
 
+    }
+}
 export const routes = [
     {
         name: "login",
@@ -97,17 +121,7 @@ export const routes = [
         path: "/dashboard",
         component: Dashboard,
         meta: { title: "Dashboard" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // if (User) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                // next('/logout');
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "logout",
@@ -119,34 +133,14 @@ export const routes = [
         path: "/add-employee",
         component: AddEmployee,
         meta: { title: "Add Employee" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // if (User) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                // next('/logout');
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "manage-employee",
         path: "/manage-employee",
         component: ManageEmployee,
         meta: { title: "Manage Employee" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // if (User) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                // next('/logout');
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "edit-employee",
@@ -170,17 +164,7 @@ export const routes = [
         name: "manage-supplier",
         path: "/manage-supplier",
         component: ManageSupplier,
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // if (User) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                // next('/logout');
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "edit-supplier",
@@ -193,33 +177,13 @@ export const routes = [
         name: "manage-customer",
         path: "/manage-customer",
         component: ManageCustomer,
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // if (User) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                // next('/logout');
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "edit-customer",
         path: "/edit-customer/:id",
         component: EditCustomer,
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // if (User) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                // next('/logout');
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
 
     // Role Paths
@@ -228,66 +192,28 @@ export const routes = [
         path: "/roles",
         component: ManageRole,
         meta: { title: "Manage Roles" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "role.create",
         path: "/roles/create",
         component: RoleForm,
         meta: { title: "Create Role" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // if (User) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                // next('/logout');
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "role.edit",
         path: "/roles/:id/edit",
         component: RoleForm,
         meta: { title: "Edit Role" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // if (User) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                // next('/logout');
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "role.view",
         path: "/roles/:id",
         component: Role,
         meta: { title: "View Role" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // if (User) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                // next('/logout');
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
 
     // User Paths
@@ -296,68 +222,28 @@ export const routes = [
         path: "/users",
         component: ManageUser,
         meta: { title: "Manage Users" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // if (User) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                // next('/logout');
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "user.create",
         path: "/users/create",
         component: UserForm,
         meta: { title: "Add User" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // if (User) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                // next('/logout');
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "user.edit",
         path: "/users/:id/edit",
         component: UserForm,
         meta: { title: "Edit User" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // if (User) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                // next('/logout');
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "user.view",
         path: "/users/:id",
         component: ViewUser,
         meta: { title: "View User" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // if (User) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                // next('/logout');
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
 
     // Permission Paths
@@ -366,92 +252,141 @@ export const routes = [
         path: "/add-permission",
         component: AddPermission,
         meta: { title: "Add Permission" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "edit-permission",
         path: "/edit-permission/:id",
         component: EditPermission,
         meta: { title: "Edit Permission" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "manage-permission",
         path: "/manage-permission",
         component: ManagePermission,
         meta: { title: "Manage Permission" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
+    },
+// Option Group Paths
+{
+    name: "option-groups",
+    path: "/option-groups",
+    component: ManageOptionGroup,
+    meta: { title: "Manage OptionGroup" },
+    beforeEnter: guard,
+},
+{
+    name: "option-groups.create",
+    path: "/option-groups/create",
+    component: OptionGroupForm,
+    meta: { title: "Add Option Group" },
+    beforeEnter: guard,
+},
+{
+    name: "option-groups.edit",
+    path: "/option-groups/:id/edit",
+    component: OptionGroupForm,
+    meta: { title: "Edit Option Group" },
+    beforeEnter: guard,
+},
+{
+    name: "option-groups.view",
+    path: "/option-groups/:id",
+    component: ViewOptionGroup,
+    meta: { title: "View Option Group" },
+    beforeEnter: guard,
+},
+    // Option Paths
+    {
+        name: "options",
+        path: "/options",
+        component: ManageOption,
+        meta: { title: "Manage Options" },
+        beforeEnter: guard,
+    },
+    {
+        name: "options.create",
+        path: "/options/create",
+        component: OptionForm,
+        meta: { title: "Add Option" },
+        beforeEnter: guard,
+    },
+    {
+        name: "options.edit",
+        path: "/options/:id/edit",
+        component: OptionForm,
+        meta: { title: "Edit Option" },
+        beforeEnter: guard,
+    },
+    {
+        name: "options.view",
+        path: "/options/:id",
+        component: ViewOption,
+        meta: { title: "View Option" },
+        beforeEnter: guard,
     },
 
+    // Category Paths
     {
-        name: "add-category",
-        path: "/add-category",
-        component: AddCategory,
-        meta: { title: "Add Category" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
-    },
-    {
-        name: "manage-category",
-        path: "/manage-category",
+        name: "categories",
+        path: "/categories",
         component: ManageCategory,
         meta: { title: "Manage Category" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
-        name: "edit-category",
-        path: "/edit-category/:id",
-        component: EditCategory,
-        meta: { title: "Edit Category" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        name: "categories.create",
+        path: "/categories/create",
+        component: CategoryForm,
+        meta: { title: "Add Category" },
+        beforeEnter: guard,
     },
+    {
+        name: "categories.edit",
+        path: "/categories/:id/edit",
+        component: CategoryForm,
+        meta: { title: "Edit Category" },
+        beforeEnter: guard,
+    },
+    {
+        name: "categories.view",
+        path: "/categories/:id",
+        component: ViewCategory,
+        meta: { title: "View Category" },
+        beforeEnter: guard,
+    },
+
+    // Sub-Category Paths
+    {
+        name: "sub-categories",
+        path: "/sub-categories",
+        component: ManageSubCategory,
+        meta: { title: "Manage Sub Category" },
+        beforeEnter: guard,
+    },
+    {
+        name: "sub-categories.create",
+        path: "/sub-categories/create",
+        component: SubCategoryForm,
+        meta: { title: "Add Sub-Category" },
+        beforeEnter: guard,
+    },
+    {
+        name: "sub-categories.edit",
+        path: "/sub-categories/:id/edit",
+        component: SubCategoryForm,
+        meta: { title: "Edit Sub-Category" },
+        beforeEnter: guard,
+    },
+    {
+        name: "sub-categories.view",
+        path: "/sub-categories/:id",
+        component: ViewSubCategory,
+        meta: { title: "View Sub-Category" },
+        beforeEnter: guard,
+    },
+
 
     { name: "add-product", path: "/add-product", component: AddProduct },
     {
@@ -459,30 +394,14 @@ export const routes = [
         path: "/manage-product",
         component: ManageProduct,
         meta: { title: "Add Product" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "edit-product",
         path: "/edit-product/:id",
         component: EditProduct,
         meta: { title: "Edit Product" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
 
     {
@@ -490,43 +409,19 @@ export const routes = [
         path: "/add-expense",
         component: AddExpense,
         meta: { title: "Add Expense" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "manage-expense",
         path: "/manage-expense",
         component: ManageExpense,
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         name: "edit-expense",
         path: "/edit-expense/:id",
         component: EditExpense,
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
 
     // Salary Routes
@@ -534,72 +429,32 @@ export const routes = [
         path: "/given-salary",
         component: Salary,
         name: "given-salary",
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         path: "/pay-salary/:id",
         component: PaySalary,
         name: "pay-salary",
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
 
     {
         path: "/salary",
         component: AllSalary,
         name: "salary",
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         path: "/view-salary/:id",
         component: ViewSalary,
         name: "view-salary",
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         path: "/edit-salary/:id",
         component: EditSalary,
         name: "edit-salary",
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
 
     // Stock Routes
@@ -607,29 +462,13 @@ export const routes = [
         path: "/stock",
         component: Stock,
         name: "stock",
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         path: "/edit-stock/:id",
         component: EditStock,
         name: "edit-stock",
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
 
     // POS Routes
@@ -637,15 +476,7 @@ export const routes = [
         path: "/pos",
         component: Pos,
         name: "pos",
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
 
     // Order Routes
@@ -653,43 +484,19 @@ export const routes = [
         path: "/order",
         component: Order,
         name: "order",
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         path: "/view-order/:id",
         component: ViewOrder,
         name: "view-order",
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
     {
         path: "/searchorder",
         component: SearchOrder,
         name: "searchorder",
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                next("/");
-            }
-        },
+        beforeEnter: guard,
     },
 ];
 

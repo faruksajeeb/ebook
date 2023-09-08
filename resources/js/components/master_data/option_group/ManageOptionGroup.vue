@@ -8,9 +8,10 @@
           <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
           >
-            <h3 class="m-0 font-weight-bold">User List</h3>
+            <h3 class="m-0 font-weight-bold">Option Group List</h3>
           </div>
           <div class="card-body p-0 m-0">
+            <!-- <div class="row justify-content-between"> -->
             <div class="row p-2">
               <div class="input-group">
                 <div class="col-md-2">
@@ -26,7 +27,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Search by user. (Type and Enter)"
+                  placeholder="Search by option group name. (Type and Enter)"
                   v-model="search"
                 />
                 <button @click="downloadFile" class="btn my-btn-success export-btn">
@@ -41,11 +42,11 @@
                 />
 
                 <router-link
-                  to="/users/create"
+                  to="/option-groups/create"
                   class="z-index-1 btn my-btn-primary float-right"
                 >
                   <i class="fa fa-solid fa-plus"></i>
-                  Add User
+                  Add Option Group
                 </router-link>
               </div>
             </div>
@@ -78,7 +79,7 @@
                       >
                     </th>
                     <th scope="col">
-                      <a href="#" @click.prevent="changeShort('name')">Name</a>
+                      <a href="#" @click.prevent="changeShort('name')">Option Group Name</a>
                       <!-- <a href="#">Name</a> -->
                       <span
                         v-if="
@@ -95,7 +96,6 @@
                         >↓</span
                       >
                     </th>
-                    <th class="text-right">Roles</th>
                     <th class="text-right">Action</th>
                   </tr>
                   <tr>
@@ -117,40 +117,34 @@
                       />
                     </th>
                     <th></th>
-                    <th></th>
                   </tr>
                 </thead>
-                <tbody v-if="users && paginator.totalRecords > 0">
-                  <tr v-for="user in users.data" :key="user.id">
+                <tbody v-if="option_groups && paginator.totalRecords > 0">
+                  <tr v-for="option_group in option_groups.data" :key="option_group.id">
                     <td class="text-center">
                       <input
                         type="checkbox"
-                        :value="user.id"
+                        :value="option_groupid"
                         v-model="checked"
                         class="form-check-input"
                       />
                     </td>
-                    <td class="text-nowrap">{{ user.id }}</td>
-                    <td>{{ user.name }}</td>
-                    <td>
-                        <span class=" badge bg-info text-dark text-start p-1 m-1" v-for="role in user.roles" :key="role.id">
-                          {{ role.name }}
-                        </span>
-                    </td>
+                    <td class="text-nowrap">{{ option_group.id }}</td>
+                    <td>{{ option_group.name }}</td>
                     <td class="text-right text-nowrap">
-                      <div  class="btn-group" user="group" >
+                      <div  class="btn-group" option="group" >
                       <router-link
-                  :to="`/users/${user.id}`"
+                  :to="`/option-groups/${option_group.id}`"
                   class="btn btn-sm my-btn-primary"
                   ><i class="fa fa-eye"></i> View</router-link
                 >
                       <router-link
-                        :to="`/users/${user.id}/edit`"
+                        :to="`/option-groups/${option_group.id}/edit`"
                         class="btn btn-sm btn-primary px-2 mx-1"
                         ><i class="fa fa-edit"></i> Edit</router-link
                       >
                       <a
-                        @click="deleteuser(user.id)"
+                        @click="deleteoption(option_group.id)"
                         class="btn btn-sm btn-danger px-2 mx-1"
                       >
                         <font color="#ffffff"><i class="fa fa-trash"></i> Delete</font></a
@@ -182,9 +176,9 @@
               <div class="col-md-6">
                 <pagination
                   align="right"
-                  :data="users"
+                  :data="option-groups"
                   :limit="5"
-                  @pagination-change-page="getusers"
+                  @pagination-change-page="getOptionGroups"
                 ></pagination>
               </div>
             </div>
@@ -197,7 +191,7 @@
 </template>
 <script type="text/javascript">
 export default {
-  name: "user",
+  name: "option group",
   data() {
     return {
       checked: [],
@@ -208,7 +202,7 @@ export default {
         current_page: "",
         per_page: "",
       },
-      users: {
+      option_groups: {
         type: Object,
         default: null,
       },
@@ -225,54 +219,46 @@ export default {
       filterFields: {},
     };
   },
-  created(){
+  create(){
     if (!User.loggedIn()) {
       this.$router.push("/");
     }
   },
   mounted() {
     this.filterFields = { ...this.params };
-    this.getusers();
+    this.getOptionGroups();
   },
   watch: {
     params: {
       handler() {
-        this.getusers();
+        this.getOptionGroups();
       },
       deep: true,
     },
     search(val, old) {
       if (val.length >= 3 || old.length >= 3) {
-        this.getusers();
+        this.getOptionGroups();
       }
     },
   },
   computed: {},
   methods: {
-    
-    async getusers(page = 1) {
-      const token = localStorage.getItem("token");
+    async getOptionGroups(page = 1) {
       this.isLoading = true;
       await axios
         // .get(`/api/products?page=${page}`)
-        // .get(`/api/products?page=${page}&user_id=${this.params.user_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
-        .get("/api/users", {
+        // .get(`/api/products?page=${page}&option_id=${this.params.option_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
+        .get("/api/option-groups", {
           params: {
             page,
             search: this.search.length >= 3 ? this.search : "",
             ...this.params,
           },
-        }, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          })
+        })
         .then((response) => {
-          // console.log(response);
+          console.log(response);
           this.isLoading = false;
-          this.users = response.data;
-          console.log(this.users);
+          this.option_groups = response.data;
           this.paginator.totalRecords = response.data.total;
           // if (response.data.total <= 0) {
           //   document.querySelector(".loading-section").innerText = "No Record Found!.";
@@ -292,7 +278,7 @@ export default {
     refreshData() {
       this.isRefreshing = true;
       this.params = { ...this.filterFields };
-      this.getusers();
+      this.getOptionGroups();
     },
     changeShort(field) {
       if (this.params.sort_field === field) {
@@ -304,7 +290,7 @@ export default {
       }
       // this.getProducts();
     },
-    deleteuser(id) {
+    deleteOptionGroup(id) {
       Swal.fire({
         allowOutsideClick: false,
         title: "Are you sure?",
@@ -317,9 +303,9 @@ export default {
       }).then((result) => {
         if (result.value) {
           axios
-            .delete("/api/users/" + id)
+            .delete("/api/option-groups/" + id)
             .then(() => {
-              this.getusers();
+              this.getOptionGroups();
               Notification.success("Data has been deleted successfully.");
             })
             .catch((error) => {
@@ -340,12 +326,12 @@ export default {
     },
     downloadFile() {
       let loader =
-        '<span class="spinner-border spinner-border-sm" user="status" aria-hidden="true" ></span> Exporting...';
+        '<span class="spinner-border spinner-border-sm" option="status" aria-hidden="true" ></span> Exporting...';
       document.querySelector(".export-btn").innerHTML = loader;
       try {
         axios
           // .get("/api/products-export")
-          .get("/api/user-export", { responseType: "arraybuffer" })
+          .get("/api/option-export", { responseType: "arraybuffer" })
           .then((response) => {
             if (response.status == 200) {
               document.querySelector(".export-btn").innerText = "Export to Excel";
@@ -353,7 +339,7 @@ export default {
               var fileURL = window.URL.createObjectURL(new Blob([response.data]));
               var fileLink = document.createElement("a");
               fileLink.href = fileURL;
-              fileLink.setAttribute("download", "product_list.xlsx");
+              fileLink.setAttribute("download", "option_group_list.xlsx");
               document.body.appendChild(fileLink);
               fileLink.click();
             } else {
@@ -367,9 +353,9 @@ export default {
     },
     exportPdf() {
       let loader =
-        '<span class="spinner-border spinner-border-sm" user="status" aria-hidden="true" ></span>  Exporting...PDF';
+        '<span class="spinner-border spinner-border-sm" option="status" aria-hidden="true" ></span>  Exporting...PDF';
       document.querySelector(".export-btn-pdf").innerHTML = loader;
-      axios.get("/api/user-export-pdf", { responseType: "blob" }).then((response) => {
+      axios.get("/api/option-export-pdf", { responseType: "blob" }).then((response) => {
         document.querySelector(".export-btn-pdf").innerText = "Export PDF";
         Notification.success("Exported Successfully");
         var fileURL = window.URL.createObjectURL(
@@ -377,7 +363,7 @@ export default {
         );
         var fileLink = document.createElement("a");
         fileLink.href = fileURL;
-        fileLink.setAttribute("download", "user_list.pdf");
+        fileLink.setAttribute("download", "option_list.pdf");
         document.body.appendChild(fileLink);
         fileLink.click();
       });

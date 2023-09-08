@@ -5,6 +5,8 @@ const store = createStore({
     state() {
         return {
             message: "welcome",
+            option_groups: [],
+            categories: [],
             permissions: [],
             roles: [],
             user: {
@@ -56,6 +58,12 @@ const store = createStore({
           setRoles(state, roles) {
             state.user.roles = roles;
           },
+          setOptionGroups(state, option_groups) {
+            state.option_groups = option_groups;
+          },
+          setCategories(state, categories) {
+            state.categories = categories;
+          },
     },
     actions: {
         fetchUserPermissions({ commit }) {
@@ -69,6 +77,18 @@ const store = createStore({
             // e.g., using axios or fetch
             api.fetchRoles().then((roles) => {
               commit('setRoles', roles);
+            });
+        },
+        fetchOptionGroups({ commit }) {
+            // e.g., using axios or fetch
+            api.fetchOptionGroups().then((option_groups) => {
+              commit('setOptionGroups', option_groups);
+            });
+        },
+        fetchCategories({ commit }) {
+            // e.g., using axios or fetch
+            api.fetchCategories().then((categories) => {
+              commit('setCategories', categories);
             });
         },
     },

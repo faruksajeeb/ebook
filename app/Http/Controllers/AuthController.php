@@ -17,6 +17,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
+     
         //  $this->middleware('auth:api', ['except' => ['login','register']]);
         $this->middleware('JWT', ['except' => ['login', 'register']]);
     }
@@ -30,6 +31,7 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+      
         $validateData = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -37,8 +39,10 @@ class AuthController extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
+       
         try {
             if ($token = $this->guard()->attempt($credentials)) {
+               
                 return $this->respondWithToken($token);
             }
             return response()->json(
