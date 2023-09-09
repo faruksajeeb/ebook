@@ -60,11 +60,13 @@ Route::middleware('JWT')->group(function () {
     Route::apiResource('/sub-categories', SubCategoryController::class);
 
     Route::apiResource('/users', UserController::class);
-    Route::apiResource('/roles', RoleController::class);
+    Route::apiResource('/roles', RoleController::class);    
     Route::apiResource('/manage-permission', PermissionController::class);
+
+    Route::apiResource('/customers', CustomerController::class);
+    
     Route::apiResource('/manage-employee', EmployeeController::class);
     Route::apiResource('/manage-supplier', SupplierController::class);
-    Route::apiResource('/manage-customer', CustomerController::class);
     Route::apiResource('/manage-category', CategoryController::class);
     Route::apiResource('/manage-product', ProductController::class);
     Route::apiResource('/manage-expense', ExpenseController::class);

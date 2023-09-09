@@ -26,11 +26,7 @@ class UserController extends Controller
     {
         $this->tableName = 'users';
         $this->webspice = new Webspice();
-        $this->middleware(function ($request, $next) {
-            //    $this->user = Auth::user();
-            $this->user = Auth::guard('web')->user();
-            return $next($request);
-        });
+        $this->middleware('JWT');
         $this->users = $users;
     }
 

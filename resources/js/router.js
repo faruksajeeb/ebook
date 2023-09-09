@@ -45,6 +45,11 @@ import SubCategoryForm from "./components/master_data/sub-category/SubCategoryFo
 import ManageSubCategory from "./components/master_data/sub-category/ManageSubCategory.vue";
 import ViewSubCategory from "./components/master_data/sub-category/SubCategory.vue";
 
+// Customer Files
+import CustomerForm from "./components/customer/CustomerForm.vue";
+import ManageCustomer from "./components/customer/ManageCustomer.vue";
+import Customer from "./components/customer/Customer.vue";
+
 // Employee Files
 import AddEmployee from "./components/employee/create.vue";
 import ManageEmployee from "./components/employee/index.vue";
@@ -54,11 +59,6 @@ import EditEmployee from "./components/employee/edit.vue";
 import AddSupplier from "./components/supplier/create.vue";
 import ManageSupplier from "./components/supplier/index.vue";
 import EditSupplier from "./components/supplier/edit.vue";
-
-// Customer Files
-import AddCustomer from "./components/customer/create.vue";
-import ManageCustomer from "./components/customer/index.vue";
-import EditCustomer from "./components/customer/edit.vue";
 
 // Product Files
 import AddProduct from "./components/product/create.vue";
@@ -172,19 +172,7 @@ export const routes = [
         component: EditSupplier,
     },
 
-    { name: "add-customer", path: "/add-customer", component: AddCustomer },
-    {
-        name: "manage-customer",
-        path: "/manage-customer",
-        component: ManageCustomer,
-        beforeEnter: guard,
-    },
-    {
-        name: "edit-customer",
-        path: "/edit-customer/:id",
-        component: EditCustomer,
-        beforeEnter: guard,
-    },
+  
 
     // Role Paths
     {
@@ -387,6 +375,36 @@ export const routes = [
         beforeEnter: guard,
     },
 
+    
+    // Customer Paths
+    {
+        name: "customers",
+        path: "/customers",
+        component: ManageCustomer,
+        meta: { title: "Manage Customer" },
+        beforeEnter: guard,
+    },
+    {
+        name: "customers.create",
+        path: "/customers/create",
+        component: CustomerForm,
+        meta: { title: "Add Customer" },
+        beforeEnter: guard,
+    },
+    {
+        name: "customers.edit",
+        path: "/customers/:id/edit",
+        component: CustomerForm,
+        meta: { title: "Edit Customer" },
+        beforeEnter: guard,
+    },
+    {
+        name: "customers.view",
+        path: "/customers/:id",
+        component: Customer,
+        meta: { title: "View Customer" },
+        beforeEnter: guard,
+    },
 
     { name: "add-product", path: "/add-product", component: AddProduct },
     {

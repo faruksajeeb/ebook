@@ -54,6 +54,7 @@ import SaveChangesButton from './components/SaveChangesButton.vue';
 import RefreshButton from './components/RefreshButton.vue';
 import ResetButton from './components/ResetButton.vue';
 import LoadingSpinner from './components/LoadingSpinner.vue';
+import NoRecordFound from './components/NoRecordFound.vue';
 const options = {
     color: "red",
     failedColor: "#874b4b",
@@ -73,6 +74,7 @@ const app = createApp(App);
 
 app.component('loader', Loader);
 app.component('LoadingSpinner', LoadingSpinner);
+app.component('NoRecordFound', NoRecordFound);
 app.component('pagination', Bootstrap5Pagination);
 app.component('save-button', SaveButton);
 app.component('save-changes-button', SaveChangesButton);

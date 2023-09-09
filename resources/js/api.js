@@ -1,9 +1,16 @@
 // api.js
 
 import axios from "axios";
-const token = localStorage.getItem('token');
-
-axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+const token = localStorage.getItem("token");
+if (!token) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    if (window.location.href != "http://127.0.0.1:8000/") {
+        window.location.replace("/"); // go to '/login';
+        // this.$router.push({ name: 'login'})
+    }
+}
+axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
 const apiClient = axios.create({
     baseURL: "/api", // Adjust the base URL as per your API configuration

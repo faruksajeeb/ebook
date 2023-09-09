@@ -23,11 +23,7 @@ class RoleController extends Controller
     {
         $this->roles = $roles;
         $this->tableName = 'roles';
-        $this->middleware(function ($request, $next) {
-            //    $this->user = Auth::user();
-            $this->user = Auth::guard('web')->user();
-            return $next($request);
-        });
+        $this->middleware('JWT');
     }
 
     public function index()

@@ -8,27 +8,10 @@
           <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
           >
-            <h3 class="m-0 font-weight-bold">Option List</h3>
+            <h3 class="m-0 font-weight-bold">Customer List</h3>
           </div>
           <div class="card-body p-0 m-0">
-            <!-- <div class="row p-2">
-              <div class="col-md-6">
-                <input
-                  type="text"
-                  v-model="searchTerm"
-                  class="form-control"
-                  style="width: 300px"
-                  placeholder="Search Here"
-                />
-              </div>
-              <div class="col-md-6">
-                <router-link to="/add-option" class="btn btn-primary float-right">
-                  <i class="fa fa-solid fa-plus"></i>
-                  Add option
-                </router-link>
-              </div>
-            </div> -->
-            <!-- <div class="row justify-content-between"> -->
+           
             <div class="row p-2">
               <div class="input-group">
                 <div class="col-md-2">
@@ -44,7 +27,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Search by option. (Type and Enter)"
+                  placeholder="Search by Customer. (Type and Enter)"
                   v-model="search"
                 />
                 <button @click="downloadFile" class="btn my-btn-success export-btn">
@@ -59,11 +42,11 @@
                 />
 
                 <router-link
-                  to="/options/create"
+                  to="/customers/create"
                   class="z-index-1 btn my-btn-primary float-right"
                 >
                   <i class="fa fa-solid fa-plus"></i>
-                  Add Option
+                  Add Customer
                 </router-link>
               </div>
             </div>
@@ -95,25 +78,28 @@
                         >↓</span
                       >
                     </th>
+                    <th class="text-right">Photo</th>
                     <th scope="col">
-                      <a href="#" @click.prevent="changeShort('name')">Option Name</a>
+                      <a href="#" @click.prevent="changeShort('customer_name')">Customer Name</a>
                       <!-- <a href="#">Name</a> -->
                       <span
                         v-if="
-                          this.params.sort_field == 'name' &&
+                          this.params.sort_field == 'customer_name' &&
                           this.params.sort_direction == 'asc'
                         "
                         >↑</span
                       >
                       <span
                         v-if="
-                          this.params.sort_field == 'name' &&
+                          this.params.sort_field == 'customer_name' &&
                           this.params.sort_direction == 'desc'
                         "
                         >↓</span
                       >
                     </th>
-                    <th class="text-right">Option Group</th>
+                    <th class="text-right">Customer Phone</th>
+                    <th class="text-right">Customer Email</th>
+                    <th class="text-right">Customer Address</th>
                     <th class="text-right">Action</th>
                   </tr>
                   <tr>
@@ -127,51 +113,75 @@
                       />
                     </th>
                     <th>
+                     
+                    </th>
+                    <th>
                       <input
                         type="text"
-                        placeholder="Search By Name"
+                        placeholder="Search By Customer Name"
                         class="form-control"
-                        v-model="params.name"
+                        v-model="params.customer_name"
                       />
                     </th>
                     <th>
-                      <select v-model="params.group_name" class="form-select">
-                        <option value="" selected>--select group--</option>
-                        <option :value="optionGroup.id" v-for="optionGroup in optionGroups" :key="optionGroup.id">{{optionGroup.name}}</option>
-                      </select>
+                      <input
+                        type="text"
+                        placeholder="Search By Customer Phone"
+                        class="form-control"
+                        v-model="params.customer_phone"
+                      />
+                    </th>
+                    <th>
+                      <input
+                        type="text"
+                        placeholder="Search By Customer Email"
+                        class="form-control"
+                        v-model="params.customer_email"
+                      />
+                    </th>
+                    <th>
+                      <input
+                        type="text"
+                        placeholder="Search By Customer Address"
+                        class="form-control"
+                        v-model="params.customer_address"
+                      />
                     </th>
                     <th></th>
                   </tr>
                 </thead>
-                <tbody v-if="options && paginator.totalRecords > 0">
-                  <tr v-for="option in options.data" :key="option.id">
+                <tbody v-if="customers && paginator.totalRecords > 0">
+                  <tr v-for="customer in customers.data" :key="customer.id">
                     <td class="text-center">
                       <input
                         type="checkbox"
-                        :value="option.id"
+                        :value="customer.id"
                         v-model="checked"
                         class="form-check-input"
                       />
                     </td>
-                    <td class="text-nowrap">{{ option.id }}</td>
-                    <td>{{ option.name }}</td>
-                    <td>
-                       {{ option.option_group.name }}
-                    </td>
+                    <td class="text-nowrap">{{ customer.id }}</td>
+                    <td> 
+                    <img :src="customer.customer_photo" alt="Customer Photo" width="50"/></td>
+                    <td>{{ customer.customer_name }}</td>
+                    <td>{{ customer.customer_phone }}</td>
+                    <td>{{ customer.customer_email }}</td>
+                    <td>{{ customer.customer_address }}</td>
+                   
                     <td class="text-right text-nowrap">
                       <div  class="btn-group" option="group" >
                       <router-link
-                  :to="`/options/${option.id}`"
+                  :to="`/customers/${customer.id}`"
                   class="btn btn-sm my-btn-primary"
                   ><i class="fa fa-eye"></i> View</router-link
                 >
                       <router-link
-                        :to="`/options/${option.id}/edit`"
+                        :to="`/customers/${customer.id}/edit`"
                         class="btn btn-sm btn-primary px-2 mx-1"
                         ><i class="fa fa-edit"></i> Edit</router-link
                       >
                       <a
-                        @click="deleteoption(option.id)"
+                        @click="deleteCustomer(customer.id)"
                         class="btn btn-sm btn-danger px-2 mx-1"
                       >
                         <font color="#ffffff"><i class="fa fa-trash"></i> Delete</font></a
@@ -182,7 +192,7 @@
                 </tbody>
                 <tbody v-else>
                   <tr>
-                    <td colspan="5" class="text-center loading-section">
+                    <td colspan="8" class="text-center loading-section">
                       <loader v-if="isLoading"></loader>
                       <NoRecordFound v-else />
                     </td>
@@ -203,9 +213,9 @@
               <div class="col-md-6">
                 <pagination
                   align="right"
-                  :data="options"
+                  :data="customers"
                   :limit="5"
-                  @pagination-change-page="getOptions"
+                  @pagination-change-page="getCustomers"
                 ></pagination>
               </div>
             </div>
@@ -217,9 +227,8 @@
   </div>
 </template>
 <script type="text/javascript">
-import { mapActions } from 'vuex';
 export default {
-  name: "option",
+  name: "Customer",
   data() {
     return {
       checked: [],
@@ -230,15 +239,15 @@ export default {
         current_page: "",
         per_page: "",
       },
-      options: {
+      customers: {
         type: Object,
         default: null,
       },
       params: {
         paginate: 5,
         id: "",
-        name: "",
-        group_name: "",
+        customer_name: "",
+        category_id: "",
         sort_field: "created_at",
         sort_direction: "desc",
       },
@@ -249,41 +258,37 @@ export default {
     };
   },
   create(){
-    this.fetchOptionGroups();
-    if (!User.loggedIn()) {
-      this.$router.push("/");
-    }
+
   },
   mounted() {
     this.filterFields = { ...this.params };
-    this.getOptions();
+    this.getCustomers();
   },
   watch: {
     params: {
       handler() {
-        this.getOptions();
+        this.getCustomers();
       },
       deep: true,
     },
     search(val, old) {
       if (val.length >= 3 || old.length >= 3) {
-        this.getOptions();
+        this.getCustomers();
       }
     },
   },
   computed: {
-    optionGroups() {
-      return this.$store.state.option_groups;
+    categories() {
+      return this.$store.state.categories;
     },
   },
   methods: {
-    ...mapActions(['fetchOptionGroups']),
-    async getOptions(page = 1) {
+    async getCustomers(page = 1) {
       this.isLoading = true;
       await axios
         // .get(`/api/products?page=${page}`)
-        // .get(`/api/products?page=${page}&option_id=${this.params.option_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
-        .get("/api/options", {
+        // .get(`/api/products?page=${page}&Customer_id=${this.params.Customer_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
+        .get("/api/customers", {
           params: {
             page,
             search: this.search.length >= 3 ? this.search : "",
@@ -293,7 +298,7 @@ export default {
         .then((response) => {
           // console.log(response);
           this.isLoading = false;
-          this.options = response.data;
+          this.customers = response.data;
           this.paginator.totalRecords = response.data.total;
           // if (response.data.total <= 0) {
           //   document.querySelector(".loading-section").innerText = "No Record Found!.";
@@ -313,7 +318,7 @@ export default {
     refreshData() {
       this.isRefreshing = true;
       this.params = { ...this.filterFields };
-      this.getOptions();
+      this.getCustomers();
     },
     changeShort(field) {
       if (this.params.sort_field === field) {
@@ -325,7 +330,7 @@ export default {
       }
       // this.getProducts();
     },
-    deleteoption(id) {
+    deleteCustomer(id) {
       Swal.fire({
         allowOutsideClick: false,
         title: "Are you sure?",
@@ -338,9 +343,9 @@ export default {
       }).then((result) => {
         if (result.value) {
           axios
-            .delete("/api/options/" + id)
+            .delete("/api/customers/" + id)
             .then(() => {
-              this.getOptions();
+              this.getCustomers();
               Notification.success("Data has been deleted successfully.");
             })
             .catch((error) => {
@@ -361,12 +366,12 @@ export default {
     },
     downloadFile() {
       let loader =
-        '<span class="spinner-border spinner-border-sm" option="status" aria-hidden="true" ></span> Exporting...';
+        '<span class="spinner-border spinner-border-sm" Customer="status" aria-hidden="true" ></span> Exporting...';
       document.querySelector(".export-btn").innerHTML = loader;
       try {
         axios
           // .get("/api/products-export")
-          .get("/api/option-export", { responseType: "arraybuffer" })
+          .get("/api/customer-export", { responseType: "arraybuffer" })
           .then((response) => {
             if (response.status == 200) {
               document.querySelector(".export-btn").innerText = "Export to Excel";
@@ -374,7 +379,7 @@ export default {
               var fileURL = window.URL.createObjectURL(new Blob([response.data]));
               var fileLink = document.createElement("a");
               fileLink.href = fileURL;
-              fileLink.setAttribute("download", "option_list.xlsx");
+              fileLink.setAttribute("download", "customer_list.xlsx");
               document.body.appendChild(fileLink);
               fileLink.click();
             } else {
@@ -388,9 +393,9 @@ export default {
     },
     exportPdf() {
       let loader =
-        '<span class="spinner-border spinner-border-sm" option="status" aria-hidden="true" ></span>  Exporting...PDF';
+        '<span class="spinner-border spinner-border-sm" customer="status" aria-hidden="true" ></span>  Exporting...PDF';
       document.querySelector(".export-btn-pdf").innerHTML = loader;
-      axios.get("/api/option-export-pdf", { responseType: "blob" }).then((response) => {
+      axios.get("/api/customer-export-pdf", { responseType: "blob" }).then((response) => {
         document.querySelector(".export-btn-pdf").innerText = "Export PDF";
         Notification.success("Exported Successfully");
         var fileURL = window.URL.createObjectURL(
@@ -398,7 +403,7 @@ export default {
         );
         var fileLink = document.createElement("a");
         fileLink.href = fileURL;
-        fileLink.setAttribute("download", "option_list.pdf");
+        fileLink.setAttribute("download", "customer_list.pdf");
         document.body.appendChild(fileLink);
         fileLink.click();
       });

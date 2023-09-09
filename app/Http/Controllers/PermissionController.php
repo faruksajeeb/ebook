@@ -25,11 +25,7 @@ class PermissionController extends Controller
     {
         $this->permissions = $permissions;
         $this->tableName = 'permissions';
-        $this->middleware(function ($request, $next) {
-            //    $this->user = Auth::user();
-            $this->user = Auth::guard('web')->user();
-            return $next($request);
-        });
+        $this->middleware('JWT');
     }
 
     public function index()

@@ -6,6 +6,7 @@
                         role="status"
                         aria-hidden="true"
                       ></span> -->
+                      
     </div>
   </template>
   
@@ -26,7 +27,7 @@
   
     .loader {
       border: 4px solid #f3f3f3;
-      border-top: 4px solid #3498db;
+      border-top: 4px solid #974EC3;
       border-radius: 50%;
       width: 70px;
       height: 70px;

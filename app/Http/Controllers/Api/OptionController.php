@@ -22,6 +22,7 @@ class OptionController extends Controller
         $this->webspice = $webspice;
         $this->options = $option;
         $this->tableName = 'options';
+        $this->middleware('JWT');
     }
 
     public function index()

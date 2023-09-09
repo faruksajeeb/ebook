@@ -22,11 +22,7 @@ class OptionGroupController extends Controller
         $this->webspice = $webspice;
         $this->option_groups = $option_group;
         $this->tableName = 'option_groups';
-        $this->middleware(function ($request, $next) {
-            //    $this->user = Auth::user();
-            $this->user = Auth::guard('web')->user();
-            return $next($request);
-        });
+        $this->middleware('JWT');
     }
 
     public function index()

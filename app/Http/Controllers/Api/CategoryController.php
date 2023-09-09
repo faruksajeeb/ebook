@@ -22,11 +22,7 @@ class CategoryController extends Controller
         $this->webspice = $webspice;
         $this->categories = $category;
         $this->tableName = 'categories';
-        $this->middleware(function ($request, $next) {
-            //    $this->user = Auth::user();
-            $this->user = Auth::guard('web')->user();
-            return $next($request);
-        });
+        $this->middleware('JWT');
     }
 
     public function index()

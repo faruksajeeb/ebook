@@ -178,7 +178,7 @@
                   <tr>
                     <td colspan="5" class="text-center " id="loading-section">                   
                       <loader v-if="isLoading"></loader>
-                      <p v-else>No Record Found!</p>
+                      <NoRecordFound v-else />
                     </td>
                   </tr>
                 </tbody>

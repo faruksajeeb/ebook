@@ -22,6 +22,7 @@ class SubCategoryController extends Controller
         $this->webspice = $webspice;
         $this->SubCategories = $SubCategory;
         $this->tableName = 'sub_categories';
+        $this->middleware('JWT');
     }
 
     public function index()
