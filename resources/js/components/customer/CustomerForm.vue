@@ -28,6 +28,7 @@
                     type="text"
                     class="form-control"
                     placeholder="Enter Your Customer Name"
+                    name="customer_name"
                     v-model="form.customer_name"
                     :class="{ 'is-invalid': form.errors.has('customer_name') }"
                   />
@@ -136,12 +137,13 @@ export default {
       // this.form.customer_photo = response.data.customer_photo;
       this.form.customer_email = response.data.customer_email;
       this.form.customer_address = response.data.customer_address;
-      this.imageUrl = `${window.publicPath}`+response.data.customer_photo;
+      this.imageUrl = `${window.publicPath}assets/img/customer/thumbnail/`+response.data.customer_photo;
     }
   },
   methods: {
     onFileChange(e) {     
       this.form.customer_photo = e.target.files[0];
+    
       const reader = new FileReader();
 
       reader.onload = (e) => {
@@ -183,20 +185,8 @@ export default {
           });
       } else {
         try {
-          // const form = document.getElementById("form");
-          // let formData = new FormData(form);
-          // formData.append('customer_name', this.form.customer_name);
-          // formData.append('customer_phone', this.form.customer_phone);
-          // formData.append('customer_email', this.form.customer_email);
-          // formData.append('customer_address', this.form.customer_address);
-          // formData.append('customer_photo', this.from.customer_photo);
-          // this.form.append('customer_photo', this.from.customer_photo);
           await this.form
-            .put(`/api/customers/${this.$route.params.id}`, this.form,{
-                    headers: {
-                        'content-type': 'multipart/form-data',
-                    }
-                })
+            .post(`/api/customers/${this.$route.params.id}`, this.form)
             .then((response) => {
               Notification.success("Customer info Updated");
               this.$router.push("/customers");

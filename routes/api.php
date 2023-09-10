@@ -64,6 +64,8 @@ Route::middleware('JWT')->group(function () {
     Route::apiResource('/manage-permission', PermissionController::class);
 
     Route::apiResource('/customers', CustomerController::class);
+    // Custom PUT Api for edit
+    Route::post('/customers/{id}',[CustomerController::class,'update']);
     
     Route::apiResource('/manage-employee', EmployeeController::class);
     Route::apiResource('/manage-supplier', SupplierController::class);

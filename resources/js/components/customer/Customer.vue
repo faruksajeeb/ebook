@@ -12,7 +12,28 @@
         <div class="card-body">
           <div v-if="customer">
             <h3>Customer Name: {{ customer.customer_name }}</h3>
-            <img :src="customerPhotoUrl" alt="Cutomer Photo" width="100"/>
+            <div class="row">
+              <div class="col-md-4">
+            <img :src="customerPhotoUrl" alt="Cutomer Photo" width="250"  class="img-fluid"/>
+              
+              </div>
+              <div class="col-md-8">
+                <table class="table ">
+                  <tr>
+                    <td>Phone</td>
+                    <td>{{ customer.customer_phone }}</td>
+                  </tr>
+                  <tr>
+                    <td>Email</td>
+                    <td>{{ customer.customer_email }}</td>
+                  </tr>
+                  <tr>
+                    <td>Address</td>
+                    <td>{{ customer.customer_address }}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
           </div>
 
           <div v-else>
@@ -41,7 +62,7 @@ export default {
       const response = await axios.get(`/api/customers/${this.$route.params.id}`);
       // alert(response.data);
       this.customer = response.data;
-      this.customerPhotoUrl = `${window.publicPath}`+response.data.customer_photo;
+      this.customerPhotoUrl = `${window.publicPath}assets/img/customer/`+response.data.customer_photo;
     },
   },
 };

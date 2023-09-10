@@ -153,6 +153,7 @@ return [
     | this array to grant expanded functionality to your applications.
     |
     */
+    'request' => Illuminate\Http\Request::class,
 
     'providers' => [
 

@@ -76,7 +76,6 @@ class CustomerController extends Controller
 
     public function store(Request $request)
     {
-
         #permission verfy
         // $this->webspice->permissionVerify('customer.create');
 
@@ -116,7 +115,7 @@ class CustomerController extends Controller
                 // $filename = $file->getClientOriginalName();
                 // $uploadedPath = $file->move(public_path($destinationPath), $filename);
                 if ($uploadSuccess) {
-                    $input['customer_photo'] = $destinationPath . $imageName;
+                    $input['customer_photo'] = $imageName;
                 }
             }
             $input['created_by'] = $this->webspice->getUserId();
@@ -149,11 +148,7 @@ class CustomerController extends Controller
 
     public function update(Request $request, $id)
     {
-        //  dd($id);
-        dd($request->all());
-
-
-
+        // dd($request->isMethod('put'));
         #permission verfy
         // $this->webspice->permissionVerify('customer.edit');
 
@@ -164,7 +159,7 @@ class CustomerController extends Controller
             [
                 'customer_phone' => 'required|regex:/^[a-zA-Z 0-9]+$/u|min:3|max:20|unique:customers,customer_phone,' . $id,
                 'customer_name' => 'required',
-                // 'customer_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'customer_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ],
             [
                 'customer_name.required' => 'customer Name field is required.',
@@ -200,7 +195,7 @@ class CustomerController extends Controller
                     if ($existingImage) {
                         unlink($existingImage);
                     }
-                    $customer->customer_photo = $destinationPath . $imageName;
+                    $customer->customer_photo = $imageName;
                 }
             }
             $customer->updated_by = $this->webspice->getUserId();

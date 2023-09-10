@@ -162,7 +162,7 @@
                     </td>
                     <td class="text-nowrap">{{ customer.id }}</td>
                     <td> 
-                    <img :src="customer.customer_photo" alt="Customer Photo" width="50"/></td>
+                    <img :src="`${publicPath}assets/img/customer/thumbnail/`+customer.customer_photo" alt="Customer Photo" width="50"/></td>
                     <td>{{ customer.customer_name }}</td>
                     <td>{{ customer.customer_phone }}</td>
                     <td>{{ customer.customer_email }}</td>
@@ -231,6 +231,7 @@ export default {
   name: "Customer",
   data() {
     return {
+      publicPath : window.publicPath,
       checked: [],
       paginator: {
         totalRecords: 0,
