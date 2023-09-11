@@ -61,6 +61,10 @@ import ManageAuthor from "./components/master_data/author/ManageAuthor.vue";
 import PublisherForm from "./components/master_data/publisher/PublisherForm.vue";
 import ManagePublisher from "./components/master_data/publisher/ManagePublisher.vue";
 
+// Book Files
+import BookForm from "./components/book/BookForm.vue";
+import ManageBook from "./components/book/ManageBook.vue";
+
 // Employee Files
 import AddEmployee from "./components/employee/create.vue";
 import ManageEmployee from "./components/employee/index.vue";
@@ -459,7 +463,28 @@ export const routes = [
         meta: { title: "Edit Supplier" },
         beforeEnter: guard,
     },
-
+// Book Paths
+{
+    name: "books",
+    path: "/books",
+    component: ManageBook,
+    meta: { title: "Manage Book" },
+    beforeEnter: guard,
+},
+{
+    name: "books.create",
+    path: "/books/create",
+    component: BookForm,
+    meta: { title: "Add Book" },
+    beforeEnter: guard,
+},
+{
+    name: "books.edit",
+    path: "/books/:id/edit",
+    component: BookForm,
+    meta: { title: "Edit Book" },
+    beforeEnter: guard,
+},
     { name: "add-product", path: "/add-product", component: AddProduct },
     {
         name: "manage-product",

@@ -198,19 +198,91 @@
         </a>
         <div id="collapseProduct" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <router-link class="collapse-item" to="/add-product">Add Product</router-link>
-            <router-link class="collapse-item" to="/manage-product">Manage Product</router-link>
+            <router-link class="collapse-item" to="/books/create">Add Book</router-link>
+            <router-link class="collapse-item" to="/books">Manage Book</router-link>
           </div>
         </div>
       </li>
-      
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePurchase"
+          aria-expanded="true" aria-controls="collapsePurchase">
+          <i class="far fa-fw fa-window-maximize"></i>
+          <span>Purchases</span>
+        </a>
+        <div id="collapsePurchase" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <router-link class="collapse-item" to="/add-employee">Add Purchase</router-link>
+            <router-link class="collapse-item" to="/manage-employee">Manage Purchase</router-link>
+          </div>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSale"
+          aria-expanded="true" aria-controls="collapseSale">
+          <i class="far fa-fw fa-window-maximize"></i>
+          <span>Sales</span>
+        </a>
+        <div id="collapseSale" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <router-link class="collapse-item" to="/add-employee">Add Sale</router-link>
+            <router-link class="collapse-item" to="/manage-employee">Manage Sale</router-link>
+          </div>
+        </div>
+      </li>     
+
+      <li class="nav-item">
+        <router-link class="nav-link" to="/stock">
+          <i class="fab fa-fw fa-wpforms"></i>
+          <span>Stock</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePayment"
+            aria-expanded="true" aria-controls="collapsePayment">
+            <i class="far fa-fw fa-window-maximize"></i>
+            <span>Payments</span>
+          </a>
+          <div id="collapsePayment" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+            <ul id="accordionPaymentBar" class="navbar-nav accordion px-3" >
+            <li class="nav-item py-2 ">
+                    <a class="nav-link-layer-two collapsed" href="#" data-toggle="collapse" data-target="#collapseCustomerPayment"
+                      aria-expanded="true" aria-controls="collapseCustomerPayment">                
+                      <span>Customer Payments</span>
+                    </a>
+                    <div id="collapseCustomerPayment" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionPaymentBar">
+                      <div class="bg-white py-2  rounded">
+                        <router-link class="collapse-item p-1" to="/roles/create">Add Payment</router-link>
+                        <router-link class="collapse-item p-1" to="/roles">Manage Payment</router-link>
+                      </div>
+                  </div>
+            </li>
+            <li class="nav-item py-2">
+                    <a class="nav-link-layer-two collapsed" href="#" data-toggle="collapse" data-target="#collapseSupplierPayment"
+                      aria-expanded="true" aria-controls="collapseSupplierPayment">                   
+                      <span>Supplier Payments</span>
+                    </a>
+                    <div id="collapseSupplierPayment" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionPaymentBar">
+                      <div class="bg-white py-2  rounded">
+                        <router-link v-if="userPermissions.includes('user.create')" class="collapse-item p-1" to="/users/create">Add Payment</router-link>
+                      
+                        <router-link v-if="userPermissions.includes('user.manage')"   class="collapse-item p-1" to="/users">Manage Payment</router-link>
+                      
+                      </div>
+                  </div>
+            </li>
+            </ul>           
+            </div>
+          </div>
+      </li>
 
       
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEmployee"
           aria-expanded="true" aria-controls="collapseEmployee">
           <i class="far fa-fw fa-window-maximize"></i>
-          <span>Employee</span>
+          <span>Employees</span>
         </a>
         <div id="collapseEmployee" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
@@ -219,7 +291,6 @@
           </div>
         </div>
       </li>
-
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseExpense"
           aria-expanded="true" aria-controls="collapseExpense">
@@ -257,18 +328,13 @@
         <div id="collapseBootstrap51" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
            
-   <router-link class="collapse-item" to="/order">Today Order</router-link>
-   <router-link class="collapse-item" to="/searchorder">Search</router-link>
+            <router-link class="collapse-item" to="/order">Today Order</router-link>
+            <router-link class="collapse-item" to="/searchorder">Search</router-link>
             
           </div>
         </div>
       </li>
-      <li class="nav-item">
-        <router-link class="nav-link" to="/stock">
-          <i class="fab fa-fw fa-wpforms"></i>
-          <span>Stock</span>
-        </router-link>
-      </li>
+    
 
       <li class="nav-item">
         <a class="nav-link" href="forms.html">
