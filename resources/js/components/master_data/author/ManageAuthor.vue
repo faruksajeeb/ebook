@@ -5,9 +5,10 @@
         <!-- Simple Tables -->
         <div class="card">
           <div
-            class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+            class="card-header py-3"
           >
-            <h3 class="m-0 font-weight-bold">Customer List</h3>
+            <h3 class="m-0 font-weight-bold">Author List</h3>
+            <p class="text-secondary m-0">Stores information about book authors</p>
           </div>
           <div class="card-body p-0 m-0">
             <div class="row p-2">
@@ -25,7 +26,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Search by Customer. (Type and Enter)"
+                  placeholder="Search by author. (Type and Enter)"
                   v-model="search"
                 />
                 <button @click="downloadFile" class="btn my-btn-success export-btn">
@@ -40,11 +41,11 @@
                 />
 
                 <router-link
-                  to="/customers/create"
+                  to="/authors/create"
                   class="z-index-1 btn my-btn-primary float-right"
                 >
                   <i class="fa fa-solid fa-plus"></i>
-                  Add Customer
+                  Add author
                 </router-link>
               </div>
             </div>
@@ -76,35 +77,34 @@
                         >↓</span
                       >
                     </th>
-                    <th class="text-right">Photo</th>
+                    <th class="text-center">Photo</th>
                     <th scope="col">
-                      <a href="#" @click.prevent="changeShort('customer_name')"
-                        >Customer Name</a
+                      <a href="#" @click.prevent="changeShort('author_name')"
+                        >Author Name</a
                       >
                       <!-- <a href="#">Name</a> -->
                       <span
                         v-if="
-                          this.params.sort_field == 'customer_name' &&
+                          this.params.sort_field == 'author_name' &&
                           this.params.sort_direction == 'asc'
                         "
                         >↑</span
                       >
                       <span
                         v-if="
-                          this.params.sort_field == 'customer_name' &&
+                          this.params.sort_field == 'author_name' &&
                           this.params.sort_direction == 'desc'
                         "
                         >↓</span
                       >
                     </th>
-                    <th class="text-right">Customer Phone</th>
-                    <th class="text-right">Customer Email</th>
-                    <th class="text-right">Customer Address</th>
-                    <th class="text-right">Action</th>
+                    <th class="text-center"> Phone</th>
+                    <th class="text-center"> Email</th>
+                    <th class="text-center"> Address</th>
+                    <th class="text-center">Action</th>
                   </tr>
                   <tr>
-                    <th></th>
-                    <th>
+                    <th colspan="2">
                       <input
                         type="text"
                         placeholder="Search By ID"
@@ -112,83 +112,82 @@
                         v-model="params.id"
                       />
                     </th>
-                    <th></th>
-                    <th>
+                    <th colspan="2">
                       <input
                         type="text"
-                        placeholder="Search By Customer Name"
+                        placeholder="Search By author Name"
                         class="form-control"
-                        v-model="params.customer_name"
+                        v-model="params.author_name"
                       />
                     </th>
                     <th>
                       <input
                         type="text"
-                        placeholder="Search By Customer Phone"
+                        placeholder="Search By author Phone"
                         class="form-control"
-                        v-model="params.customer_phone"
+                        v-model="params.author_phone"
                       />
                     </th>
                     <th>
                       <input
                         type="text"
-                        placeholder="Search By Customer Email"
+                        placeholder="Search By author Email"
                         class="form-control"
-                        v-model="params.customer_email"
+                        v-model="params.author_email"
                       />
                     </th>
                     <th>
                       <input
                         type="text"
-                        placeholder="Search By Customer Address"
+                        placeholder="Search By author Address"
                         class="form-control"
-                        v-model="params.customer_address"
+                        v-model="params.author_address"
                       />
                     </th>
                     <th></th>
                   </tr>
                 </thead>
-                <tbody v-if="customers && paginator.totalRecords > 0">
-                  <tr v-for="customer in customers.data" :key="customer.id">
+                <tbody v-if="authors && paginator.totalRecords > 0">
+                  <tr v-for="author in authors.data" :key="author.id">
                     <td class="text-center">
                       <input
                         type="checkbox"
-                        :value="customer.id"
+                        :value="author.id"
                         v-model="checked"
                         class="form-check-input"
                       />
                     </td>
-                    <td class="text-nowrap">{{ customer.id }}</td>
+                    <td class="text-nowrap">{{ author.id }}</td>
                     <td>
                       <img
                         :src="
-                          `${publicPath}assets/img/customer/thumbnail/` +
-                          customer.customer_photo
+                          `${publicPath}assets/img/author/thumbnail/` +
+                          author.author_photo
                         "
-                        alt="Customer Photo"
+                        alt="author Photo"
                         width="50"
                       />
                     </td>
-                    <td>{{ customer.customer_name }}</td>
-                    <td>{{ customer.customer_phone }}</td>
-                    <td>{{ customer.customer_email }}</td>
-                    <td>{{ customer.customer_address }}</td>
+                    <td>{{ author.author_name }}</td>
+                    <td>{{ author.author_phone }}</td>
+                    <td>{{ author.author_email }}</td>
+                    <td>{{ author.author_address }}</td>
 
                     <td class="text-right text-nowrap">
                       <div class="btn-group" option="group">
-                        <button @click="openModal(customer.id)" class="btn btn-sm my-btn-primary"  data-toggle="modal" data-target="#recordModal" > <i class="fa fa-eye"></i> View </button>
+                        <button @click="openModal(author.id)" class="btn btn-sm my-btn-primary"  data-toggle="modal" data-target="#recordModal" > <i class="fa fa-eye"></i> View </button>
                         <!-- <router-link
-                          :to="`/customers/${customer.id}`"
+                          :to="`/authors/${author.id}`"
                           class="btn btn-sm my-btn-primary"
                           ><i class="fa fa-eye"></i> View</router-link
                         > -->
                         <router-link
-                          :to="`/customers/${customer.id}/edit`"
+                          :to="`/authors/${author.id}/edit`"
                           class="btn btn-sm btn-primary px-2 mx-1"
                           ><i class="fa fa-edit"></i> Edit</router-link
                         >
                         <a
-                          @click="deleteCustomer(customer.id)"
+                          @click="deleteauthor(author.id)"
                           class="btn btn-sm btn-danger px-2"
                         >
                           <font color="#ffffff"
@@ -222,9 +221,9 @@
               <div class="col-md-6">
                 <pagination
                   align="right"
-                  :data="customers"
+                  :data="authors"
                   :limit="5"
-                  @pagination-change-page="getCustomers"
+                  @pagination-change-page="getAuthors"
                 ></pagination>
               </div>
             </div>
@@ -234,19 +233,19 @@
     </div>
     <!--Row-->
     <!-- Bootstrap Modal -->
-    <ViewCustomer :record="record" />
+    <Viewauthor :record="record" />
     <!-- Modal End -->
   </div>
 </template>
 <script type="text/javascript">
-import ViewCustomer from './ViewCustomer.vue'
+import Viewauthor from './ViewAuthor.vue'
 export default {
-  name: "Customer",
-  components:{ViewCustomer},
+  name: "author",
+  components:{Viewauthor},
   data() {
     return {
       record: {},
-      customerPhotoUrl: null,
+      authorPhotoUrl: null,
       publicPath: window.publicPath,
       checked: [],
       paginator: {
@@ -256,14 +255,14 @@ export default {
         current_page: "",
         per_page: "",
       },
-      customers: {
+      authors: {
         type: Object,
         default: null,
       },
       params: {
         paginate: 5,
         id: "",
-        customer_name: "",
+        author_name: "",
         category_id: "",
         sort_field: "created_at",
         sort_direction: "desc",
@@ -277,18 +276,18 @@ export default {
   create() {},
   mounted() {
     this.filterFields = { ...this.params };
-    this.getCustomers();
+    this.getAuthors();
   },
   watch: {
     params: {
       handler() {
-        this.getCustomers();
+        this.getAuthors();
       },
       deep: true,
     },
     search(val, old) {
       if (val.length >= 3 || old.length >= 3) {
-        this.getCustomers();
+        this.getAuthors();
       }
     },
   },
@@ -298,12 +297,12 @@ export default {
     },
   },
   methods: {
-    async getCustomers(page = 1) {
+    async getAuthors(page = 1) {
       this.isLoading = true;
       await axios
         // .get(`/api/products?page=${page}`)
-        // .get(`/api/products?page=${page}&Customer_id=${this.params.Customer_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
-        .get("/api/customers", {
+        // .get(`/api/products?page=${page}&author_id=${this.params.author_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
+        .get("/api/authors", {
           params: {
             page,
             search: this.search.length >= 3 ? this.search : "",
@@ -313,7 +312,7 @@ export default {
         .then((response) => {
           // console.log(response);
           this.isLoading = false;
-          this.customers = response.data;
+          this.authors = response.data;
           this.paginator.totalRecords = response.data.total;
           // if (response.data.total <= 0) {
           //   document.querySelector(".loading-section").innerText = "No Record Found!.";
@@ -336,7 +335,7 @@ export default {
     refreshData() {
       this.isRefreshing = true;
       this.params = { ...this.filterFields };
-      this.getCustomers();
+      this.getAuthors();
     },
     changeShort(field) {
       if (this.params.sort_field === field) {
@@ -348,7 +347,7 @@ export default {
       }
       // this.getProducts();
     },
-    deleteCustomer(id) {
+    deleteauthor(id) {
       Swal.fire({
         allowOutsideClick: false,
         title: "Are you sure?",
@@ -361,9 +360,9 @@ export default {
       }).then((result) => {
         if (result.value) {
           axios
-            .delete("/api/customers/" + id)
+            .delete("/api/authors/" + id)
             .then(() => {
-              this.getCustomers();
+              this.getAuthors();
               Notification.success("Data has been deleted successfully.");
             })
             .catch((error) => {
@@ -384,12 +383,12 @@ export default {
     },
     downloadFile() {
       let loader =
-        '<span class="spinner-border spinner-border-sm" Customer="status" aria-hidden="true" ></span> Exporting...';
+        '<span class="spinner-border spinner-border-sm" author="status" aria-hidden="true" ></span> Exporting...';
       document.querySelector(".export-btn").innerHTML = loader;
       try {
         axios
           // .get("/api/products-export")
-          .get("/api/customer-export", { responseType: "arraybuffer" })
+          .get("/api/author-export", { responseType: "arraybuffer" })
           .then((response) => {
             if (response.status == 200) {
               document.querySelector(".export-btn").innerText = "Export to Excel";
@@ -397,7 +396,7 @@ export default {
               var fileURL = window.URL.createObjectURL(new Blob([response.data]));
               var fileLink = document.createElement("a");
               fileLink.href = fileURL;
-              fileLink.setAttribute("download", "customer_list.xlsx");
+              fileLink.setAttribute("download", "author_list.xlsx");
               document.body.appendChild(fileLink);
               fileLink.click();
             } else {
@@ -411,9 +410,9 @@ export default {
     },
     exportPdf() {
       let loader =
-        '<span class="spinner-border spinner-border-sm" customer="status" aria-hidden="true" ></span>  Exporting...PDF';
+        '<span class="spinner-border spinner-border-sm" author="status" aria-hidden="true" ></span>  Exporting...PDF';
       document.querySelector(".export-btn-pdf").innerHTML = loader;
-      axios.get("/api/customer-export-pdf", { responseType: "blob" }).then((response) => {
+      axios.get("/api/author-export-pdf", { responseType: "blob" }).then((response) => {
         document.querySelector(".export-btn-pdf").innerText = "Export PDF";
         Notification.success("Exported Successfully");
         var fileURL = window.URL.createObjectURL(
@@ -421,7 +420,7 @@ export default {
         );
         var fileLink = document.createElement("a");
         fileLink.href = fileURL;
-        fileLink.setAttribute("download", "customer_list.pdf");
+        fileLink.setAttribute("download", "author_list.pdf");
         document.body.appendChild(fileLink);
         fileLink.click();
       });
@@ -429,7 +428,7 @@ export default {
     openModal(id) {
       // Fetch the record details from the server using Axios or a similar library
       axios
-        .get(`api/customers/${id}`)
+        .get(`api/authors/${id}`)
         .then((response) => {
           this.record = response.data;
           // Open the Bootstrap modal

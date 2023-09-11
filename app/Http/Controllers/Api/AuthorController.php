@@ -4,25 +4,25 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Lib\Webspice;
-use App\Models\Customer;
+use App\Models\Author;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Image;
 
-class CustomerController extends Controller
+class AuthorController extends Controller
 {
     public $webspice;
-    protected $customer;
-    protected $customers;
-    protected $customerid;
+    protected $author;
+    protected $authors;
+    protected $authorid;
     public $tableName;
 
-    public function __construct(Customer $customer, Webspice $webspice)
+    public function __construct(Author $author, Webspice $webspice)
     {
         $this->webspice = $webspice;
-        $this->customers = $customer;
-        $this->tableName = 'customers';
+        $this->authors = $author;
+        $this->tableName = 'authors';
         $this->middleware('JWT');
     }
 
@@ -36,10 +36,10 @@ class CustomerController extends Controller
             $sortField = request('sort_field', 'created_at');
             if (!in_array($sortField, [
                 'id',
-                'customer_name',
-                'customer_email',
-                'customer_phone',
-                'customer_address',
+                'author_name',
+                'author_email',
+                'author_phone',
+                'author_address',
             ])) {
                 $sortField = 'created_at';
             }
@@ -50,13 +50,13 @@ class CustomerController extends Controller
 
             $filled = array_filter(request([
                 'id',
-                'customer_name',
-                'customer_email',
-                'customer_phone',
-                'customer_address',
+                'author_name',
+                'author_email',
+                'author_phone',
+                'author_address',
             ]));
 
-            $customers = customer::when(count($filled) > 0, function ($query) use ($filled) {
+            $authors = Author::when(count($filled) > 0, function ($query) use ($filled) {
                 foreach ($filled as $column => $value) {
                     $query->where($column, 'LIKE', '%' . $value . '%');
                 }
@@ -65,7 +65,7 @@ class CustomerController extends Controller
                 $query->search(trim($searchTerm));
             })->orderBy($sortField, $sortDirection)->paginate($paginate);
 
-            return response()->json($customers);
+            return response()->json($authors);
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -78,50 +78,50 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('customer.create');
+        // $this->webspice->permissionVerify('author.create');
 
         $request->validate(
             [
-                'customer_phone' => 'required|regex:/^[a-zA-Z 0-9]+$/u|min:3|max:20|unique:customers',
-                'customer_name' => 'required',
-                'customer_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'author_name' => 'required|regex:/^[a-zA-Z 0-9]+$/u|min:3|max:20|unique:authors',
+              
+                'author_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ],
             [
-                'customer_name.required' => 'customer name field is required.',
-                'customer_phone.unique' => 'The customer phone has already been taken.',
-                'customer_name.regex' => 'The customer name format is invalid. Please enter alpabatic text.',
-                'customer_name.min' => 'The customer name must be at least 3 characters.',
-                'customer_name.max' => 'The customer name may not be greater than 20 characters.',
+                'author_name.required' => 'author name field is required.',
+                'author_phone.unique' => 'The author phone has already been taken.',
+                'author_name.regex' => 'The author name format is invalid. Please enter alpabatic text.',
+                'author_name.min' => 'The author name must be at least 3 characters.',
+                'author_name.max' => 'The author name may not be greater than 20 characters.',
             ]
         );
 
         try {
-            // $this->customers->create($data);
+            // $this->authors->create($data);
             $input = $request->all();
-            if ($request->hasFile('customer_photo')) {
-                $image = Image::make($request->file('customer_photo'));
-                $imageName = time() . '-' . $request->file('customer_photo')->getClientOriginalName();
+            if ($request->hasFile('author_photo')) {
+                $image = Image::make($request->file('author_photo'));
+                $imageName = time() . '-' . $request->file('author_photo')->getClientOriginalName();
 
-                $destinationPath = 'assets/img/customer/';
+                $destinationPath = 'assets/img/author/';
                 $uploadSuccess = $image->save($destinationPath . $imageName);
 
                 /**
                  * Generate Thumbnail Image Upload on Folder Code
                  */
-                $destinationPathThumbnail = public_path('assets/img/customer/thumbnail/');
+                $destinationPathThumbnail = public_path('assets/img/author/thumbnail/');
                 $image->resize(50, 50);
                 $image->save($destinationPathThumbnail . $imageName);
 
-                // $file = $request->file('customer_photo');
+                // $file = $request->file('author_photo');
                 // $filename = $file->getClientOriginalName();
                 // $uploadedPath = $file->move(public_path($destinationPath), $filename);
                 if ($uploadSuccess) {
-                    $input['customer_photo'] = $imageName;
+                    $input['author_photo'] = $imageName;
                 }
             }
             $input['created_by'] = $this->webspice->getUserId();
 
-            $this->customers->create($input);
+            $this->authors->create($input);
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -136,8 +136,8 @@ class CustomerController extends Controller
     public function show($id)
     {
         try {
-            $customer = Customer::find($id);
-            return $customer;
+            $author = Author::find($id);
+            return $author;
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -151,48 +151,48 @@ class CustomerController extends Controller
     {
         // dd($request->isMethod('put'));
         #permission verfy
-        // $this->webspice->permissionVerify('customer.edit');
+        // $this->webspice->permissionVerify('author.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 
         $request->validate(
             [
-                'customer_phone' => 'required|regex:/^[a-zA-Z 0-9]+$/u|min:3|max:20|unique:customers,customer_phone,' . $id,
-                'customer_name' => 'required',
-                'customer_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'author_name' => 'required|regex:/^[a-zA-Z 0-9]+$/u|min:3|max:20|unique:authors,author_name,' . $id,               
+                'author_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ],
             [
-                'customer_name.required' => 'customer Name field is required.',
-                'customer_phone.unique' => '"' . $request->customer_phone . '" The customer phone has already been taken.',
-                'customer_name.regex' => 'The customer name format is invalid. Please enter alpabatic text.',
-                'customer_name.min' => 'The customer name must be at least 3 characters.',
-                'customer_name.max' => 'The customer name may not be greater than 20 characters.',
+                'author_name.required' => 'author Name field is required.',
+                'author_phone.unique' => '"' . $request->author_phone . '" The author phone has already been taken.',
+                'author_name.regex' => 'The author name format is invalid. Please enter alpabatic text.',
+                'author_name.min' => 'The author name must be at least 3 characters.',
+                'author_name.max' => 'The author name may not be greater than 20 characters.',
             ]
         );
         try {
-            $customer = Customer::find($id);
-            $customer->customer_name = $request->customer_name;
-            $customer->customer_phone = $request->customer_phone;
-            $customer->customer_email = $request->customer_email;
-            $customer->customer_address = $request->customer_address;
-            if ($request->hasFile('customer_photo')) {
-                $image = Image::make($request->file('customer_photo'));
-                $imageName = time() . '-' . $request->file('customer_photo')->getClientOriginalName();
+            $author = Author::find($id);
+            $author->author_name = $request->author_name;
+            $author->author_phone = $request->author_phone;
+            $author->author_email = $request->author_email;
+            $author->author_address = $request->author_address;
+            $author->author_country = $request->author_country;
+            if ($request->hasFile('author_photo')) {
+                $image = Image::make($request->file('author_photo'));
+                $imageName = time() . '-' . $request->file('author_photo')->getClientOriginalName();
 
-                $destinationPath = 'assets/img/customer/';
+                $destinationPath = 'assets/img/author/';
                 $uploadSuccess = $image->save($destinationPath . $imageName);
 
                 /**
                  * Generate Thumbnail Image Upload on Folder Code
                  */
-                $destinationPathThumbnail = public_path('assets/img/customer/thumbnail/');
+                $destinationPathThumbnail = public_path('assets/img/author/thumbnail/');
                 $image->resize(50, 50);
                 $image->save($destinationPathThumbnail . $imageName);
                 if ($uploadSuccess) {
                     //Delete Old File
-                    $imgExist = Customer::where('id', $id)->first();
-                    $existingImage = $imgExist->customer_photo;
+                    $imgExist = Author::where('id', $id)->first();
+                    $existingImage = $imgExist->author_photo;
                     if ($existingImage) {
                       
                         if (Storage::disk('local')->exists($destinationPath . $existingImage)) {                           
@@ -202,11 +202,11 @@ class CustomerController extends Controller
                             unlink($destinationPathThumbnail . $existingImage);
                         }
                     }
-                    $customer->customer_photo = $imageName;
+                    $author->author_photo = $imageName;
                 }
             }
-            $customer->updated_by = $this->webspice->getUserId();
-            $customer->save();
+            $author->updated_by = $this->webspice->getUserId();
+            $author->save();
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -214,19 +214,19 @@ class CustomerController extends Controller
                     'error' => $e->getMessage(),
                 ], 401);
         }
-        // return redirect()->route('customers.index');
+        // return redirect()->route('authors.index');
     }
 
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('customer.delete');
+        // $this->webspice->permissionVerify('author.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 
-            $customer = $this->customers->findById($id);
-            $customer->delete();
+            $author = $this->authors->findById($id);
+            $author->delete();
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -241,12 +241,12 @@ class CustomerController extends Controller
     {
         return response()->json(['error' => 'Unauthenticated.'], 401);
         #permission verfy
-        $this->webspice->permissionVerify('customer.force_delete');
+        $this->webspice->permissionVerify('author.force_delete');
         try {
             #decrypt value
             $id = $this->webspice->encryptDecrypt('decrypt', $id);
-            $customer = customer::withTrashed()->findOrFail($id);
-            $customer->forceDelete();
+            $author = Author::withTrashed()->findOrFail($id);
+            $author->forceDelete();
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
@@ -255,37 +255,37 @@ class CustomerController extends Controller
     public function restore($id)
     {
         #permission verfy
-        $this->webspice->permissionVerify('customer.restore');
+        $this->webspice->permissionVerify('author.restore');
         try {
             $id = $this->webspice->encryptDecrypt('decrypt', $id);
-            $customer = customer::withTrashed()->findOrFail($id);
-            $customer->restore();
+            $author = Author::withTrashed()->findOrFail($id);
+            $author->restore();
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
-        // return redirect()->route('customers.index', ['status' => 'archived'])->withSuccess(__('User restored successfully.'));
-        return redirect()->route('customers.index');
+        // return redirect()->route('authors.index', ['status' => 'archived'])->withSuccess(__('User restored successfully.'));
+        return redirect()->route('authors.index');
     }
 
     public function restoreAll()
     {
         #permission verfy
-        $this->webspice->permissionVerify('customer.restore');
+        $this->webspice->permissionVerify('author.restore');
         try {
-            $customers = customer::onlyTrashed()->get();
-            foreach ($customers as $customer) {
-                $customer->restore();
+            $authors = Author::onlyTrashed()->get();
+            foreach ($authors as $author) {
+                $author->restore();
             }
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
-        return redirect()->route('customers.index');
-        // return redirect()->route('customers.index')->withSuccess(__('All customers restored successfully.'));
+        return redirect()->route('authors.index');
+        // return redirect()->route('authors.index')->withSuccess(__('All authors restored successfully.'));
     }
 
-    public function getcustomers()
+    public function getauthors()
     {
-        $data = customer::where('status', 1)->get();
+        $data = Author::where('status', 1)->get();
         return response()->json($data);
     }
 

@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\OptionGroupController;
 use App\Http\Controllers\Api\OptionController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\SubCategoryController;
+use App\Http\Controllers\Api\AuthorController;
+use App\Http\Controllers\Api\PublisherController;
 
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CustomerController;
@@ -63,13 +65,20 @@ Route::middleware('JWT')->group(function () {
     Route::apiResource('/roles', RoleController::class);    
     Route::apiResource('/manage-permission', PermissionController::class);
 
-    Route::apiResource('/customers', CustomerController::class);
-    // Custom PUT Api for edit
+    Route::apiResource('/authors', AuthorController::class);
+    Route::post('/authors/{id}',[AuthorController::class,'update']);
+
+    Route::apiResource('/publishers', PublisherController::class);
+    Route::post('/publishers/{id}',[PublisherController::class,'update']);
+
+    Route::apiResource('/customers', CustomerController::class);// Custom PUT Api for edit
     Route::post('/customers/{id}',[CustomerController::class,'update']);
+
+    Route::apiResource('/suppliers', SupplierController::class);
+    Route::post('/suppliers/{id}',[SupplierController::class,'update']);
+    
     
     Route::apiResource('/manage-employee', EmployeeController::class);
-    Route::apiResource('/manage-supplier', SupplierController::class);
-    Route::apiResource('/manage-category', CategoryController::class);
     Route::apiResource('/manage-product', ProductController::class);
     Route::apiResource('/manage-expense', ExpenseController::class);
 

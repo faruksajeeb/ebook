@@ -5,87 +5,98 @@
         <div class="card shadow-sm my-4">
           <div class="card-header py-2 my-bg-success">
             <h3 class="text-white-900" v-if="isNew">
-              <i class="fa fa-plus"></i> Add Customer
+              <i class="fa fa-plus"></i> Add publisher
             </h3>
             <h3 class="text-white-900" v-else>
-              <i class="fa fa-pencil"></i> Edit Customer
+              <i class="fa fa-pencil"></i> Edit publisher
             </h3>
           </div>
           <div class="card-body p-3">
             <div class="form">
               <form
                 id="form"
-                class="customer"
+                class="publisher"
                 enctype="multipart/form-data"
                 @submit.prevent="submitForm"
                 @keydown="form.onKeydown($event)"
               >
                 <AlertError :form="form" />
-                <div v-if="!isNew && !customer">
+                <div v-if="!isNew && !publisher">
                   <LoadingSpinner/>
                 </div>
                 <div class="form-group">
-                  <label for="">Customer Name <span class="text-danger">*</span></label>
+                  <label for="">publisher Name <span class="text-danger">*</span></label>
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="Enter Your Customer Name"
-                    name="customer_name"
-                    v-model="form.customer_name"
-                    :class="{ 'is-invalid': form.errors.has('customer_name') }"
+                    placeholder="Enter Your publisher Name"
+                    name="publisher_name"
+                    v-model="form.publisher_name"
+                    :class="{ 'is-invalid': form.errors.has('publisher_name') }"
                   />
-                  <HasError :form="form" field="customer_name" />
+                  <HasError :form="form" field="publisher_name" />
                 </div>
                 <div class="form-group">
-                  <label for="">Customer Phone <span class="text-danger">*</span></label>
+                  <label for="">publisher Phone </label>
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="Enter Your Customer phone"
-                    v-model="form.customer_phone"
-                    :class="{ 'is-invalid': form.errors.has('customer_phone') }"
+                    placeholder="Enter Your publisher phone"
+                    v-model="form.publisher_phone"
+                    :class="{ 'is-invalid': form.errors.has('publisher_phone') }"
                   />
-                  <HasError :form="form" field="customer_phone" />
+                  <HasError :form="form" field="publisher_phone" />
                 </div>
                 <div class="form-group">
-                  <label for="">Customer Email </label>
+                  <label for="">publisher Email </label>
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="Enter Your Customer Email"
-                    v-model="form.customer_email"
-                    :class="{ 'is-invalid': form.errors.has('customer_email') }"
+                    placeholder="Enter Your publisher Email"
+                    v-model="form.publisher_email"
+                    :class="{ 'is-invalid': form.errors.has('publisher_email') }"
                   />
-                  <HasError :form="form" field="customer_email" />
+                  <HasError :form="form" field="publisher_email" />
+                </div>
+                <div class="form-group">
+                  <label for="">publisher Country </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter Your publisher Country"
+                    v-model="form.publisher_country"
+                    :class="{ 'is-invalid': form.errors.has('publisher_country') }"
+                  />
+                  <HasError :form="form" field="publisher_country" />
                 </div>
                 <div class="form-group">
                   <label for="">Address </label>
                   <textarea
-                    v-model="form.customer_address"
+                    v-model="form.publisher_address"
                     cols="30"
                     rows="3"
-                    :class="{ 'is-invalid': form.errors.has('customer_address') }"
+                    :class="{ 'is-invalid': form.errors.has('publisher_address') }"
                     class="form-control"
                   ></textarea>
 
-                  <HasError :form="form" field="customer_address" />
+                  <HasError :form="form" field="publisher_address" />
                 </div>
                 <div class="form-group">
-                  <label for="">Customer Photo </label>
+                  <label for="">publisher Photo </label>
                   <input
                     type="file"
                     class="form-control"
-                    placeholder="Enter Your Customer Photo"
-                    name="customer_photo"
+                    placeholder="Enter Your publisher Photo"
+                    name="publisher_photo"
                     @change="onFileChange"
                     accept="image/*"
-                    :class="{ 'is-invalid': form.errors.has('customer_photo') }"
+                    :class="{ 'is-invalid': form.errors.has('publisher_photo') }"
                   />
-                  <HasError :form="form" field="customer_photo" />
+                  <HasError :form="form" field="publisher_photo" />
                   [Allow File type:jpeg,png,jpg,gif,svg & Size:2MB]
                 </div>
                 <div class="image-item">
-                  <!-- <img src="http://127.0.0.1:8000/assets/img/customer/faizaan.jpg" alt="" width="100" /> -->
+                  <!-- <img src="http://127.0.0.1:8000/assets/img/publisher/faizaan.jpg" alt="" width="100" /> -->
                   <img v-if="imageUrl" :src="imageUrl" alt="Image Preview" width="150" />
                   <button
                     class="remove-button"
@@ -101,7 +112,7 @@
                   <div v-if="form.progress">
                     Progress: {{ form.progress.percentage }}%
                   </div>
-                  <router-link to="/customers"> Manage Customer </router-link>                  
+                  <router-link to="/publishers"> Manage publisher </router-link>                 
                   <save-button v-if="isNew" :is-submitting="isSubmitting"></save-button>
                   <save-changes-button
                     v-else
@@ -122,13 +133,13 @@ export default {
   data: () => ({
     isSubmitting: false,
     imageUrl: null,
-    customer: false,
+    publisher: false,
     form: new Form({
-      customer_name: "",
-      customer_phone: "",
-      customer_photo: null,
-      customer_email: "",
-      customer_address: "",
+      publisher_name: "",
+      publisher_phone: "",
+      publisher_photo: null,
+      publisher_email: "",
+      publisher_address: "",
     }),
   }),
   computed: {
@@ -138,18 +149,20 @@ export default {
   },
   async created() {
     if (!this.isNew) {
-      const response = await axios.get(`/api/customers/${this.$route.params.id}`);
+      const response = await axios.get(`/api/publishers/${this.$route.params.id}`);
 
       // console.log(response.data);
-      this.form.customer_name = response.data.customer_name;
-      this.form.customer_phone = response.data.customer_phone;
-      // this.form.customer_photo = response.data.customer_photo;
-      this.form.customer_email = response.data.customer_email;
-      this.form.customer_address = response.data.customer_address;
+     
+      this.form.publisher_name = response.data.publisher_name;
+      this.form.publisher_phone = response.data.publisher_phone;
+      // this.form.publisher_photo = response.data.publisher_photo;
+      this.form.publisher_email = response.data.publisher_email;
+      this.form.publisher_address = response.data.publisher_address;
+      this.form.publisher_country = response.data.publisher_country;
       this.imageUrl =
-        `${window.publicPath}assets/img/customer/thumbnail/` +
-        response.data.customer_photo;
-        this.customer = true;
+        `${window.publicPath}assets/img/publisher/thumbnail/` +
+        response.data.publisher_photo;
+        this.publisher = true;
     }
   },
   methods: {
@@ -157,22 +170,22 @@ export default {
       let selectedFile = e.target.files[0];
       if (selectedFile) {
         const allowedFileTypes = ["image/jpeg", "image/jpg", "image/png","image/gif","image/svg","application/pdf"];
-        if (selectedFile.size > 2048 * 1024) { 
+        if (selectedFile.size > 2048 * 1024) {
           // Change this to your desired maximum file size in bytes
           this.form.errors.set(
-            "customer_photo",
+            "publisher_photo",
             "File size exceeds the maximum allowed size."
           );
           Notification.error("File size exceeds the maximum allowed size.");
         }
         if (!allowedFileTypes.includes(selectedFile.type)) {
           this.form.errors.set(
-            "customer_photo",
+            "publisher_photo",
             " File type is not supported. Please choose a valid file type."
           );
           Notification.error(" File type is not supported. Please choose a valid file type.");
         }
-        this.form.customer_photo = selectedFile;
+        this.form.publisher_photo = selectedFile;
 
         const reader = new FileReader();
 
@@ -184,16 +197,16 @@ export default {
     },
     removeSingleImage(image, index) {
       this.imageUrl = null;
-      this.form.customer_photo = null;
+      this.form.publisher_photo = null;
     },
     async submitForm() {
       this.isSubmitting = true;
       if (this.isNew) {
         await this.form
-          .post("/api/customers", this.form)
+          .post("/api/publishers", this.form)
           .then(() => {
-            this.$router.push({ name: "customers" });
-            Notification.success(`CreateCustomer ${this.form.name} successfully!`);
+            this.$router.push({ name: "publishers" });
+            Notification.success(`Create publisher ${this.form.name} successfully!`);
           })
           .catch((error) => {
             // console.log(error);
@@ -201,7 +214,7 @@ export default {
               this.errors = error.response.data.errors;
               Notification.error("Validation Errors!");
             } else if (error.response.status === 401) {
-              // statusText = "Unauthorized";
+              // statusText = "Unpublisherized";
               this.errors = {};
               Notification.error(error.response.data.error);
             } else {
@@ -215,10 +228,10 @@ export default {
       } else {
         try {
           await this.form
-            .post(`/api/customers/${this.$route.params.id}`, this.form)
+            .post(`/api/publishers/${this.$route.params.id}`, this.form)
             .then((response) => {
-              Notification.success("Customer info Updated");
-              this.$router.push("/customers");
+              Notification.success("publisher info updated");
+              this.$router.push("/publishers");
             })
             .catch((error) => {
               Notification.error(error);

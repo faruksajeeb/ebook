@@ -48,17 +48,23 @@ import ViewSubCategory from "./components/master_data/sub-category/SubCategory.v
 // Customer Files
 import CustomerForm from "./components/customer/CustomerForm.vue";
 import ManageCustomer from "./components/customer/ManageCustomer.vue";
-import Customer from "./components/customer/Customer.vue";
+
+// Supplier Files
+import SupplierForm from "./components/supplier/SupplierForm.vue";
+import ManageSupplier from "./components/supplier/ManageSupplier.vue";
+
+// Author Files
+import AuthorForm from "./components/master_data/author/AuthorForm.vue";
+import ManageAuthor from "./components/master_data/author/ManageAuthor.vue";
+
+// Publisher Files
+import PublisherForm from "./components/master_data/publisher/PublisherForm.vue";
+import ManagePublisher from "./components/master_data/publisher/ManagePublisher.vue";
 
 // Employee Files
 import AddEmployee from "./components/employee/create.vue";
 import ManageEmployee from "./components/employee/index.vue";
 import EditEmployee from "./components/employee/edit.vue";
-
-// Suppler Files
-import AddSupplier from "./components/supplier/create.vue";
-import ManageSupplier from "./components/supplier/index.vue";
-import EditSupplier from "./components/supplier/edit.vue";
 
 // Product Files
 import AddProduct from "./components/product/create.vue";
@@ -159,20 +165,7 @@ export const routes = [
             }
         },
     },
-    { name: "add-supplier", path: "/add-supplier", component: AddSupplier },
-    {
-        name: "manage-supplier",
-        path: "/manage-supplier",
-        component: ManageSupplier,
-        beforeEnter: guard,
-    },
-    {
-        name: "edit-supplier",
-        path: "/edit-supplier/:id",
-        component: EditSupplier,
-    },
 
-  
 
     // Role Paths
     {
@@ -375,6 +368,51 @@ export const routes = [
         beforeEnter: guard,
     },
 
+// Author Paths
+{
+    name: "authors",
+    path: "/authors",
+    component: ManageAuthor,
+    meta: { title: "Manage Author" },
+    beforeEnter: guard,
+},
+{
+    name: "authors.create",
+    path: "/authors/create",
+    component: AuthorForm,
+    meta: { title: "Add Author" },
+    beforeEnter: guard,
+},
+{
+    name: "authors.edit",
+    path: "/authors/:id/edit",
+    component: AuthorForm,
+    meta: { title: "Edit Author" },
+    beforeEnter: guard,
+},
+
+// Publisher Paths
+{
+    name: "publishers",
+    path: "/publishers",
+    component: ManagePublisher,
+    meta: { title: "Manage Publisher" },
+    beforeEnter: guard,
+},
+{
+    name: "publishers.create",
+    path: "/publishers/create",
+    component: PublisherForm,
+    meta: { title: "Add Publisher" },
+    beforeEnter: guard,
+},
+{
+    name: "publishers.edit",
+    path: "/publishers/:id/edit",
+    component: PublisherForm,
+    meta: { title: "Edit Publisher" },
+    beforeEnter: guard,
+},
     
     // Customer Paths
     {
@@ -398,11 +436,27 @@ export const routes = [
         meta: { title: "Edit Customer" },
         beforeEnter: guard,
     },
+   
+     // Supplier Paths
+     {
+        name: "suppliers",
+        path: "/suppliers",
+        component: ManageSupplier,
+        meta: { title: "Manage Supplier" },
+        beforeEnter: guard,
+    },
     {
-        name: "customers.view",
-        path: "/customers/:id",
-        component: Customer,
-        meta: { title: "View Customer" },
+        name: "suppliers.create",
+        path: "/suppliers/create",
+        component: SupplierForm,
+        meta: { title: "Add Supplier" },
+        beforeEnter: guard,
+    },
+    {
+        name: "suppliers.edit",
+        path: "/suppliers/:id/edit",
+        component: SupplierForm,
+        meta: { title: "Edit Supplier" },
         beforeEnter: guard,
     },
 

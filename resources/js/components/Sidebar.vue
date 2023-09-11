@@ -2,18 +2,18 @@
     <div >
         <ul v-show="$route.path === '/' || $route.path === '/register' || $route.path === '/forget_password' ? false : true"
       class="navbar-nav sidebar sidebar-light accordion" id="accordionSidebar">
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+      <router-link to="/dashboard" class="sidebar-brand d-flex align-items-center justify-content-center">
         <div class="sidebar-brand-icon">
           <img src="assets/img/logo/logo.png">
         </div>
         <div class="sidebar-brand-text mx-3">Faizaan's Shop</div>
-      </a>
+      </router-link>
       <hr class="sidebar-divider my-0">
-      <li class="nav-item active">
+      <!-- <li class="nav-item active">
         <router-link class="nav-link" to="/dashboard">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Dashboard</span></router-link>
-      </li>
+      </li> -->
       
      <li class="nav-item my-bg-primary">
         <router-link class="nav-link  text-light" to="/pos">
@@ -133,6 +133,30 @@
                       </div>
                   </div>
             </li>
+            <li class="nav-item py-2">
+                    <a class="nav-link-layer-two collapsed" href="#" data-toggle="collapse" data-target="#collapseAuthor"
+                      aria-expanded="true" aria-controls="collapseAuthor">                   
+                      <span>Authors</span>
+                    </a>
+                    <div id="collapseAuthor" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionMasterDataMgtBar">
+                      <div class="bg-white py-2  rounded">
+                        <router-link class="collapse-item p-1" to="/authors/create">Add Author</router-link>
+                        <router-link class="collapse-item p-1" to="/authors">Manage Author</router-link>
+                      </div>
+                  </div>
+            </li>
+            <li class="nav-item py-2">
+                    <a class="nav-link-layer-two collapsed" href="#" data-toggle="collapse" data-target="#collapsePublisher"
+                      aria-expanded="true" aria-controls="collapsePublisher">                   
+                      <span>Publishers</span>
+                    </a>
+                    <div id="collapsePublisher" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionMasterDataMgtBar">
+                      <div class="bg-white py-2  rounded">
+                        <router-link class="collapse-item p-1" to="/publishers/create">Add Publisher</router-link>
+                        <router-link class="collapse-item p-1" to="/publishers">Manage Publisher</router-link>
+                      </div>
+                  </div>
+            </li>
             </ul>           
             </div>
           </div>
@@ -160,8 +184,8 @@
         </a>
         <div id="collapseSupplier" class="collapse" aria-labelledby="headingTable" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <router-link class="collapse-item" to="/add-supplier">Add Supplier</router-link>
-            <router-link class="collapse-item" to="/manage-supplier">Manage Supplier</router-link>
+            <router-link class="collapse-item" to="/suppliers/create">Add Supplier</router-link>
+            <router-link class="collapse-item" to="/suppliers">Manage Supplier</router-link>
           </div>
         </div>
       </li>
@@ -169,8 +193,8 @@
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProduct"
           aria-expanded="true" aria-controls="collapseProduct">
-          <i class="far fa-fw fa-window-maximize"></i>
-          <span>Product</span>
+          <i class="fas fa-solid fa-book"></i>
+          <span>Books</span>
         </a>
         <div id="collapseProduct" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">

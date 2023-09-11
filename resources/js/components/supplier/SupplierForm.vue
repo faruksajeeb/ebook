@@ -5,87 +5,87 @@
         <div class="card shadow-sm my-4">
           <div class="card-header py-2 my-bg-success">
             <h3 class="text-white-900" v-if="isNew">
-              <i class="fa fa-plus"></i> Add Customer
+              <i class="fa fa-plus"></i> Add Supplier
             </h3>
             <h3 class="text-white-900" v-else>
-              <i class="fa fa-pencil"></i> Edit Customer
+              <i class="fa fa-pencil"></i> Edit Supplier
             </h3>
           </div>
           <div class="card-body p-3">
             <div class="form">
               <form
                 id="form"
-                class="customer"
+                class="supplier"
                 enctype="multipart/form-data"
                 @submit.prevent="submitForm"
                 @keydown="form.onKeydown($event)"
               >
                 <AlertError :form="form" />
-                <div v-if="!isNew && !customer">
+                <div v-if="!isNew && !supplier">
                   <LoadingSpinner/>
                 </div>
                 <div class="form-group">
-                  <label for="">Customer Name <span class="text-danger">*</span></label>
+                  <label for="">Supplier Name <span class="text-danger">*</span></label>
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="Enter Your Customer Name"
-                    name="customer_name"
-                    v-model="form.customer_name"
-                    :class="{ 'is-invalid': form.errors.has('customer_name') }"
+                    placeholder="Enter Your supplier Name"
+                    name="supplier_name"
+                    v-model="form.supplier_name"
+                    :class="{ 'is-invalid': form.errors.has('supplier_name') }"
                   />
-                  <HasError :form="form" field="customer_name" />
+                  <HasError :form="form" field="supplier_name" />
                 </div>
                 <div class="form-group">
-                  <label for="">Customer Phone <span class="text-danger">*</span></label>
+                  <label for="">supplier Phone <span class="text-danger">*</span></label>
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="Enter Your Customer phone"
-                    v-model="form.customer_phone"
-                    :class="{ 'is-invalid': form.errors.has('customer_phone') }"
+                    placeholder="Enter Your supplier phone"
+                    v-model="form.supplier_phone"
+                    :class="{ 'is-invalid': form.errors.has('supplier_phone') }"
                   />
-                  <HasError :form="form" field="customer_phone" />
+                  <HasError :form="form" field="supplier_phone" />
                 </div>
                 <div class="form-group">
-                  <label for="">Customer Email </label>
+                  <label for="">supplier Email </label>
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="Enter Your Customer Email"
-                    v-model="form.customer_email"
-                    :class="{ 'is-invalid': form.errors.has('customer_email') }"
+                    placeholder="Enter Your supplier Email"
+                    v-model="form.supplier_email"
+                    :class="{ 'is-invalid': form.errors.has('supplier_email') }"
                   />
-                  <HasError :form="form" field="customer_email" />
+                  <HasError :form="form" field="supplier_email" />
                 </div>
                 <div class="form-group">
                   <label for="">Address </label>
                   <textarea
-                    v-model="form.customer_address"
+                    v-model="form.supplier_address"
                     cols="30"
                     rows="3"
-                    :class="{ 'is-invalid': form.errors.has('customer_address') }"
+                    :class="{ 'is-invalid': form.errors.has('supplier_address') }"
                     class="form-control"
                   ></textarea>
 
-                  <HasError :form="form" field="customer_address" />
+                  <HasError :form="form" field="supplier_address" />
                 </div>
                 <div class="form-group">
-                  <label for="">Customer Photo </label>
+                  <label for="">supplier Photo </label>
                   <input
                     type="file"
                     class="form-control"
-                    placeholder="Enter Your Customer Photo"
-                    name="customer_photo"
+                    placeholder="Enter Your supplier Photo"
+                    name="supplier_photo"
                     @change="onFileChange"
                     accept="image/*"
-                    :class="{ 'is-invalid': form.errors.has('customer_photo') }"
+                    :class="{ 'is-invalid': form.errors.has('supplier_photo') }"
                   />
-                  <HasError :form="form" field="customer_photo" />
+                  <HasError :form="form" field="supplier_photo" />
                   [Allow File type:jpeg,png,jpg,gif,svg & Size:2MB]
                 </div>
                 <div class="image-item">
-                  <!-- <img src="http://127.0.0.1:8000/assets/img/customer/faizaan.jpg" alt="" width="100" /> -->
+                  <!-- <img src="http://127.0.0.1:8000/assets/img/supplier/faizaan.jpg" alt="" width="100" /> -->
                   <img v-if="imageUrl" :src="imageUrl" alt="Image Preview" width="150" />
                   <button
                     class="remove-button"
@@ -101,7 +101,7 @@
                   <div v-if="form.progress">
                     Progress: {{ form.progress.percentage }}%
                   </div>
-                  <router-link to="/customers"> Manage Customer </router-link>                  
+                  <router-link to="/suppliers"> Manage supplier </router-link>                 
                   <save-button v-if="isNew" :is-submitting="isSubmitting"></save-button>
                   <save-changes-button
                     v-else
@@ -122,13 +122,13 @@ export default {
   data: () => ({
     isSubmitting: false,
     imageUrl: null,
-    customer: false,
+    supplier: false,
     form: new Form({
-      customer_name: "",
-      customer_phone: "",
-      customer_photo: null,
-      customer_email: "",
-      customer_address: "",
+      supplier_name: "",
+      supplier_phone: "",
+      supplier_photo: null,
+      supplier_email: "",
+      supplier_address: "",
     }),
   }),
   computed: {
@@ -138,18 +138,19 @@ export default {
   },
   async created() {
     if (!this.isNew) {
-      const response = await axios.get(`/api/customers/${this.$route.params.id}`);
+      const response = await axios.get(`/api/suppliers/${this.$route.params.id}`);
 
       // console.log(response.data);
-      this.form.customer_name = response.data.customer_name;
-      this.form.customer_phone = response.data.customer_phone;
-      // this.form.customer_photo = response.data.customer_photo;
-      this.form.customer_email = response.data.customer_email;
-      this.form.customer_address = response.data.customer_address;
+     
+      this.form.supplier_name = response.data.supplier_name;
+      this.form.supplier_phone = response.data.supplier_phone;
+      // this.form.supplier_photo = response.data.supplier_photo;
+      this.form.supplier_email = response.data.supplier_email;
+      this.form.supplier_address = response.data.supplier_address;
       this.imageUrl =
-        `${window.publicPath}assets/img/customer/thumbnail/` +
-        response.data.customer_photo;
-        this.customer = true;
+        `${window.publicPath}assets/img/supplier/thumbnail/` +
+        response.data.supplier_photo;
+        this.supplier = true;
     }
   },
   methods: {
@@ -157,22 +158,22 @@ export default {
       let selectedFile = e.target.files[0];
       if (selectedFile) {
         const allowedFileTypes = ["image/jpeg", "image/jpg", "image/png","image/gif","image/svg","application/pdf"];
-        if (selectedFile.size > 2048 * 1024) { 
+        if (selectedFile.size > 2048 * 1024) {
           // Change this to your desired maximum file size in bytes
           this.form.errors.set(
-            "customer_photo",
+            "supplier_photo",
             "File size exceeds the maximum allowed size."
           );
           Notification.error("File size exceeds the maximum allowed size.");
         }
         if (!allowedFileTypes.includes(selectedFile.type)) {
           this.form.errors.set(
-            "customer_photo",
+            "supplier_photo",
             " File type is not supported. Please choose a valid file type."
           );
           Notification.error(" File type is not supported. Please choose a valid file type.");
         }
-        this.form.customer_photo = selectedFile;
+        this.form.supplier_photo = selectedFile;
 
         const reader = new FileReader();
 
@@ -184,16 +185,16 @@ export default {
     },
     removeSingleImage(image, index) {
       this.imageUrl = null;
-      this.form.customer_photo = null;
+      this.form.supplier_photo = null;
     },
     async submitForm() {
       this.isSubmitting = true;
       if (this.isNew) {
         await this.form
-          .post("/api/customers", this.form)
+          .post("/api/suppliers", this.form)
           .then(() => {
-            this.$router.push({ name: "customers" });
-            Notification.success(`CreateCustomer ${this.form.name} successfully!`);
+            this.$router.push({ name: "suppliers" });
+            Notification.success(`Create supplier ${this.form.name} successfully!`);
           })
           .catch((error) => {
             // console.log(error);
@@ -215,10 +216,10 @@ export default {
       } else {
         try {
           await this.form
-            .post(`/api/customers/${this.$route.params.id}`, this.form)
+            .post(`/api/suppliers/${this.$route.params.id}`, this.form)
             .then((response) => {
-              Notification.success("Customer info Updated");
-              this.$router.push("/customers");
+              Notification.success("Supplier info updated");
+              this.$router.push("/suppliers");
             })
             .catch((error) => {
               Notification.error(error);

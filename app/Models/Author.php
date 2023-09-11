@@ -5,17 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Supplier extends Model
+class Author extends Model
 {
    
-    protected $table = 'suppliers';
+    protected $table = 'authors';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'supplier_name',
-        'supplier_email',
-        'supplier_phone',
-        'supplier_address',
-        'supplier_photo',
+        'author_name',
+        'author_email',
+        'author_phone',
+        'author_address',
+        'author_photo',
+        'author_country',
         'created_by',
         'updated_at',
         'created_at',
@@ -34,10 +35,10 @@ class Supplier extends Model
         $term = "%$term%";
         $query->where(function ($q) use ($term) {
             // $q->where('id','LIKE',$term);
-            $q->where('supplier_name', 'LIKE', $term);
-            $q->orWhere('supplier_email', 'LIKE', $term);
-            $q->orWhere('supplier_phone', 'LIKE', $term);
-            $q->orWhere('supplier_address', 'LIKE', $term);
+            $q->where('author_name', 'LIKE', $term);
+            $q->orWhere('author_email', 'LIKE', $term);
+            $q->orWhere('author_phone', 'LIKE', $term);
+            $q->orWhere('author_address', 'LIKE', $term);
             // $q->orWhereHas('categories',function($q) use($term){
             //     $q->where('category_name','LIKE',$term);
             // });
