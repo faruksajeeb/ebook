@@ -283,7 +283,7 @@ class AuthorController extends Controller
         // return redirect()->route('authors.index')->withSuccess(__('All authors restored successfully.'));
     }
 
-    public function getauthors()
+    public function getAuthors()
     {
         $data = Author::where('status', 1)->get();
         return response()->json($data);

@@ -26,7 +26,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Search by book. (Type and Enter)"
+                  placeholder="Search by title/ isbn/ genre. (Type and Enter)"
                   v-model="search"
                 />
                 <button @click="downloadFile" class="btn my-btn-success export-btn">
@@ -57,10 +57,10 @@
               >
                 <thead class="thead-light">
                   <tr>
-                    <th scope="col" class="text-center">
+                    <!-- <th scope="col" class="text-center">
                       <input type="checkbox" class="form-check p-3" />
-                    </th>
-                    <th scope="col">
+                    </th> -->
+                    <th scope="col" >
                       <a href="#" @click.prevent="changeShort('id')">#ID</a>
                       <span
                         v-if="
@@ -102,86 +102,126 @@
                     <th class="text-center text-nowrap" scope="col"> Author</th>
                     <th class="text-center text-nowrap" scope="col"> Category</th>
                     <th class="text-center text-nowrap" scope="col">Sub Category</th>
-                    <th class="text-center text-nowrap" scope="col">Stock Qty.</th>
-                    <th class="text-center text-nowrap" scope="col">Price</th>
-                    <th class="text-center text-nowrap" scope="col">Buying Discunt %</th>
-                    <th class="text-center text-nowrap" scope="col">Selling Discunt %</th>
+                    <th class="text-center text-nowrap" scope="col">
+                      <a href="#" @click.prevent="changeShort('stock_quantity')">Stock Qty.</a>
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'asc'
+                        "
+                        >↑</span
+                      >
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'desc'
+                        "
+                        >↓</span
+                      >
+                    </th>
+                    <th class="text-center text-nowrap" scope="col">
+                      <a href="#" @click.prevent="changeShort('price')">Price</a>
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'asc'
+                        "
+                        >↑</span
+                      >
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'desc'
+                        "
+                        >↓</span
+                      ></th>
                     <th class="text-center text-nowrap" scope="col">Action</th>
                   </tr>
                   <tr>
-                    <th colspan="2">
-                      <input
+                    <!-- <th></th> -->
+                    <th class="px-1">
+                      <input style="width:70px"
                         type="text"
-                        placeholder="Search By ID"
-                        class="form-control"
+                        placeholder="By ID"
+                        class=""
                         v-model="params.id"
                       />
                     </th>
-                    <th colspan="2">
+                    <th colspan="2" class="text-nowarp px-1">
                       <input
                         type="text"
-                        placeholder="Search By book Name"
-                        class="form-control"
-                        v-model="params.book_name"
+                        placeholder="Search By Book Title"
+                        class="" style="width:100%"
+                        v-model="params.title"
                       />
                     </th>
-                    <th>
-                      <input
+                    <th class="text-nowarp px-1">
+                      <select v-model="params.publisher_id" style="width:100%" class="form-select-sm">
+                        <option value=""  selected>--select publisher--</option>
+                        <option :value="publisher.id" v-for="publisher in publishers" :key="publisher.id">{{publisher.publisher_name}}</option>
+                      </select>
+                    </th>
+                    <th class="text-nowarp px-1">
+                      <select v-model="params.author_id" style="width:100%" class="form-select-sm">
+                        <option value=""  selected>--select author--</option>
+                        <option :value="author.id" v-for="author in authors" :key="author.id">{{author.author_name}}</option>
+                      </select>
+                    </th>
+                    <th class="text-nowarp px-1">
+                      <select v-model="params.category_id" class="form-select-sm" style="width:100%">
+                        <option value=""  selected>--select category--</option>
+                        <option :value="category.id" v-for="category in categories" :key="category.id">{{category.category_name}}</option>
+                      </select>
+                    </th>
+                    <th class="text-nowarp px-1">
+                      <select v-model="params.subcategory_id" class="form-select-sm" style="width:100%">
+                        <option value="" selected>--select sub-category--</option>
+                        <option :value="subcategory.id" v-for="subcategory in subcategories" :key="subcategory.id">{{subcategory.subcategory_name}}</option>
+                      </select>
+                    </th>
+                    <th  class="text-nowarp px-1"><input
                         type="text"
-                        placeholder="Search By book Phone"
-                        class="form-control"
-                        v-model="params.book_phone"
-                      />
-                    </th>
-                    <th>
-                      <input
+                        placeholder="Search By Qty"
+                        class="" style="width:100%"
+                        v-model="params.stock_quantity"
+                      /></th>
+                    <th  class="text-nowarp px-1"><input
                         type="text"
-                        placeholder="Search By book Email"
-                        class="form-control"
-                        v-model="params.book_email"
-                      />
-                    </th>
-                    <th>
-                      <input
-                        type="text"
-                        placeholder="Search By book Address"
-                        class="form-control"
-                        v-model="params.book_address"
-                      />
-                    </th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
+                        placeholder="Search By Price"
+                        class="" style="width:100%"
+                        v-model="params.price"
+                      /></th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody v-if="books && paginator.totalRecords > 0">
                   <tr v-for="book in books.data" :key="book.id">
-                    <td class="text-center">
+                    <!-- <td class="text-center">
                       <input
                         type="checkbox"
                         :value="book.id"
                         v-model="checked"
                         class="form-check-input"
                       />
-                    </td>
-                    <td class="text-nowrap">{{ book.id }}</td>
+                    </td> -->
+                    <td style="width:60px!important" class="text-nowrap">{{ book.id }}</td>
                     <td>
                       <img
                         :src="
                           `${publicPath}assets/img/book/thumbnail/` +
-                          book.book_photo
+                          book.photo
                         "
                         alt=""
                         width="30"
                       />
                     </td>
-                    <td>{{ book.book_name }}</td>
-                    <td>{{ book.book_phone }}</td>
-                    <td>{{ book.book_email }}</td>
-                    <td>{{ book.book_address }}</td>
+                    <td class="text-nowrap">{{ book.title }}</td>
+                    <td class="text-nowrap">{{ book.publisher.publisher_name }}</td>
+                    <td class="text-nowrap">{{ book.author.author_name }}</td>
+                    <td class="text-nowrap">{{ book.category.category_name }}</td>
+                    <td class="text-nowrap">{{ book.subcategory.subcategory_name }}</td>
+                    <td class="text-nowrap">{{ book.stock_quantity }}</td>
+                    <td class="text-nowrap">{{ book.price }}</td>
 
                     <td class="text-right text-nowrap">
                       <div class="btn-group" option="group">
@@ -233,7 +273,7 @@
                   align="right"
                   :data="books"
                   :limit="5"
-                  @pagination-change-page="getbooks"
+                  @pagination-change-page="getBooks"
                 ></pagination>
               </div>
             </div>
@@ -248,13 +288,15 @@
   </div>
 </template>
 <script type="text/javascript">
-import Viewbook from './Viewbook.vue'
+import { mapActions } from "vuex";
+import Viewbook from './ViewBook.vue'
 export default {
   name: "book",
   components:{Viewbook},
   data() {
     return {
       record: {},
+      sub_categories: [],
       bookPhotoUrl: null,
       publicPath: window.publicPath,
       checked: [],
@@ -272,8 +314,11 @@ export default {
       params: {
         paginate: 5,
         id: "",
-        book_name: "",
+        title: "",
+        publisher_id: "",
+        author_id: "",
         category_id: "",
+        sub_category_id: "",
         sort_field: "created_at",
         sort_direction: "desc",
       },
@@ -283,21 +328,33 @@ export default {
       filterFields: {},
     };
   },
-  create() {},
+  async created() {
+    this.fetchCategories();
+    this.authors = this.$store.getters.getAuthors;
+    if (this.authors.length == 0) {
+      const response = await axios.get("/api/get-authors");
+      this.authors = response.data;
+    }
+    this.publishers = this.$store.getters.getPublishers;
+    if (this.publishers.length == 0) {
+      const response = await axios.get("/api/get-publishers");
+      this.publishers = response.data;
+    }
+  },
   mounted() {
     this.filterFields = { ...this.params };
-    this.getbooks();
+    this.getBooks();
   },
   watch: {
     params: {
       handler() {
-        this.getbooks();
+        this.getBooks();
       },
       deep: true,
     },
     search(val, old) {
       if (val.length >= 3 || old.length >= 3) {
-        this.getbooks();
+        this.getBooks();
       }
     },
   },
@@ -307,7 +364,8 @@ export default {
     },
   },
   methods: {
-    async getbooks(page = 1) {
+    ...mapActions(["fetchCategories"]),
+    async getBooks(page = 1) {
       this.isLoading = true;
       await axios
         // .get(`/api/products?page=${page}`)
@@ -345,7 +403,7 @@ export default {
     refreshData() {
       this.isRefreshing = true;
       this.params = { ...this.filterFields };
-      this.getbooks();
+      this.getBooks();
     },
     changeShort(field) {
       if (this.params.sort_field === field) {
@@ -372,7 +430,7 @@ export default {
           axios
             .delete("/api/books/" + id)
             .then(() => {
-              this.getbooks();
+              this.getBooks();
               Notification.success("Data has been deleted successfully.");
             })
             .catch((error) => {

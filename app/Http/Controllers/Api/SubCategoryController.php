@@ -215,4 +215,11 @@ class SubCategoryController extends Controller
         // return redirect()->route('SubCategorys.index')->withSuccess(__('All SubCategorys restored successfully.'));
     }
 
+    public function getCategoryWiseSubCategories(Request $request)
+    {
+        $data = SubCategory::where('category_id', $request->category_id)->get();
+
+        return response()->json($data);
+    }
+
 }

@@ -4,25 +4,26 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Lib\Webspice;
-use App\Models\Publisher;
+use App\Models\Book;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Image;
 
-class PublisherController extends Controller
+class BookController extends Controller
 {
     public $webspice;
-    protected $publisher;
-    protected $publishers;
-    protected $publisherid;
+    protected $book;
+    protected $books;
+    protected $bookid;
     public $tableName;
 
-    public function __construct(publisher $publisher, Webspice $webspice)
+    public function __construct(Book $book, Webspice $webspice)
     {
         $this->webspice = $webspice;
-        $this->publishers = $publisher;
-        $this->tableName = 'publishers';
+        $this->books = $book;
+        $this->tableName = 'books';
         $this->middleware('JWT');
     }
 
@@ -36,10 +37,9 @@ class PublisherController extends Controller
             $sortField = request('sort_field', 'created_at');
             if (!in_array($sortField, [
                 'id',
-                'publisher_name',
-                'publisher_email',
-                'publisher_phone',
-                'publisher_address',
+                'title',
+                'price',
+                'stock_quantity',
             ])) {
                 $sortField = 'created_at';
             }
@@ -50,13 +50,16 @@ class PublisherController extends Controller
 
             $filled = array_filter(request([
                 'id',
-                'publisher_name',
-                'publisher_email',
-                'publisher_phone',
-                'publisher_address',
+                'title',
+                'publisher_id',
+                'author_id',
+                'category_id',
+                'sub_category_id',
+                'stock_quantity',
+                'price',
             ]));
 
-            $publishers = publisher::when(count($filled) > 0, function ($query) use ($filled) {
+            $books = Book::with(['publisher', 'author', 'category', 'subcategory'])->when(count($filled) > 0, function ($query) use ($filled) {
                 foreach ($filled as $column => $value) {
                     $query->where($column, 'LIKE', '%' . $value . '%');
                 }
@@ -65,7 +68,7 @@ class PublisherController extends Controller
                 $query->search(trim($searchTerm));
             })->orderBy($sortField, $sortDirection)->paginate($paginate);
 
-            return response()->json($publishers);
+            return response()->json($books);
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -78,50 +81,60 @@ class PublisherController extends Controller
     public function store(Request $request)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('publisher.create');
+        // $this->webspice->permissionVerify('book.create');
+
+        // Unique check __> book name, author, publisher
 
         $request->validate(
             [
-                'publisher_name' => 'required|regex:/^[a-zA-Z 0-9]+$/u|min:3|max:20|unique:publishers',
-              
-                'publisher_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'title' => ['required', 'min:1', 'max:1000', Rule::unique('books')->where(function ($query) use ($request) {
+                    return $query->where('title', $request->title)
+                        ->where('publisher_id', $request->publisher_id)
+                        ->where('author_id', $request->author_id);
+                })],
+                'publisher_id' => 'required',
+                'author_id' => 'required',
+                'buying_discount_percentage' => 'required|numeric',
+                'selling_discount_percentage' => 'required|numeric',
+                'buying_vat_percentage' => 'required|numeric',
+                'selling_vat_percentage' => 'required|numeric',
+                'price' => ['required', 'numeric', 'min:0.01'],
+                'publication_year' => ['required', 'integer', 'between:1950,2050', 'date_format:Y'],
+                'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ],
             [
-                'publisher_name.required' => 'publisher name field is required.',
-                'publisher_phone.unique' => 'The publisher phone has already been taken.',
-                'publisher_name.regex' => 'The publisher name format is invalid. Please enter alpabatic text.',
-                'publisher_name.min' => 'The publisher name must be at least 3 characters.',
-                'publisher_name.max' => 'The publisher name may not be greater than 20 characters.',
+                'title.unique' => 'The book (title,publisher_id,author_id) has already been taken.',
             ]
         );
 
         try {
-            // $this->publishers->create($data);
+            // $this->books->create($data);
             $input = $request->all();
-            if ($request->hasFile('publisher_photo')) {
-                $image = Image::make($request->file('publisher_photo'));
-                $imageName = time() . '-' . $request->file('publisher_photo')->getClientOriginalName();
+            // dd($input);
+            if ($request->hasFile('photo')) {
+                $image = Image::make($request->file('photo'));
+                $imageName = time() . '-' . $request->file('photo')->getClientOriginalName();
 
-                $destinationPath = 'assets/img/publisher/';
+                $destinationPath = 'assets/img/book/';
                 $uploadSuccess = $image->save($destinationPath . $imageName);
 
                 /**
                  * Generate Thumbnail Image Upload on Folder Code
                  */
-                $destinationPathThumbnail = public_path('assets/img/publisher/thumbnail/');
+                $destinationPathThumbnail = public_path('assets/img/book/thumbnail/');
                 $image->resize(50, 50);
                 $image->save($destinationPathThumbnail . $imageName);
 
-                // $file = $request->file('publisher_photo');
+                // $file = $request->file('photo');
                 // $filename = $file->getClientOriginalName();
                 // $uploadedPath = $file->move(public_path($destinationPath), $filename);
                 if ($uploadSuccess) {
-                    $input['publisher_photo'] = $imageName;
+                    $input['photo'] = $imageName;
                 }
             }
             $input['created_by'] = $this->webspice->getUserId();
-
-            $this->publishers->create($input);
+            // dd($input);
+            $this->books->create($input);
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -136,8 +149,8 @@ class PublisherController extends Controller
     public function show($id)
     {
         try {
-            $publisher = publisher::find($id);
-            return $publisher;
+            $book = Book::with(['publisher', 'author', 'category', 'subcategory'])->find($id);
+            return $book;
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -151,61 +164,65 @@ class PublisherController extends Controller
     {
         // dd($request->isMethod('put'));
         #permission verfy
-        // $this->webspice->permissionVerify('publisher.edit');
+        // $this->webspice->permissionVerify('book.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 
         $request->validate(
             [
-                'publisher_name' => 'required|regex:/^[a-zA-Z 0-9]+$/u|min:3|max:20|unique:publishers,publisher_name,' . $id,               
-                'publisher_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'title' => ['required', 'min:1', 'max:1000', Rule::unique('books')->ignore($id, 'id')->where(function ($query) use ($request) {
+                    return $query->where('title', $request->title)
+                        ->where('publisher_id', $request->publisher_id)
+                        ->where('author_id', $request->author_id);
+                })],
+                'publisher_id' => 'required',
+                'author_id' => 'required',
+                'buying_discount_percentage' => 'required',
+                'selling_discount_percentage' => 'required',
+                'buying_vat_percentage' => 'required',
+                'selling_vat_percentage' => 'required',
+                'price' => ['required', 'numeric', 'min:0.01'],
+                'publication_year' => 'required',
             ],
             [
-                'publisher_name.required' => 'publisher Name field is required.',
-                'publisher_phone.unique' => '"' . $request->publisher_phone . '" The publisher phone has already been taken.',
-                'publisher_name.regex' => 'The publisher name format is invalid. Please enter alpabatic text.',
-                'publisher_name.min' => 'The publisher name must be at least 3 characters.',
-                'publisher_name.max' => 'The publisher name may not be greater than 20 characters.',
+                'title.unique' => 'The book (title,publisher_id,author_id) has already been taken.',
             ]
         );
         try {
-            $publisher = publisher::find($id);
-            $publisher->publisher_name = $request->publisher_name;
-            $publisher->publisher_phone = $request->publisher_phone;
-            $publisher->publisher_email = $request->publisher_email;
-            $publisher->publisher_address = $request->publisher_address;
-            if ($request->hasFile('publisher_photo')) {
-                $image = Image::make($request->file('publisher_photo'));
-                $imageName = time() . '-' . $request->file('publisher_photo')->getClientOriginalName();
+            $input = $request->all();
+            if ($request->hasFile('photo')) {
+                $image = Image::make($request->file('photo'));
+                $imageName = time() . '-' . $request->file('photo')->getClientOriginalName();
 
-                $destinationPath = 'assets/img/publisher/';
+                $destinationPath = 'assets/img/book/';
                 $uploadSuccess = $image->save($destinationPath . $imageName);
 
                 /**
                  * Generate Thumbnail Image Upload on Folder Code
                  */
-                $destinationPathThumbnail = public_path('assets/img/publisher/thumbnail/');
+                $destinationPathThumbnail = public_path('assets/img/book/thumbnail/');
                 $image->resize(50, 50);
                 $image->save($destinationPathThumbnail . $imageName);
                 if ($uploadSuccess) {
                     //Delete Old File
-                    $imgExist = publisher::where('id', $id)->first();
-                    $existingImage = $imgExist->publisher_photo;
+                    $imgExist = Book::where('id', $id)->first();
+                    $existingImage = $imgExist->photo;
                     if ($existingImage) {
-                      
-                        if (Storage::disk('local')->exists($destinationPath . $existingImage)) {                           
+
+                        if (Storage::disk('local')->exists($destinationPath . $existingImage)) {
                             unlink($destinationPath . $existingImage);
                         }
                         if (Storage::disk('local')->exists($destinationPathThumbnail . $existingImage)) {
                             unlink($destinationPathThumbnail . $existingImage);
                         }
                     }
-                    $publisher->publisher_photo = $imageName;
+                    $input['photo'] = $imageName;
                 }
             }
-            $publisher->updated_by = $this->webspice->getUserId();
-            $publisher->save();
+
+            $input['updated_by'] = $this->webspice->getUserId();
+            Book::where('id', $id)->update($input);
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -213,19 +230,19 @@ class PublisherController extends Controller
                     'error' => $e->getMessage(),
                 ], 401);
         }
-        // return redirect()->route('publishers.index');
+        // return redirect()->route('books.index');
     }
 
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('publisher.delete');
+        // $this->webspice->permissionVerify('book.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 
-            $publisher = $this->publishers->findById($id);
-            $publisher->delete();
+            $book = $this->books->findById($id);
+            $book->delete();
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -240,12 +257,12 @@ class PublisherController extends Controller
     {
         return response()->json(['error' => 'Unauthenticated.'], 401);
         #permission verfy
-        $this->webspice->permissionVerify('publisher.force_delete');
+        $this->webspice->permissionVerify('book.force_delete');
         try {
             #decrypt value
             $id = $this->webspice->encryptDecrypt('decrypt', $id);
-            $publisher = publisher::withTrashed()->findOrFail($id);
-            $publisher->forceDelete();
+            $book = Book::withTrashed()->findOrFail($id);
+            $book->forceDelete();
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
@@ -254,37 +271,37 @@ class PublisherController extends Controller
     public function restore($id)
     {
         #permission verfy
-        $this->webspice->permissionVerify('publisher.restore');
+        $this->webspice->permissionVerify('book.restore');
         try {
             $id = $this->webspice->encryptDecrypt('decrypt', $id);
-            $publisher = publisher::withTrashed()->findOrFail($id);
-            $publisher->restore();
+            $book = Book::withTrashed()->findOrFail($id);
+            $book->restore();
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
-        // return redirect()->route('publishers.index', ['status' => 'archived'])->withSuccess(__('User restored successfully.'));
-        return redirect()->route('publishers.index');
+        // return redirect()->route('books.index', ['status' => 'archived'])->withSuccess(__('User restored successfully.'));
+        return redirect()->route('books.index');
     }
 
     public function restoreAll()
     {
         #permission verfy
-        $this->webspice->permissionVerify('publisher.restore');
+        $this->webspice->permissionVerify('book.restore');
         try {
-            $publishers = publisher::onlyTrashed()->get();
-            foreach ($publishers as $publisher) {
-                $publisher->restore();
+            $books = Book::onlyTrashed()->get();
+            foreach ($books as $book) {
+                $book->restore();
             }
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
-        return redirect()->route('publishers.index');
-        // return redirect()->route('publishers.index')->withSuccess(__('All publishers restored successfully.'));
+        return redirect()->route('books.index');
+        // return redirect()->route('books.index')->withSuccess(__('All books restored successfully.'));
     }
 
-    public function getPublishers()
+    public function getbooks()
     {
-        $data = Publisher::where('status', 1)->get();
+        $data = Book::where('status', 1)->get();
         return response()->json($data);
     }
 

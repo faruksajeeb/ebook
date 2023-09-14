@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-import api from "../api"  // Import your API service
+import api from "../api"; // Import your API service
 // Create a new store instance.
 const store = createStore({
     state() {
@@ -9,16 +9,16 @@ const store = createStore({
             categories: [],
             permissions: [],
             roles: [],
+            authors: [],
+            publishers: [],
             user: {
-                permissions: [
-                   
-                ],               
-              },
+                permissions: [],
+            },
         };
     },
     getters: {
         getPemissions: (state) => {
-            api.fetchPermissions().then( (permissions) => {
+            api.fetchPermissions().then((permissions) => {
                 // console.log(state.permissions);
                 state.permissions = permissions;
             });
@@ -35,60 +35,62 @@ const store = createStore({
             // return formatedPermission;
         },
         getRoles: (state) => {
-            api.fetchRoles().then( (roles) => {               
-               state.roles = roles;               
+            api.fetchRoles().then((roles) => {
+                state.roles = roles;
             });
-            // let formatedPermission = state.roles.map((role) => {
-            //     const str = `${role.name}`;
-            //     const formatedName = str.charAt(0).toUpperCase() + str.slice(1);
-            //     return {
-            //         id: role.id,
-            //         name: formatedName,
-            //     };
-            // });
-            // return formatedPermission;
-            // console.log(state.roles);
-             return state.roles;
+            return state.roles;
+        },
+        getAuthors: (state) => {
+            api.fetchAuthors().then((authors) => {
+                state.authors = authors;
+            });
+            return state.authors;
+        },
+        getPublishers: (state) => {
+            api.fetchPublishers().then((publishers) => {
+                state.publishers = publishers;
+            });
+            return state.publishers;
         },
     },
     mutations: {
         setUserPermissions(state, permissions) {
             state.user.permissions = permissions;
-          },
-          setRoles(state, roles) {
+        },
+        setRoles(state, roles) {
             state.user.roles = roles;
-          },
-          setOptionGroups(state, option_groups) {
+        },
+        setOptionGroups(state, option_groups) {
             state.option_groups = option_groups;
-          },
-          setCategories(state, categories) {
+        },
+        setCategories(state, categories) {
             state.categories = categories;
-          },
+        },
     },
     actions: {
         fetchUserPermissions({ commit }) {
             // Replace this with the actual API call to fetch user permissions
             // e.g., using axios or fetch
             api.fetchUserPermissions().then((permissions) => {
-              commit('setUserPermissions', permissions);
+                commit("setUserPermissions", permissions);
             });
         },
         fetchRoles({ commit }) {
             // e.g., using axios or fetch
             api.fetchRoles().then((roles) => {
-              commit('setRoles', roles);
+                commit("setRoles", roles);
             });
         },
         fetchOptionGroups({ commit }) {
             // e.g., using axios or fetch
             api.fetchOptionGroups().then((option_groups) => {
-              commit('setOptionGroups', option_groups);
+                commit("setOptionGroups", option_groups);
             });
         },
         fetchCategories({ commit }) {
             // e.g., using axios or fetch
             api.fetchCategories().then((categories) => {
-              commit('setCategories', categories);
+                commit("setCategories", categories);
             });
         },
     },

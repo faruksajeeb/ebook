@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\SubCategoryController;
 use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\PublisherController;
+use App\Http\Controllers\Api\BookController;
 
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CustomerController;
@@ -54,7 +55,10 @@ Route::middleware('JWT')->group(function () {
     Route::get('get-option-groups', [OptionGroupController::class, 'getOptionGroups']);
     Route::get('get-roles', [RoleController::class, 'getRoles']);
     Route::get('get-permissions', [PermissionController::class, 'getPermissions']);
+    Route::get('get-authors', [AuthorController::class, 'getAuthors']);
+    Route::get('get-publishers', [PublisherController::class, 'getPublishers']);
     Route::get('/user/{id}/permissions', [PermissionController::class, 'getUserPermissions']);
+    Route::get('get-category-wise-sub-categories', [SubCategoryController::class, 'getCategoryWiseSubCategories'])->name('getCategoryWiseSubCategories');
 
     Route::apiResource('/option-groups', OptionGroupController::class);
     Route::apiResource('/options', OptionController::class);
@@ -77,6 +81,9 @@ Route::middleware('JWT')->group(function () {
     Route::apiResource('/suppliers', SupplierController::class);
     Route::post('/suppliers/{id}',[SupplierController::class,'update']);
     
+    
+    Route::apiResource('/books',BookController::class);
+    Route::post('/books/{id}',[BookController::class,'update']);
     
     Route::apiResource('/manage-employee', EmployeeController::class);
     Route::apiResource('/manage-product', ProductController::class);

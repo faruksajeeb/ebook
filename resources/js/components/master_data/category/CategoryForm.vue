@@ -10,6 +10,7 @@
             <h3 class="text-white-900" v-else>
               <i class="fa fa-pencil"></i> Edit Category
             </h3>
+            <p class="text-white m-0">ফরমের লাল তারকা (<span class="text-danger">*</span>) চিহ্নিত ঘরগুলো অবশ্যই পূরণ করুন। অন্যান্য ঘরগুলো পূরণ ঐচ্ছিক।</p>
           </div>
           <div class="card-body p-3">
             <div class="form">

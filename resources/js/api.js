@@ -43,4 +43,14 @@ export default {
             return response.data;
         });
     },
+    fetchAuthors(){
+        return apiClient.get("/get-authors").then(function (response) {
+            return response.data;
+        });
+    },
+    fetchPublishers(){
+        return apiClient.get("/get-publishers").then(function (response) {
+            return response.data;
+        });
+    },
 };

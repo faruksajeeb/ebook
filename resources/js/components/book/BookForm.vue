@@ -1,127 +1,337 @@
 <template>
-  <div>
-    <div class="row">
-      <div class="col-md-6 offset-md-3">
-        <div class="card shadow-sm my-4">
-          <div class="card-header py-2 my-bg-success">
-            <h3 class="text-white-900" v-if="isNew">
-              <i class="fa fa-plus"></i> Add publisher
-            </h3>
-            <h3 class="text-white-900" v-else>
-              <i class="fa fa-pencil"></i> Edit publisher
-            </h3>
-          </div>
-          <div class="card-body p-3">
-            <div class="form">
-              <form
-                id="form"
-                class="publisher"
-                enctype="multipart/form-data"
-                @submit.prevent="submitForm"
-                @keydown="form.onKeydown($event)"
-              >
-                <AlertError :form="form" />
-                <div v-if="!isNew && !publisher">
-                  <LoadingSpinner/>
-                </div>
-                <div class="form-group">
-                  <label for="">publisher Name <span class="text-danger">*</span></label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Enter Your publisher Name"
-                    name="publisher_name"
-                    v-model="form.publisher_name"
-                    :class="{ 'is-invalid': form.errors.has('publisher_name') }"
-                  />
-                  <HasError :form="form" field="publisher_name" />
-                </div>
-                <div class="form-group">
-                  <label for="">publisher Phone </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Enter Your publisher phone"
-                    v-model="form.publisher_phone"
-                    :class="{ 'is-invalid': form.errors.has('publisher_phone') }"
-                  />
-                  <HasError :form="form" field="publisher_phone" />
-                </div>
-                <div class="form-group">
-                  <label for="">publisher Email </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Enter Your publisher Email"
-                    v-model="form.publisher_email"
-                    :class="{ 'is-invalid': form.errors.has('publisher_email') }"
-                  />
-                  <HasError :form="form" field="publisher_email" />
-                </div>
-                <div class="form-group">
-                  <label for="">publisher Country </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Enter Your publisher Country"
-                    v-model="form.publisher_country"
-                    :class="{ 'is-invalid': form.errors.has('publisher_country') }"
-                  />
-                  <HasError :form="form" field="publisher_country" />
-                </div>
-                <div class="form-group">
-                  <label for="">Address </label>
-                  <textarea
-                    v-model="form.publisher_address"
-                    cols="30"
-                    rows="3"
-                    :class="{ 'is-invalid': form.errors.has('publisher_address') }"
-                    class="form-control"
-                  ></textarea>
-
-                  <HasError :form="form" field="publisher_address" />
-                </div>
-                <div class="form-group">
-                  <label for="">publisher Photo </label>
-                  <input
-                    type="file"
-                    class="form-control"
-                    placeholder="Enter Your publisher Photo"
-                    name="publisher_photo"
-                    @change="onFileChange"
-                    accept="image/*"
-                    :class="{ 'is-invalid': form.errors.has('publisher_photo') }"
-                  />
-                  <HasError :form="form" field="publisher_photo" />
-                  [Allow File type:jpeg,png,jpg,gif,svg & Size:2MB]
-                </div>
-                <div class="image-item">
-                  <!-- <img src="http://127.0.0.1:8000/assets/img/publisher/faizaan.jpg" alt="" width="100" /> -->
-                  <img v-if="imageUrl" :src="imageUrl" alt="Image Preview" width="150" />
-                  <button
-                    class="remove-button"
-                    type="button"
-                    v-if="imageUrl"
-                    @click="removeSingleImage(image, key)"
-                  >
-                    x
-                  </button>
-                </div>
-                <hr />
-                <div class="form-group">
-                  <div v-if="form.progress">
-                    Progress: {{ form.progress.percentage }}%
+  <div class="row">
+    <div class="col-md-12 offset-md-0">
+      <div class="card shadow-sm my-2">
+        <div class="card-header py-2 my-bg-success">
+          <h3 class="text-white-900" v-if="isNew"><i class="fa fa-plus"></i> Add Book (বই যোগ করুন)</h3>
+          <h3 class="text-white-900" v-else><i class="fa fa-pencil"></i> Edit Book</h3>
+          <p class="text-white m-0">ফরমের লাল তারকা (<span class="text-danger">*</span>) চিহ্নিত ঘরগুলো অবশ্যই পূরণ করুন। অন্যান্য ঘরগুলো পূরণ ঐচ্ছিক।</p>
+        </div>
+        <div class="card-body p-3">
+          <div class="form">
+            <form
+              id="form"
+              class="book"
+              enctype="multipart/form-data"
+              @submit.prevent="submitForm"
+              @keydown="form.onKeydown($event)"
+            >
+              <AlertError :form="form" />
+              <div v-if="!isNew && !book">
+                <LoadingSpinner />
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="input-group mb-2 row mx-0 px-0">
+                    <div class="input-group-prepend px-0 col-md-4 mx-0">
+                      <label class="input-group-text col-md-12" for="inputGroupSelect01"
+                        >Book Title
+                        <div class="text-danger">*</div></label
+                      >
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Your book title"
+                      name="title"
+                      v-model="form.title"
+                      :class="{ 'is-invalid': form.errors.has('title') }"
+                    />
+                    <HasError :form="form" field="title" />
                   </div>
-                  <router-link to="/publishers"> Manage publisher </router-link>                 
-                  <save-button v-if="isNew" :is-submitting="isSubmitting"></save-button>
-                  <save-changes-button
-                    v-else
-                    :is-submitting="isSubmitting"
-                  ></save-changes-button>
-                  <reset-button @reset-data="resetData" />
+                  <div class="input-group mb-2 row mx-0 px-0">
+                   
+                    <div class="input-group-prepend px-0 col-md-4 mx-0">
+                      <label class="input-group-text col-md-12" for="inputGroupSelect01"
+                        >Author
+                        <div class="text-danger">*</div></label
+                      >
+                    </div>
+                
+                    <select
+                      class="custom-select mx-0 pe-0"
+                      id="inputGroupSelect01"
+                      v-model="form.author_id"
+                      :class="{ 'is-invalid': form.errors.has('author_id') }"
+                    >
+                   
+                      <option value="" disabled selected>Choose...</option>
+                      <option
+                        :value="author.id"
+                        v-for="author in authors"
+                        :key="author.id"
+                      >
+                        {{ author.author_name }}
+                      </option>
+                   
+                    </select>
+                
+                    <HasError :form="form" field="author_id" />
+                  </div>
+                  <div class="input-group mb-2 row mx-0 px-0">
+                    <div class="input-group-prepend px-0 col-md-4 mx-0">
+                      <label class="input-group-text col-md-12" for="inputGroupSelect01"
+                        >Category</label
+                      >
+                    </div>
+                    <select
+                      class="custom-select mx-0 pe-0"
+                      v-model="form.category_id"
+                      @change="getSubCategories"
+                      :class="{ 'is-invalid': form.errors.has('category_id') }"
+                    >
+                      <option value="" disabled selected>Choose...</option>
+                      <option
+                        :value="category.id"
+                        v-for="category in categories"
+                        :key="categories.id"
+                      >
+                        {{ category.category_name }}
+                      </option>
+                    </select>
+                    <HasError :form="form" field="category_id" />
+                  </div>
+                  <div class="input-group mb-2 row mx-0 px-0">
+                    <div class="input-group-prepend px-0 col-md-4 mx-0">
+                      <label class="input-group-text col-md-12" for="inputGroupSelect01"
+                        >Genre
+                      </label>
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Your book genre"
+                      name="genre"
+                      v-model="form.genre"
+                      :class="{ 'is-invalid': form.errors.has('genre') }"
+                    />
+                    <HasError :form="form" field="genre" />
+                  </div>
+                  <div class="input-group mb-2 row mx-0 px-0">
+                    <div class="input-group-prepend px-0 col-md-5 mx-0">
+                      <label class="input-group-text col-md-12" for="inputGroupSelect01"
+                        >Buying Discount Percentage
+                        <div class="text-danger">*</div></label
+                      >
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Ex. 25"
+                      name="buying_discount_percentage"
+                      v-model="form.buying_discount_percentage"
+                      :class="{
+                        'is-invalid': form.errors.has('buying_discount_percentage'),
+                      }"
+                    />
+                    <HasError :form="form" field="buying_discount_percentage" />
+                  </div>
+                  <div class="input-group mb-2 row mx-0 px-0">
+                    <div class="input-group-prepend px-0 col-md-5 mx-0">
+                      <label class="input-group-text col-md-12" for="inputGroupSelect01"
+                        >Buying Vat Percentage
+                        <div class="text-danger">*</div></label
+                      >
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Ex: 5"
+                      name="buying_vat_percentage"
+                      v-model="form.buying_vat_percentage"
+                      :class="{ 'is-invalid': form.errors.has('buying_vat_percentage') }"
+                    />
+                    <HasError :form="form" field="buying_vat_percentage" />
+                  </div>
+                  <div class="input-group mb-2 row mx-0 px-0">
+                    <div class="input-group-prepend px-0 col-md-5 mx-0">
+                      <label class="input-group-text col-md-12" for="inputGroupSelect01"
+                        >Publication Year
+                        <div class="text-danger">*</div></label
+                      >
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Ex: 2023"
+                      name="publication_year"
+                      v-model="form.publication_year"
+                      :class="{ 'is-invalid': form.errors.has('publication_year') }"
+                    />
+                    <HasError :form="form" field="publication_year" />
+                  </div>
                 </div>
-              </form>
-            </div>
+                <div class="col-md-6">
+                  <div class="input-group mb-2 row mx-0 px-0">
+                    <div class="input-group-prepend px-0 col-md-4 mx-0">
+                      <label
+                        class="input-group-text col-md-12"
+                        for="inputGroupSelect01"
+                        title="(International Standard Book Number)"
+                        >ISBN
+                        <div class="text-danger"></div></label
+                      >
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Your book isbn"
+                      name="isbn"
+                      v-model="form.isbn"
+                      :class="{ 'is-invalid': form.errors.has('isbn') }"
+                    />
+                    <HasError :form="form" field="isbn" />
+                  </div>
+
+                  <div class="input-group mb-2 row mx-0 px-0">
+                    <div class="input-group-prepend px-0 col-md-4 mx-0">
+                      <label class="input-group-text col-md-12" for="inputGroupSelect01"
+                        >Publisher
+                        <div class="text-danger">*</div></label
+                      >
+                    </div>
+                    <select
+                      class="custom-select mx-0 pe-0"
+                      v-model="form.publisher_id"
+                      :class="{ 'is-invalid': form.errors.has('publisher_id') }"
+                    >
+                      <option value="" disabled selected>Choose...</option>
+                      <option
+                        :value="publisher.id"
+                        v-for="publisher in publishers"
+                        :key="publisher.id"
+                      >
+                        {{ publisher.publisher_name }}
+                      </option>
+                    </select>
+                    <HasError :form="form" field="publisher_id" />
+                  </div>
+
+                  <div class="input-group mb-2 row mx-0 px-0">
+                    <div class="input-group-prepend px-0 col-md-4 mx-0">
+                      <label class="input-group-text col-md-12" for="inputGroupSelect01"
+                        >Sub-category</label
+                      >
+                    </div>
+                    <select
+                      class="custom-select mx-0 pe-0"
+                      v-model="form.sub_category_id"
+                      :class="{ 'is-invalid': form.errors.has('sub_category_id') }"
+                    >
+                      <option value="" disabled selected>Choose...</option>
+                      <option
+                        :value="sub_category.id"
+                        v-for="sub_category in sub_categories"
+                        :key="sub_category.id"
+                      >
+                        {{ sub_category.sub_category_name }}
+                      </option>
+                    </select>
+                    <HasError :form="form" field="sub_category_id" />
+                  </div>
+                  <div class="input-group mb-2 row mx-0 px-0">
+                    <div class="input-group-prepend px-0 col-md-4 mx-0">
+                      <label class="input-group-text col-md-12" for="inputGroupSelect01"
+                        >Price
+                        <div class="text-danger">*</div></label
+                      >
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Your book price"
+                      name="price"
+                      v-model="form.price"
+                      :class="{ 'is-invalid': form.errors.has('price') }"
+                    />
+                    <HasError :form="form" field="price" />
+                  </div>
+                  <div class="input-group mb-2 row mx-0 px-0">
+                    <div class="input-group-prepend px-0 col-md-5 mx-0">
+                      <label class="input-group-text col-md-12" for="inputGroupSelect01"
+                        >Selling Discount Percentage
+                        <div class="text-danger">*</div></label
+                      >
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Ex: 15"
+                      name="selling_discount_percentage"
+                      v-model="form.selling_discount_percentage"
+                      :class="{
+                        'is-invalid': form.errors.has('selling_discount_percentage'),
+                      }"
+                    />
+                    <HasError :form="form" field="selling_discount_percentage" />
+                  </div>
+                  <div class="input-group mb-2 row mx-0 px-0">
+                    <div class="input-group-prepend px-0 col-md-5 mx-0">
+                      <label class="input-group-text col-md-12" for="inputGroupSelect01"
+                        >Selling Vat Percentage
+                        <div class="text-danger">*</div></label
+                      >
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Ex: 7"
+                      name="selling_vat_percentage"
+                      v-model="form.selling_vat_percentage"
+                      :class="{ 'is-invalid': form.errors.has('selling_vat_percentage') }"
+                    />
+                    <HasError :form="form" field="selling_vat_percentage" />
+                  </div>
+                  <div class="input-group mb-2 row mx-0 px-0">
+                    <div class="input-group-prepend px-0 col-md-5 mx-0">
+                      <label class="input-group-text col-md-12" for="inputGroupSelect01"
+                        >Book Photo
+                        <div class="text-danger"></div
+                      ></label>
+                    </div>
+                    <input
+                      type="file"
+                      class="form-control"
+                      placeholder="Enter Your book Photo"
+                      name="photo"
+                      @change="onFileChange"
+                      accept="image/*"
+                      :class="{ 'is-invalid': form.errors.has('photo') }"
+                    />
+                    <HasError :form="form" field="photo" />
+                    [Allow File type:jpeg,png,jpg,gif,svg & Max Size:2MB]
+                    <div class="image-item">
+                      <img
+                        v-if="imageUrl"
+                        :src="imageUrl"
+                        alt="Image Preview"
+                        width="150"
+                      />
+                      <button
+                        class="remove-button"
+                        type="button"
+                        v-if="imageUrl"
+                        @click="removeSingleImage(image, key)"
+                      >
+                        x
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <hr />
+              <div class="form-group">
+                <!-- <div v-if="form.progress">Progress: {{ form.progress.percentage }}%</div> -->
+                <router-link to="/books" class="btn btn-lg btn-outline-primary"> &lt;&lt; Manage Book </router-link>
+                <save-button v-if="isNew" :is-submitting="isSubmitting"></save-button>
+                <save-changes-button
+                  v-else
+                  :is-submitting="isSubmitting"
+                ></save-changes-button>
+                <reset-button @reset-data="resetData" />
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -129,63 +339,109 @@
   </div>
 </template>
 <script type="text/javascript">
+import { mapActions } from "vuex";
 export default {
-  data: () => ({
-    isSubmitting: false,
-    imageUrl: null,
-    publisher: false,
-    form: new Form({
-      publisher_name: "",
-      publisher_phone: "",
-      publisher_photo: null,
-      publisher_email: "",
-      publisher_address: "",
-    }),
-  }),
+  data() {
+    return {
+      isSubmitting: false,
+      imageUrl: null,
+      book: false,
+      sub_categories: [],
+      authors: [],
+      publishers: [],
+      form: new Form({
+        title: "",
+        isbn: "",
+        genre: "",
+        price: "",
+        author_id: "",
+        publisher_id: "",
+        category_id: "",
+        sub_category_id: "",
+        photo: null,
+        buying_discount_percentage: "",
+        selling_discount_percentage: "",
+        buying_vat_percentage: "",
+        selling_vat_percentage: "",
+        publication_year: "",
+      }),
+    };
+  },
   computed: {
     isNew() {
       return !this.$route.path.includes("edit");
     },
+    categories() {
+      return this.$store.state.categories;
+    },
   },
   async created() {
+    this.fetchCategories();
+    this.authors = this.$store.getters.getAuthors;
+    if (this.authors.length == 0) {
+      const response = await axios.get("/api/get-authors");
+      this.authors = response.data;
+    }
+    this.publishers = this.$store.getters.getPublishers;
+    if (this.publishers.length == 0) {
+      const response = await axios.get("/api/get-publishers");
+      this.publishers = response.data;
+    }
     if (!this.isNew) {
-      const response = await axios.get(`/api/publishers/${this.$route.params.id}`);
+      const response = await axios.get(`/api/books/${this.$route.params.id}`);
 
       // console.log(response.data);
-     
-      this.form.publisher_name = response.data.publisher_name;
-      this.form.publisher_phone = response.data.publisher_phone;
-      // this.form.publisher_photo = response.data.publisher_photo;
-      this.form.publisher_email = response.data.publisher_email;
-      this.form.publisher_address = response.data.publisher_address;
-      this.form.publisher_country = response.data.publisher_country;
+
+      this.form.title = response.data.title;
+      this.form.isbn = response.data.isbn;
+      // this.form.photo = response.data.photo;
+      this.form.author_id = response.data.author_id;
+      this.form.publisher_id = response.data.publisher_id;
+      this.form.category_id = response.data.category_id;
+      this.form.sub_category_id = response.data.sub_category_id;
+      this.form.price = response.data.price;
+      this.form.publication_year = response.data.publication_year;
+      this.form.buying_discount_percentage = response.data.buying_discount_percentage;
+      this.form.buying_vat_percentage = response.data.buying_vat_percentage;
+      this.form.selling_discount_percentage = response.data.selling_discount_percentage;
+      this.form.selling_vat_percentage = response.data.selling_vat_percentage;
+      this.form.genere = response.data.genere;
       this.imageUrl =
-        `${window.publicPath}assets/img/publisher/thumbnail/` +
-        response.data.publisher_photo;
-        this.publisher = true;
+        `${window.publicPath}assets/img/book/thumbnail/` + response.data.photo;
+      this.book = true;
     }
   },
   methods: {
+    ...mapActions(["fetchCategories"]),
     onFileChange(e) {
       let selectedFile = e.target.files[0];
       if (selectedFile) {
-        const allowedFileTypes = ["image/jpeg", "image/jpg", "image/png","image/gif","image/svg","application/pdf"];
+        const allowedFileTypes = [
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/svg",
+          "application/pdf",
+        ];
         if (selectedFile.size > 2048 * 1024) {
           // Change this to your desired maximum file size in bytes
           this.form.errors.set(
-            "publisher_photo",
+            "photo",
             "File size exceeds the maximum allowed size."
           );
           Notification.error("File size exceeds the maximum allowed size.");
         }
         if (!allowedFileTypes.includes(selectedFile.type)) {
           this.form.errors.set(
-            "publisher_photo",
+            "photo",
             " File type is not supported. Please choose a valid file type."
           );
-          Notification.error(" File type is not supported. Please choose a valid file type.");
+          Notification.error(
+            " File type is not supported. Please choose a valid file type."
+          );
         }
-        this.form.publisher_photo = selectedFile;
+        this.form.photo = selectedFile;
 
         const reader = new FileReader();
 
@@ -197,16 +453,16 @@ export default {
     },
     removeSingleImage(image, index) {
       this.imageUrl = null;
-      this.form.publisher_photo = null;
+      this.form.photo = null;
     },
     async submitForm() {
       this.isSubmitting = true;
       if (this.isNew) {
         await this.form
-          .post("/api/publishers", this.form)
+          .post("/api/books", this.form)
           .then(() => {
-            this.$router.push({ name: "publishers" });
-            Notification.success(`Create publisher ${this.form.name} successfully!`);
+            this.$router.push({ name: "books" });
+            Notification.success(`Create book ${this.form.name} successfully!`);
           })
           .catch((error) => {
             // console.log(error);
@@ -214,7 +470,7 @@ export default {
               this.errors = error.response.data.errors;
               Notification.error("Validation Errors!");
             } else if (error.response.status === 401) {
-              // statusText = "Unpublisherized";
+              // statusText = "Unbookized";
               this.errors = {};
               Notification.error(error.response.data.error);
             } else {
@@ -228,10 +484,10 @@ export default {
       } else {
         try {
           await this.form
-            .post(`/api/publishers/${this.$route.params.id}`, this.form)
+            .post(`/api/books/${this.$route.params.id}`, this.form)
             .then((response) => {
-              Notification.success("publisher info updated");
-              this.$router.push("/publishers");
+              Notification.success("book info updated");
+              this.$router.push("/books");
             })
             .catch((error) => {
               Notification.error(error);
@@ -244,6 +500,16 @@ export default {
           Notification.error(error);
         }
       }
+    },
+    getSubCategories() {
+      axios.get("/api/get-category-wise-sub-categories", {
+          params: {
+            category_id: this.form.category_id,
+          },
+        })
+        .then((response) => {
+          this.sub_categories = response.data;
+        });
     },
     resetData() {
       this.form.clear();
