@@ -11,6 +11,7 @@ const store = createStore({
             roles: [],
             authors: [],
             publishers: [],
+            suppliers: [],
             user: {
                 permissions: [],
             },
@@ -51,6 +52,12 @@ const store = createStore({
                 state.publishers = publishers;
             });
             return state.publishers;
+        },
+        getSuppliers: (state) => {
+            api.fetchSuppliers().then((suppliers) => {
+                state.suppliers = suppliers;
+            });
+            return state.suppliers;
         },
     },
     mutations: {

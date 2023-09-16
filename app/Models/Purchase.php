@@ -7,27 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Book extends Model
+class Purchase extends Model
 {
     use HasFactory,SoftDeletes; 
-    protected $table = 'books';
+    protected $table = 'purchases';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'title',
-        'isbn',
-        'author_id',
-        'category_id',
-        'sub_category_id',
-        'genre',
-        'price',
-        'buying_discount_percentage',
-        'selling_discount_percentage',
-        'buying_vat_percentage',
-        'selling_vat_percentage',
-        'photo',
-        'stock_quantity',
-        'publication_year',
-        'publisher_id',
+        'supplier_id',
+        'purchase_date',
+        'total_amount',
+        'discount_percentage',
+        'discount_amount',
+        'vat_percentage',
+        'vat_amount',
+        'net_amount',
+        'pay_amount',
+        'due_amount',
+        'paid_by',
+        'file',
         'status',
         'created_at',
         'updated_at',
@@ -52,12 +49,9 @@ class Book extends Model
             $q->where('title', 'LIKE', $term);
             $q->orWhere('isbn', 'LIKE', $term);
             $q->orWhere('genre', 'LIKE', $term);
-            $q->orWhereHas('publisher',function($q) use($term){
-                $q->where('publisher_name','LIKE',$term);
-            });
-            $q->orWhereHas('author',function($q) use($term){
-                $q->where('author_name','LIKE',$term);
-            });
+            // $q->orWhereHas('categories',function($q) use($term){
+            //     $q->where('category_name','LIKE',$term);
+            // });
         });
     }
     public function publisher() : BelongsTo

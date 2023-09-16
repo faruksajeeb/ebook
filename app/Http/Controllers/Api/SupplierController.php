@@ -283,7 +283,7 @@ class SupplierController extends Controller
         // return redirect()->route('suppliers.index')->withSuccess(__('All suppliers restored successfully.'));
     }
 
-    public function getsuppliers()
+    public function getSuppliers()
     {
         $data = Supplier::where('status', 1)->get();
         return response()->json($data);

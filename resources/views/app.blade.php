@@ -86,7 +86,7 @@
 </head>
 
 <body id="page-top">
-    <div id="app">
+    <div id="app" class="">
 
     </div>
     <!-- Scroll to top -->

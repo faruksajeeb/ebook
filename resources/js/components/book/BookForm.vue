@@ -32,6 +32,7 @@
                     <input
                       type="text"
                       class="form-control"
+                      autocomplete="off"
                       placeholder="Enter Your book title"
                       name="title"
                       v-model="form.title"
@@ -100,6 +101,7 @@
                     <input
                       type="text"
                       class="form-control"
+                      autocomplete="off"
                       placeholder="Enter Your book genre"
                       name="genre"
                       v-model="form.genre"
@@ -117,6 +119,7 @@
                     <input
                       type="text"
                       class="form-control"
+                      autocomplete="off"
                       placeholder="Ex. 25"
                       name="buying_discount_percentage"
                       v-model="form.buying_discount_percentage"
@@ -136,6 +139,7 @@
                     <input
                       type="text"
                       class="form-control"
+                      autocomplete="off"
                       placeholder="Ex: 5"
                       name="buying_vat_percentage"
                       v-model="form.buying_vat_percentage"
@@ -153,6 +157,7 @@
                     <input
                       type="text"
                       class="form-control"
+                      autocomplete="off"
                       placeholder="Ex: 2023"
                       name="publication_year"
                       v-model="form.publication_year"
@@ -175,6 +180,7 @@
                     <input
                       type="text"
                       class="form-control"
+                      autocomplete="off"
                       placeholder="Enter Your book isbn"
                       name="isbn"
                       v-model="form.isbn"
@@ -239,6 +245,7 @@
                     <input
                       type="text"
                       class="form-control"
+                      autocomplete="off"
                       placeholder="Enter Your book price"
                       name="price"
                       v-model="form.price"
@@ -256,6 +263,7 @@
                     <input
                       type="text"
                       class="form-control"
+                      autocomplete="off"
                       placeholder="Ex: 15"
                       name="selling_discount_percentage"
                       v-model="form.selling_discount_percentage"
@@ -275,6 +283,7 @@
                     <input
                       type="text"
                       class="form-control"
+                      autocomplete="off"
                       placeholder="Ex: 7"
                       name="selling_vat_percentage"
                       v-model="form.selling_vat_percentage"
@@ -394,11 +403,14 @@ export default {
 
       this.form.title = response.data.title;
       this.form.isbn = response.data.isbn;
-      // this.form.photo = response.data.photo;
+      this.form.photo = response.data.photo;
       this.form.author_id = response.data.author_id;
       this.form.publisher_id = response.data.publisher_id;
       this.form.category_id = response.data.category_id;
-      this.form.sub_category_id = response.data.sub_category_id;
+      if(response.data.category_id){
+        this.getSubCategories()
+      }
+      this.form.sub_category_id = response.data.sub_category_id ? response.data.sub_category_id : "";
       this.form.price = response.data.price;
       this.form.publication_year = response.data.publication_year;
       this.form.buying_discount_percentage = response.data.buying_discount_percentage;

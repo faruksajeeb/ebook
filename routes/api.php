@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\SubCategoryController;
 use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\PublisherController;
 use App\Http\Controllers\Api\BookController;
+use App\Http\Controllers\Api\PurchaseController;
 
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CustomerController;
@@ -57,6 +58,7 @@ Route::middleware('JWT')->group(function () {
     Route::get('get-permissions', [PermissionController::class, 'getPermissions']);
     Route::get('get-authors', [AuthorController::class, 'getAuthors']);
     Route::get('get-publishers', [PublisherController::class, 'getPublishers']);
+    Route::get('get-suppliers', [SupplierController::class, 'getSuppliers']);
     Route::get('/user/{id}/permissions', [PermissionController::class, 'getUserPermissions']);
     Route::get('get-category-wise-sub-categories', [SubCategoryController::class, 'getCategoryWiseSubCategories'])->name('getCategoryWiseSubCategories');
 
@@ -84,6 +86,9 @@ Route::middleware('JWT')->group(function () {
     
     Route::apiResource('/books',BookController::class);
     Route::post('/books/{id}',[BookController::class,'update']);
+
+    Route::apiResource('/purchases',PurchaseController::class);
+    Route::post('/purchases/{id}',[PurchaseController::class,'update']);
     
     Route::apiResource('/manage-employee', EmployeeController::class);
     Route::apiResource('/manage-product', ProductController::class);

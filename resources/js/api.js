@@ -53,4 +53,9 @@ export default {
             return response.data;
         });
     },
+    fetchSuppliers(){
+        return apiClient.get("/get-suppliers").then(function (response) {
+            return response.data;
+        });
+    },
 };

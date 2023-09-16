@@ -9,7 +9,7 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h3 class="modal-title" id="recordModalLabel">Book Details</h3>
+          <h3 class="modal-title" id="recordModalLabel">Purchase Details</h3>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -18,11 +18,11 @@
           <!-- Display record details here -->
          
           <div v-if="record.author">
-            <h4>Book Title: {{ record.title }}</h4>
+            <h4>purchase Title: {{ record.title }}</h4>
             <div class="row">
               <div class="col-md-4">
                 <img
-                  :src="`${publicPath}assets/img/book/`+record.photo"
+                  :src="`${publicPath}assets/img/purchase/`+record.photo"
                   alt="Cutomer Photo"
                   width="250"
                   class="img-fluid"

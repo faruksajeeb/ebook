@@ -4,26 +4,26 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Lib\Webspice;
-use App\Models\Book;
+use App\Models\purchase;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Image;
 
-class BookController extends Controller
+class PurchaseController extends Controller
 {
     public $webspice;
-    protected $book;
-    protected $books;
-    protected $bookid;
+    protected $purchase;
+    protected $purchases;
+    protected $purchaseid;
     public $tableName;
 
-    public function __construct(Book $book, Webspice $webspice)
+    public function __construct(purchase $purchase, Webspice $webspice)
     {
         $this->webspice = $webspice;
-        $this->books = $book;
-        $this->tableName = 'books';
+        $this->purchases = $purchase;
+        $this->tableName = 'purchases';
         $this->middleware('JWT');
     }
 
@@ -59,7 +59,7 @@ class BookController extends Controller
                 'price',
             ]));
 
-            $books = Book::with(['publisher', 'author', 'category', 'sub_category'])->when(count($filled) > 0, function ($query) use ($filled) {
+            $purchases = Purchase::with(['publisher', 'author', 'category', 'sub_category'])->when(count($filled) > 0, function ($query) use ($filled) {
                 foreach ($filled as $column => $value) {
                     $query->where($column, 'LIKE', '%' . $value . '%');
                 }
@@ -68,7 +68,7 @@ class BookController extends Controller
                 $query->search(trim($searchTerm));
             })->orderBy($sortField, $sortDirection)->paginate($paginate);
 
-            return response()->json($books);
+            return response()->json($purchases);
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -81,13 +81,13 @@ class BookController extends Controller
     public function store(Request $request)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('book.create');
+        // $this->webspice->permissionVerify('purchase.create');
 
-        // Unique check __> book name, author, publisher
+        // Unique check __> purchase name, author, publisher
 
         $request->validate(
             [
-                'title' => ['required', 'min:1', 'max:1000', Rule::unique('books')->where(function ($query) use ($request) {
+                'title' => ['required', 'min:1', 'max:1000', Rule::unique('purchases')->where(function ($query) use ($request) {
                     return $query->where('title', $request->title)
                         ->where('publisher_id', $request->publisher_id)
                         ->where('author_id', $request->author_id);
@@ -103,25 +103,25 @@ class BookController extends Controller
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ],
             [
-                'title.unique' => 'The book (title,publisher_id,author_id) has already been taken.',
+                'title.unique' => 'The purchase (title,publisher_id,author_id) has already been taken.',
             ]
         );
 
         try {
-            // $this->books->create($data);
+            // $this->purchases->create($data);
             $input = $request->all();
             // dd($input);
             if ($request->hasFile('photo')) {
                 $image = Image::make($request->file('photo'));
                 $imageName = time() . '-' . $request->file('photo')->getClientOriginalName();
 
-                $destinationPath = 'assets/img/book/';
+                $destinationPath = 'assets/img/purchase/';
                 $uploadSuccess = $image->save($destinationPath . $imageName);
 
                 /**
                  * Generate Thumbnail Image Upload on Folder Code
                  */
-                $destinationPathThumbnail = public_path('assets/img/book/thumbnail/');
+                $destinationPathThumbnail = public_path('assets/img/purchase/thumbnail/');
                 $image->resize(50, 50);
                 $image->save($destinationPathThumbnail . $imageName);
 
@@ -134,7 +134,7 @@ class BookController extends Controller
             }
             $input['created_by'] = $this->webspice->getUserId();
             // dd($input);
-            $this->books->create($input);
+            $this->purchases->create($input);
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -149,8 +149,8 @@ class BookController extends Controller
     public function show($id)
     {
         try {
-            $book = Book::with(['publisher', 'author', 'category', 'sub_category'])->find($id);
-            return $book;
+            $purchase = Purchase::with(['publisher', 'author', 'category', 'sub_category'])->find($id);
+            return $purchase;
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -164,14 +164,14 @@ class BookController extends Controller
     {
         // dd($request->isMethod('put'));
         #permission verfy
-        // $this->webspice->permissionVerify('book.edit');
+        // $this->webspice->permissionVerify('purchase.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 
         $request->validate(
             [
-                'title' => ['required', 'min:1', 'max:1000', Rule::unique('books')->ignore($id, 'id')->where(function ($query) use ($request) {
+                'title' => ['required', 'min:1', 'max:1000', Rule::unique('purchases')->ignore($id, 'id')->where(function ($query) use ($request) {
                     return $query->where('title', $request->title)
                         ->where('publisher_id', $request->publisher_id)
                         ->where('author_id', $request->author_id);
@@ -186,7 +186,7 @@ class BookController extends Controller
                 'publication_year' => 'required',
             ],
             [
-                'title.unique' => 'The book (title,publisher_id,author_id) has already been taken.',
+                'title.unique' => 'The purchase (title,publisher_id,author_id) has already been taken.',
             ]
         );
         try {
@@ -195,18 +195,18 @@ class BookController extends Controller
                 $image = Image::make($request->file('photo'));
                 $imageName = time() . '-' . $request->file('photo')->getClientOriginalName();
 
-                $destinationPath = 'assets/img/book/';
+                $destinationPath = 'assets/img/purchase/';
                 $uploadSuccess = $image->save($destinationPath . $imageName);
 
                 /**
                  * Generate Thumbnail Image Upload on Folder Code
                  */
-                $destinationPathThumbnail = public_path('assets/img/book/thumbnail/');
+                $destinationPathThumbnail = public_path('assets/img/purchase/thumbnail/');
                 $image->resize(50, 50);
                 $image->save($destinationPathThumbnail . $imageName);
                 if ($uploadSuccess) {
                     //Delete Old File
-                    $imgExist = Book::where('id', $id)->first();
+                    $imgExist = Purchase::where('id', $id)->first();
                     $existingImage = $imgExist->photo;
                     if ($existingImage) {
 
@@ -222,7 +222,7 @@ class BookController extends Controller
             }
 
             $input['updated_by'] = $this->webspice->getUserId();
-            Book::where('id', $id)->update($input);
+            Purchase::where('id', $id)->update($input);
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -230,19 +230,19 @@ class BookController extends Controller
                     'error' => $e->getMessage(),
                 ], 401);
         }
-        // return redirect()->route('books.index');
+        // return redirect()->route('purchases.index');
     }
 
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('book.delete');
+        // $this->webspice->permissionVerify('purchase.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 
-            $book = $this->books->findById($id);
-            $book->delete();
+            $purchase = $this->purchases->findById($id);
+            $purchase->delete();
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -257,12 +257,12 @@ class BookController extends Controller
     {
         return response()->json(['error' => 'Unauthenticated.'], 401);
         #permission verfy
-        $this->webspice->permissionVerify('book.force_delete');
+        $this->webspice->permissionVerify('purchase.force_delete');
         try {
             #decrypt value
             $id = $this->webspice->encryptDecrypt('decrypt', $id);
-            $book = Book::withTrashed()->findOrFail($id);
-            $book->forceDelete();
+            $purchase = Purchase::withTrashed()->findOrFail($id);
+            $purchase->forceDelete();
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
@@ -271,37 +271,37 @@ class BookController extends Controller
     public function restore($id)
     {
         #permission verfy
-        $this->webspice->permissionVerify('book.restore');
+        $this->webspice->permissionVerify('purchase.restore');
         try {
             $id = $this->webspice->encryptDecrypt('decrypt', $id);
-            $book = Book::withTrashed()->findOrFail($id);
-            $book->restore();
+            $purchase = Purchase::withTrashed()->findOrFail($id);
+            $purchase->restore();
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
-        // return redirect()->route('books.index', ['status' => 'archived'])->withSuccess(__('User restored successfully.'));
-        return redirect()->route('books.index');
+        // return redirect()->route('purchases.index', ['status' => 'archived'])->withSuccess(__('User restored successfully.'));
+        return redirect()->route('purchases.index');
     }
 
     public function restoreAll()
     {
         #permission verfy
-        $this->webspice->permissionVerify('book.restore');
+        $this->webspice->permissionVerify('purchase.restore');
         try {
-            $books = Book::onlyTrashed()->get();
-            foreach ($books as $book) {
-                $book->restore();
+            $purchases = Purchase::onlyTrashed()->get();
+            foreach ($purchases as $purchase) {
+                $purchase->restore();
             }
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
-        return redirect()->route('books.index');
-        // return redirect()->route('books.index')->withSuccess(__('All books restored successfully.'));
+        return redirect()->route('purchases.index');
+        // return redirect()->route('purchases.index')->withSuccess(__('All purchases restored successfully.'));
     }
 
-    public function getbooks()
+    public function getpurchases()
     {
-        $data = Book::where('status', 1)->get();
+        $data = Purchase::where('status', 1)->get();
         return response()->json($data);
     }
 

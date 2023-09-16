@@ -65,6 +65,10 @@ import ManagePublisher from "./components/master_data/publisher/ManagePublisher.
 import BookForm from "./components/book/BookForm.vue";
 import ManageBook from "./components/book/ManageBook.vue";
 
+// Purchase Files
+import PurchaseForm from "./components/purchase/PurchaseForm.vue";
+import ManagePurchase from "./components/purchase/ManagePurchase.vue";
+
 // Employee Files
 import AddEmployee from "./components/employee/create.vue";
 import ManageEmployee from "./components/employee/index.vue";
@@ -483,6 +487,28 @@ export const routes = [
     path: "/books/:id/edit",
     component: BookForm,
     meta: { title: "Edit Book" },
+    beforeEnter: guard,
+},
+// Purchase Paths
+{
+    name: "purchases",
+    path: "/purchases",
+    component: ManagePurchase,
+    meta: { title: "Manage Purchase" },
+    beforeEnter: guard,
+},
+{
+    name: "purchases.create",
+    path: "/purchases/create",
+    component: PurchaseForm,
+    meta: { title: "Add Purchase" },
+    beforeEnter: guard,
+},
+{
+    name: "purchases.edit",
+    path: "/purchases/:id/edit",
+    component: PurchaseForm,
+    meta: { title: "Edit Purchase" },
     beforeEnter: guard,
 },
     { name: "add-product", path: "/add-product", component: AddProduct },

@@ -7,8 +7,8 @@
           <div
             class="card-header py-3 "
           >
-            <h3 class="m-0 font-weight-bold" title="">Book List</h3>
-            <p class="text-secondary m-0">Stores information about each book</p>
+            <h3 class="m-0 font-weight-bold" title="">purchase List</h3>
+            <p class="text-secondary m-0">Stores information about each purchase</p>
           </div>
           <div class="card-body p-0 m-0">
             <div class="row p-2">
@@ -41,11 +41,11 @@
                 />
 
                 <router-link
-                  to="/books/create"
+                  to="/purchases/create"
                   class="z-index-1 btn my-btn-primary float-right"
                 >
                   <i class="fa fa-solid fa-plus"></i>
-                  Add book
+                  Add purchase
                 </router-link>
               </div>
             </div>
@@ -77,12 +77,10 @@
                         >↓</span
                       >
                     </th>
-                    <th class="text-center">Photo</th>
                     <th scope="col">
-                      <a href="#" @click.prevent="changeShort('title')"
-                        > Title</a
+                      <a href="#" @click.prevent="changeShort('purchase_date')"
+                        > Purchase Date</a
                       >
-                      <!-- <a href="#">Name</a> -->
                       <span
                         v-if="
                           this.params.sort_field == 'title' &&
@@ -98,12 +96,9 @@
                         >↓</span
                       >
                     </th>
-                    <th class="text-center text-nowrap" scope="col"> Publisher</th>
-                    <th class="text-center text-nowrap" scope="col"> Author</th>
-                    <th class="text-center text-nowrap" scope="col"> Category</th>
-                    <th class="text-center text-nowrap" scope="col">Sub Category</th>
+                    <th class="text-center text-nowrap" scope="col"> Supplier</th>
                     <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('stock_quantity')">Stock Qty.</a>
+                      <a href="#" @click.prevent="changeShort('total_amount')">Total Amount</a>
                       <span
                         v-if="
                           this.params.sort_field == 'id' &&
@@ -120,7 +115,7 @@
                       >
                     </th>
                     <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('price')">Price</a>
+                      <a href="#" @click.prevent="changeShort('discount_percentage')">Discount Percentage</a>
                       <span
                         v-if="
                           this.params.sort_field == 'id' &&
@@ -134,7 +129,128 @@
                           this.params.sort_direction == 'desc'
                         "
                         >↓</span
-                      ></th>
+                      >
+                      </th>
+                    <th class="text-center text-nowrap" scope="col">
+                      <a href="#" @click.prevent="changeShort('discount_amount')">Discount Amount</a>
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'asc'
+                        "
+                        >↑</span
+                      >
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'desc'
+                        "
+                        >↓</span
+                      >
+                      </th>
+                    <th class="text-center text-nowrap" scope="col">
+                      <a href="#" @click.prevent="changeShort('vat_percentage')">Vat Percentage</a>
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'asc'
+                        "
+                        >↑</span
+                      >
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'desc'
+                        "
+                        >↓</span
+                      >
+                      </th>
+                    <th class="text-center text-nowrap" scope="col">
+                      <a href="#" @click.prevent="changeShort('vat_amount')">Vat Amount</a>
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'asc'
+                        "
+                        >↑</span
+                      >
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'desc'
+                        "
+                        >↓</span
+                      >
+                      </th>
+                    <th class="text-center text-nowrap" scope="col">
+                      <a href="#" @click.prevent="changeShort('net_amount')">Net Amount</a>
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'asc'
+                        "
+                        >↑</span
+                      >
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'desc'
+                        "
+                        >↓</span
+                      >
+                      </th>
+                    <th class="text-center text-nowrap" scope="col">
+                      <a href="#" @click.prevent="changeShort('pay_amount')">Pay Amount</a>
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'asc'
+                        "
+                        >↑</span
+                      >
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'desc'
+                        "
+                        >↓</span
+                      >
+                      </th>
+                    <th class="text-center text-nowrap" scope="col">
+                      <a href="#" @click.prevent="changeShort('due_amount')">Due Amount</a>
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'asc'
+                        "
+                        >↑</span
+                      >
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'desc'
+                        "
+                        >↓</span
+                      >
+                      </th>
+                    <th class="text-center text-nowrap" scope="col">
+                      <a href="#" @click.prevent="changeShort('paid_by')">Paid By</a>
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'asc'
+                        "
+                        >↑</span
+                      >
+                      <span
+                        v-if="
+                          this.params.sort_field == 'id' &&
+                          this.params.sort_direction == 'desc'
+                        "
+                        >↓</span
+                      >
+                      </th>
+                      <th>File</th>
                     <th class="text-center text-nowrap" scope="col">Action</th>
                   </tr>
                   <tr>
@@ -147,43 +263,25 @@
                         v-model="params.id"
                       />
                     </th>
-                    <th colspan="2" class="text-nowarp px-1">
+                    <th colspan="1" class="text-nowarp px-1">
                       <input
                         type="text"
-                        placeholder="Search By Book Title"
+                        placeholder="Search By purchase date"
                         class="" style="width:100%"
-                        v-model="params.title"
+                        v-model="params.purchase"
                       />
                     </th>
                     <th class="text-nowarp px-1">
-                      <select v-model="params.publisher_id" style="width:100%" class="form-select-sm">
-                        <option value=""  selected>--select publisher--</option>
-                        <option :value="publisher.id" v-for="publisher in publishers" :key="publisher.id">{{publisher.publisher_name}}</option>
-                      </select>
-                    </th>
-                    <th class="text-nowarp px-1">
-                      <select v-model="params.author_id" style="width:100%" class="form-select-sm">
-                        <option value=""  selected>--select author--</option>
-                        <option :value="author.id" v-for="author in authors" :key="author.id">{{author.author_name}}</option>
-                      </select>
-                    </th>
-                    <th class="text-nowarp px-1">
-                      <select v-model="params.category_id" class="form-select-sm" @change="getSubCategories" style="width:100%">
-                        <option value=""  selected>--select category--</option>
-                        <option :value="category.id" v-for="category in categories" :key="category.id">{{category.category_name}}</option>
-                      </select>
-                    </th>
-                    <th class="text-nowarp px-1">
-                      <select v-model="params.sub_category_id" class="form-select-sm" style="width:100%">
-                        <option value="" selected>--select sub-category--</option>
-                        <option :value="subcategory.id" v-for="subcategory in sub_categories" :key="subcategory.id">{{subcategory.sub_category_name}}</option>
+                      <select v-model="params.supplier_id" style="width:100%" class="form-select-sm">
+                        <option value=""  selected>--select supplier--</option>
+                        <option :value="supplier.id" v-for="supplier in suppliers" :key="supplier.id">{{supplier.supplier_name}}</option>
                       </select>
                     </th>
                     <th  class="text-nowarp px-1"><input
                         type="text"
-                        placeholder="Search By Qty"
+                        placeholder="Search By Total Amount"
                         class="" style="width:100%"
-                        v-model="params.stock_quantity"
+                        v-model="params.total_amount"
                       /></th>
                     <th  class="text-nowarp px-1"><input
                         type="text"
@@ -194,50 +292,50 @@
                     <th></th>
                   </tr>
                 </thead>
-                <tbody v-if="books && paginator.totalRecords > 0">
-                  <tr v-for="book in books.data" :key="book.id">
+                <tbody v-if="purchases && paginator.totalRecords > 0">
+                  <tr v-for="purchase in purchases.data" :key="purchase.id">
                     <!-- <td class="text-center">
                       <input
                         type="checkbox"
-                        :value="book.id"
+                        :value="purchase.id"
                         v-model="checked"
                         class="form-check-input"
                       />
                     </td> -->
-                    <td style="width:60px!important" class="text-nowrap">{{ book.id }}</td>
+                    <td style="width:60px!important" class="text-nowrap">{{ purchase.id }}</td>
                     <td>
                       <img
                         :src="
-                          `${publicPath}assets/img/book/thumbnail/` +
-                          book.photo
+                          `${publicPath}assets/img/purchase/thumbnail/` +
+                          purchase.photo
                         "
                         alt=""
                         width="30"
                       />
                     </td>
-                    <td class="text-nowrap"><a  @click="openModal(book.id)" href="#" data-toggle="modal" data-target="#recordModal">{{ book.title }}</a></td>
-                    <td class="text-nowrap">{{ book.publisher.publisher_name }}</td>
-                    <td class="text-nowrap">{{ book.author.author_name }}</td>
-                    <td class="text-nowrap">{{ book.category.category_name }}</td>
-                    <td class="text-nowrap">{{ book.sub_category.sub_category_name }}</td>
-                    <td class="text-nowrap">{{ book.stock_quantity }}</td>
-                    <td class="text-nowrap">{{ book.price }}</td>
+                    <td class="text-nowrap"><a  @click="openModal(purchase.id)" href="#" data-toggle="modal" data-target="#recordModal">{{ purchase.title }}</a></td>
+                    <td class="text-nowrap">{{ purchase.supplier.supplier_name }}</td>
+                    <td class="text-nowrap">{{ purchase.author.author_name }}</td>
+                    <td class="text-nowrap">{{ purchase.category.category_name }}</td>
+                    <td class="text-nowrap">{{ purchase.sub_category.sub_category_name }}</td>
+                    <td class="text-nowrap">{{ purchase.stock_quantity }}</td>
+                    <td class="text-nowrap">{{ purchase.price }}</td>
 
                     <td class="text-right text-nowrap">
                       <div class="btn-group" option="group">
-                        <button @click="openModal(book.id)" class="btn btn-sm my-btn-primary"  data-toggle="modal" data-target="#recordModal" > <i class="fa fa-eye"></i> View </button>
+                        <button @click="openModal(purchase.id)" class="btn btn-sm my-btn-primary"  data-toggle="modal" data-target="#recordModal" > <i class="fa fa-eye"></i> View </button>
                         <!-- <router-link
-                          :to="`/books/${book.id}`"
+                          :to="`/purchases/${purchase.id}`"
                           class="btn btn-sm my-btn-primary"
                           ><i class="fa fa-eye"></i> View</router-link
                         > -->
                         <router-link
-                          :to="`/books/${book.id}/edit`"
+                          :to="`/purchases/${purchase.id}/edit`"
                           class="btn btn-sm btn-primary px-2 mx-1"
                           ><i class="fa fa-edit"></i> Edit</router-link
                         >
                         <a
-                          @click="deletebook(book.id)"
+                          @click="deletepurchase(purchase.id)"
                           class="btn btn-sm btn-danger px-2"
                         >
                           <font color="#ffffff"
@@ -271,9 +369,9 @@
               <div class="col-md-6">
                 <pagination
                   align="right"
-                  :data="books"
+                  :data="purchases"
                   :limit="5"
-                  @pagination-change-page="getBooks"
+                  @pagination-change-page="getPurchases"
                 ></pagination>
               </div>
             </div>
@@ -283,21 +381,21 @@
     </div>
     <!--Row-->
     <!-- Bootstrap Modal -->
-    <ViewBook :record="record" />
+    <ViewPurchase :record="record" />
     <!-- Modal End -->
   </div>
 </template>
 <script type="text/javascript">
 import { mapActions } from "vuex";
-import ViewBook from './ViewBook.vue'
+import ViewPurchase from './ViewPurchase.vue'
 export default {
-  name: "book",
-  components:{ViewBook},
+  name: "purchase",
+  components:{ViewPurchase},
   data() {
     return {
       record: {},
       sub_categories: [],
-      bookPhotoUrl: null,
+      purchasePhotoUrl: null,
       publicPath: window.publicPath,
       checked: [],
       paginator: {
@@ -307,7 +405,7 @@ export default {
         current_page: "",
         per_page: "",
       },
-      books: {
+      purchases: {
         type: Object,
         default: null,
       },
@@ -315,7 +413,7 @@ export default {
         paginate: 5,
         id: "",
         title: "",
-        publisher_id: "",
+        supplier_id: "",
         author_id: "",
         category_id: "",
         sub_category_id: "",
@@ -335,26 +433,26 @@ export default {
       const response = await axios.get("/api/get-authors");
       this.authors = response.data;
     }
-    this.publishers = this.$store.getters.getPublishers;
-    if (this.publishers.length == 0) {
-      const response = await axios.get("/api/get-publishers");
-      this.publishers = response.data;
+    this.suppliers = this.$store.getters.getsuppliers;
+    if (this.suppliers.length == 0) {
+      const response = await axios.get("/api/get-suppliers");
+      this.suppliers = response.data;
     }
   },
   mounted() {
     this.filterFields = { ...this.params };
-    this.getBooks();
+    this.getPurchases();
   },
   watch: {
     params: {
       handler() {
-        this.getBooks();
+        this.getPurchases();
       },
       deep: true,
     },
     search(val, old) {
       if (val.length >= 3 || old.length >= 3) {
-        this.getBooks();
+        this.getPurchases();
       }
     },
   },
@@ -365,12 +463,12 @@ export default {
   },
   methods: {
     ...mapActions(["fetchCategories"]),
-    async getBooks(page = 1) {
+    async getPurchases(page = 1) {
       this.isLoading = true;
       await axios
         // .get(`/api/products?page=${page}`)
-        // .get(`/api/products?page=${page}&book_id=${this.params.book_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
-        .get("/api/books", {
+        // .get(`/api/products?page=${page}&purchase_id=${this.params.purchase_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
+        .get("/api/purchases", {
           params: {
             page,
             search: this.search.length >= 3 ? this.search : "",
@@ -380,7 +478,7 @@ export default {
         .then((response) => {
           // console.log(response);
           this.isLoading = false;
-          this.books = response.data;
+          this.purchases = response.data;
           this.paginator.totalRecords = response.data.total;
           // if (response.data.total <= 0) {
           //   document.querySelector(".loading-section").innerText = "No Record Found!.";
@@ -413,7 +511,7 @@ export default {
     refreshData() {
       this.isRefreshing = true;
       this.params = { ...this.filterFields };
-      this.getBooks();
+      this.getPurchases();
     },
     changeShort(field) {
       if (this.params.sort_field === field) {
@@ -425,7 +523,7 @@ export default {
       }
       // this.getProducts();
     },
-    deletebook(id) {
+    deletepurchase(id) {
       Swal.fire({
         allowOutsideClick: false,
         title: "Are you sure?",
@@ -438,9 +536,9 @@ export default {
       }).then((result) => {
         if (result.value) {
           axios
-            .delete("/api/books/" + id)
+            .delete("/api/purchases/" + id)
             .then(() => {
-              this.getBooks();
+              this.getPurchases();
               Notification.success("Data has been deleted successfully.");
             })
             .catch((error) => {
@@ -449,7 +547,7 @@ export default {
                 this.errors = error.response.data.errors;
                 Notification.error(error.response.statusText);
               } else if (error.response.status === 401) {
-                // statusText = "Unbookized";
+                // statusText = "Unpurchaseized";
                 this.errors = {};
                 Notification.error(error.response.data.error);
               } else {
@@ -461,12 +559,12 @@ export default {
     },
     downloadFile() {
       let loader =
-        '<span class="spinner-border spinner-border-sm" book="status" aria-hidden="true" ></span> Exporting...';
+        '<span class="spinner-border spinner-border-sm" purchase="status" aria-hidden="true" ></span> Exporting...';
       document.querySelector(".export-btn").innerHTML = loader;
       try {
         axios
           // .get("/api/products-export")
-          .get("/api/book-export", { responseType: "arraybuffer" })
+          .get("/api/purchase-export", { responseType: "arraybuffer" })
           .then((response) => {
             if (response.status == 200) {
               document.querySelector(".export-btn").innerText = "Export to Excel";
@@ -474,7 +572,7 @@ export default {
               var fileURL = window.URL.createObjectURL(new Blob([response.data]));
               var fileLink = document.createElement("a");
               fileLink.href = fileURL;
-              fileLink.setAttribute("download", "book_list.xlsx");
+              fileLink.setAttribute("download", "purchase_list.xlsx");
               document.body.appendChild(fileLink);
               fileLink.click();
             } else {
@@ -488,9 +586,9 @@ export default {
     },
     exportPdf() {
       let loader =
-        '<span class="spinner-border spinner-border-sm" book="status" aria-hidden="true" ></span>  Exporting...PDF';
+        '<span class="spinner-border spinner-border-sm" purchase="status" aria-hidden="true" ></span>  Exporting...PDF';
       document.querySelector(".export-btn-pdf").innerHTML = loader;
-      axios.get("/api/book-export-pdf", { responseType: "blob" }).then((response) => {
+      axios.get("/api/purchase-export-pdf", { responseType: "blob" }).then((response) => {
         document.querySelector(".export-btn-pdf").innerText = "Export PDF";
         Notification.success("Exported Successfully");
         var fileURL = window.URL.createObjectURL(
@@ -498,7 +596,7 @@ export default {
         );
         var fileLink = document.createElement("a");
         fileLink.href = fileURL;
-        fileLink.setAttribute("download", "book_list.pdf");
+        fileLink.setAttribute("download", "purchase_list.pdf");
         document.body.appendChild(fileLink);
         fileLink.click();
       });
@@ -506,7 +604,7 @@ export default {
     openModal(id) {
       // Fetch the record details from the server using Axios or a similar library
       axios
-        .get(`api/books/${id}`)
+        .get(`api/purchases/${id}`)
         .then((response) => {
           this.record = response.data;
           // Open the Bootstrap modal
