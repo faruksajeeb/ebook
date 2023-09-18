@@ -1,13 +1,11 @@
 <template>
   <div class="">
-    <div class="row ">
+    <div class="row">
       <div class="col-lg-12 mb-4">
         <!-- Simple Tables -->
         <div class="card">
-          <div
-            class="card-header py-3 "
-          >
-            <h3 class="m-0 font-weight-bold" title="">purchase List</h3>
+          <div class="card-header py-3">
+            <h3 class="m-0 font-weight-bold" title="">Purchase List</h3>
             <p class="text-secondary m-0">Stores information about each purchase</p>
           </div>
           <div class="card-body p-0 m-0">
@@ -26,7 +24,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Search by title/ isbn/ genre. (Type and Enter)"
+                  placeholder="Search by purchase date, supplier name. (Type and Enter)"
                   v-model="search"
                 />
                 <button @click="downloadFile" class="btn my-btn-success export-btn">
@@ -60,7 +58,7 @@
                     <!-- <th scope="col" class="text-center">
                       <input type="checkbox" class="form-check p-3" />
                     </th> -->
-                    <th scope="col" >
+                    <th scope="col">
                       <a href="#" @click.prevent="changeShort('id')">#ID</a>
                       <span
                         v-if="
@@ -77,9 +75,9 @@
                         >↓</span
                       >
                     </th>
-                    <th scope="col">
-                      <a href="#" @click.prevent="changeShort('purchase_date')"
-                        > Purchase Date</a
+                    <th scope="col" class="text-nowrap">
+                      <a href="#" @click.prevent="changeShort('purchase_date')">
+                        Purchase Date</a
                       >
                       <span
                         v-if="
@@ -96,9 +94,11 @@
                         >↓</span
                       >
                     </th>
-                    <th class="text-center text-nowrap" scope="col"> Supplier</th>
+                    <th class="text-center text-nowrap" scope="col">Supplier</th>
                     <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('total_amount')">Total Amount</a>
+                      <a href="#" @click.prevent="changeShort('total_amount')"
+                        >Total Amount</a
+                      >
                       <span
                         v-if="
                           this.params.sort_field == 'id' &&
@@ -115,7 +115,9 @@
                       >
                     </th>
                     <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('discount_percentage')">Discount Percentage</a>
+                      <a href="#" @click.prevent="changeShort('discount_percentage')"
+                        >Discount Percentage</a
+                      >
                       <span
                         v-if="
                           this.params.sort_field == 'id' &&
@@ -130,9 +132,11 @@
                         "
                         >↓</span
                       >
-                      </th>
+                    </th>
                     <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('discount_amount')">Discount Amount</a>
+                      <a href="#" @click.prevent="changeShort('discount_amount')"
+                        >Discount Amount</a
+                      >
                       <span
                         v-if="
                           this.params.sort_field == 'id' &&
@@ -147,9 +151,11 @@
                         "
                         >↓</span
                       >
-                      </th>
+                    </th>
                     <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('vat_percentage')">Vat Percentage</a>
+                      <a href="#" @click.prevent="changeShort('vat_percentage')"
+                        >Vat Percentage</a
+                      >
                       <span
                         v-if="
                           this.params.sort_field == 'id' &&
@@ -164,9 +170,11 @@
                         "
                         >↓</span
                       >
-                      </th>
+                    </th>
                     <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('vat_amount')">Vat Amount</a>
+                      <a href="#" @click.prevent="changeShort('vat_amount')"
+                        >Vat Amount</a
+                      >
                       <span
                         v-if="
                           this.params.sort_field == 'id' &&
@@ -181,9 +189,11 @@
                         "
                         >↓</span
                       >
-                      </th>
+                    </th>
                     <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('net_amount')">Net Amount</a>
+                      <a href="#" @click.prevent="changeShort('net_amount')"
+                        >Net Amount</a
+                      >
                       <span
                         v-if="
                           this.params.sort_field == 'id' &&
@@ -198,9 +208,11 @@
                         "
                         >↓</span
                       >
-                      </th>
+                    </th>
                     <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('pay_amount')">Pay Amount</a>
+                      <a href="#" @click.prevent="changeShort('pay_amount')"
+                        >Pay Amount</a
+                      >
                       <span
                         v-if="
                           this.params.sort_field == 'id' &&
@@ -215,9 +227,11 @@
                         "
                         >↓</span
                       >
-                      </th>
+                    </th>
                     <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('due_amount')">Due Amount</a>
+                      <a href="#" @click.prevent="changeShort('due_amount')"
+                        >Due Amount</a
+                      >
                       <span
                         v-if="
                           this.params.sort_field == 'id' &&
@@ -232,7 +246,7 @@
                         "
                         >↓</span
                       >
-                      </th>
+                    </th>
                     <th class="text-center text-nowrap" scope="col">
                       <a href="#" @click.prevent="changeShort('paid_by')">Paid By</a>
                       <span
@@ -249,46 +263,73 @@
                         "
                         >↓</span
                       >
-                      </th>
-                      <th>File</th>
+                    </th>
+                    <!-- <th>File</th> -->
                     <th class="text-center text-nowrap" scope="col">Action</th>
                   </tr>
                   <tr>
                     <!-- <th></th> -->
                     <th class="px-1">
-                      <input style="width:70px"
+                      <input
+                        style="width: 70px"
                         type="text"
                         placeholder="By ID"
-                        class=""
+                        class="form-control-sm"
                         v-model="params.id"
                       />
                     </th>
-                    <th colspan="1" class="text-nowarp px-1">
+                    <th colspan="1" class="text-nowarp px-1" style="min-width: 200px">
                       <input
                         type="text"
-                        placeholder="Search By purchase date"
-                        class="" style="width:100%"
-                        v-model="params.purchase"
+                        placeholder="Search By Date Range"
+                        id="datecalander"
+                        class="form-control-sm"
+                        style="width: 100%"
+                        v-model="params.purchase_date"
                       />
                     </th>
-                    <th class="text-nowarp px-1">
-                      <select v-model="params.supplier_id" style="width:100%" class="form-select-sm">
-                        <option value=""  selected>--select supplier--</option>
-                        <option :value="supplier.id" v-for="supplier in suppliers" :key="supplier.id">{{supplier.supplier_name}}</option>
+                    <th class="text-nowarp px-1" colspan="1" style="min-width: 200px">
+                      <select
+                        v-model="params.supplier_id"
+                        style="width: 100%"
+                        class="form-select-sm"
+                      >
+                        <option value="" selected>--select supplier--</option>
+                        <option
+                          :value="supplier.id"
+                          v-for="supplier in suppliers"
+                          :key="supplier.id"
+                        >
+                          {{ supplier.supplier_name }}
+                        </option>
                       </select>
                     </th>
-                    <th  class="text-nowarp px-1"><input
+                    <th class="text-nowarp px-1">
+                      <input
                         type="text"
                         placeholder="Search By Total Amount"
-                        class="" style="width:100%"
+                        class="form-control-sm"
+                        style="width: 100%"
                         v-model="params.total_amount"
-                      /></th>
-                    <th  class="text-nowarp px-1"><input
+                      />
+                    </th>
+
+                    <th>
+                      <input
                         type="text"
-                        placeholder="Search By Price"
-                        class="" style="width:100%"
-                        v-model="params.price"
-                      /></th>
+                        placeholder="Search By Discount Pecentage"
+                        class="form-control-sm"
+                        style="width: 100%"
+                        v-model="params.discount_percentage"
+                      />
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                     <th></th>
                   </tr>
                 </thead>
@@ -302,28 +343,40 @@
                         class="form-check-input"
                       />
                     </td> -->
-                    <td style="width:60px!important" class="text-nowrap">{{ purchase.id }}</td>
-                    <td>
-                      <img
-                        :src="
-                          `${publicPath}assets/img/purchase/thumbnail/` +
-                          purchase.photo
-                        "
-                        alt=""
-                        width="30"
-                      />
+                    <td style="width: 60px !important" class="text-nowrap">
+                      {{ purchase.id }}
                     </td>
-                    <td class="text-nowrap"><a  @click="openModal(purchase.id)" href="#" data-toggle="modal" data-target="#recordModal">{{ purchase.title }}</a></td>
+
+                    <td class="text-nowrap">
+                      <a
+                        @click="openModal(purchase.id)"
+                        href="#"
+                        data-toggle="modal"
+                        data-target="#recordModal"
+                        >{{ purchase.purchase_date }}</a
+                      >
+                    </td>
                     <td class="text-nowrap">{{ purchase.supplier.supplier_name }}</td>
-                    <td class="text-nowrap">{{ purchase.author.author_name }}</td>
-                    <td class="text-nowrap">{{ purchase.category.category_name }}</td>
-                    <td class="text-nowrap">{{ purchase.sub_category.sub_category_name }}</td>
-                    <td class="text-nowrap">{{ purchase.stock_quantity }}</td>
-                    <td class="text-nowrap">{{ purchase.price }}</td>
+                    <td class="text-nowrap">{{ purchase.purchaseDetails }}</td>
+                    <td class="text-nowrap">{{ purchase.discount_percentage }}</td>
+                    <td class="text-nowrap">{{ purchase.discount_amount }}</td>
+                    <td class="text-nowrap">{{ purchase.vat_percentage }}</td>
+                    <td class="text-nowrap">{{ purchase.vat_amount }}</td>
+                    <td class="text-nowrap">{{ purchase.net_amount }}</td>
+                    <td class="text-nowrap">{{ purchase.pay_amount }}</td>
+                    <td class="text-nowrap">{{ purchase.due_amount }}</td>
+                    <td class="text-nowrap">{{ purchase.paid_by }}</td>
 
                     <td class="text-right text-nowrap">
                       <div class="btn-group" option="group">
-                        <button @click="openModal(purchase.id)" class="btn btn-sm my-btn-primary"  data-toggle="modal" data-target="#recordModal" > <i class="fa fa-eye"></i> View </button>
+                        <button
+                          @click="openModal(purchase.id)"
+                          class="btn btn-sm my-btn-primary"
+                          data-toggle="modal"
+                          data-target="#recordModal"
+                        >
+                          <i class="fa fa-eye"></i> View
+                        </button>
                         <!-- <router-link
                           :to="`/purchases/${purchase.id}`"
                           class="btn btn-sm my-btn-primary"
@@ -348,7 +401,7 @@
                 </tbody>
                 <tbody v-else>
                   <tr>
-                    <td colspan="13" class="text-center loading-section">
+                    <td colspan="7" class="text-center loading-section">
                       <loader v-if="isLoading"></loader>
                       <NoRecordFound v-else />
                     </td>
@@ -381,18 +434,22 @@
     </div>
     <!--Row-->
     <!-- Bootstrap Modal -->
-    <ViewPurchase :record="record" />
+    <ViewPurchase :record="record" :fileExtension="fileExtension" />
     <!-- Modal End -->
   </div>
 </template>
 <script type="text/javascript">
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.css";
+
 import { mapActions } from "vuex";
-import ViewPurchase from './ViewPurchase.vue'
+import ViewPurchase from "./ViewPurchase.vue";
 export default {
   name: "purchase",
-  components:{ViewPurchase},
+  components: { ViewPurchase },
   data() {
     return {
+      fileExtention: null,
       record: {},
       sub_categories: [],
       purchasePhotoUrl: null,
@@ -412,11 +469,10 @@ export default {
       params: {
         paginate: 5,
         id: "",
-        title: "",
+        purchase_date: "",
         supplier_id: "",
-        author_id: "",
-        category_id: "",
-        sub_category_id: "",
+        total_amount: "",
+        discount_percentage: "",
         sort_field: "created_at",
         sort_direction: "desc",
       },
@@ -427,13 +483,8 @@ export default {
     };
   },
   async created() {
-    this.fetchCategories();
-    this.authors = this.$store.getters.getAuthors;
-    if (this.authors.length == 0) {
-      const response = await axios.get("/api/get-authors");
-      this.authors = response.data;
-    }
-    this.suppliers = this.$store.getters.getsuppliers;
+    // this.fetchCategories();
+    this.suppliers = this.$store.getters.getSuppliers;
     if (this.suppliers.length == 0) {
       const response = await axios.get("/api/get-suppliers");
       this.suppliers = response.data;
@@ -442,6 +493,11 @@ export default {
   mounted() {
     this.filterFields = { ...this.params };
     this.getPurchases();
+    flatpickr("#datecalander", {
+      mode: "range",
+      dateFormat: "Y-m-d", // Customize the date format as needed
+      // Add more Flatpickr options as needed
+    });
   },
   watch: {
     params: {
@@ -476,7 +532,7 @@ export default {
           },
         })
         .then((response) => {
-          // console.log(response);
+          console.log(response.data);
           this.isLoading = false;
           this.purchases = response.data;
           this.paginator.totalRecords = response.data.total;
@@ -499,7 +555,8 @@ export default {
         });
     },
     getSubCategories() {
-      axios.get("/api/get-category-wise-sub-categories", {
+      axios
+        .get("/api/get-category-wise-sub-categories", {
           params: {
             category_id: this.params.category_id,
           },
@@ -607,6 +664,16 @@ export default {
         .get(`api/purchases/${id}`)
         .then((response) => {
           this.record = response.data;
+          const fileName = response.data.purchase.attach_file;
+          const parts = fileName.split(".");
+          if (parts.length > 1) {
+            // Get the last part as the file extension
+            this.fileExtension = parts[parts.length - 1].toLowerCase();
+            // alert(this.fileExtension);
+          } else {
+            this.fileExtension = null; // No file extension found
+          }
+        
           // Open the Bootstrap modal
           // $("#recordModal").modal("show");
         })

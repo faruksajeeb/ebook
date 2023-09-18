@@ -3,6 +3,7 @@ import './bootstrap';
 import { createApp } from 'vue'
 import App from './App.vue'
 
+
 // pagination
 import { Bootstrap5Pagination } from 'laravel-vue-pagination';
 

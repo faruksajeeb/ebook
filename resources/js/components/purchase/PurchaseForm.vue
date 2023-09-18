@@ -16,7 +16,7 @@
         </div>
         <div class="card-body p-3">
           <div class="form">
-            <AlertError :form="form" />
+           
             <div v-if="!isNew && !purchase">
               <LoadingSpinner />
             </div>
@@ -103,6 +103,7 @@
                 </div>
               </div>
               <div class="col-md-7 border border-solid-1 py-1">
+                <AlertError :form="form" />
                 <form
                   id="form"
                   class="purchase"
@@ -145,9 +146,10 @@
                     </div>
                     <input
                       type="text"
-                      class="form-control"
+                      class="form-control datecalender"
+                      id="datecalander"
                       autocomplete="off"
-                      placeholder="Enter Your purchase purchase_date"
+                      placeholder="Choose purchase date"
                       name="purchase_date"
                       v-model="form.purchase_date"
                       :class="{ 'is-invalid': form.errors.has('purchase_date') }"
@@ -251,11 +253,10 @@
                         <td class="fw-bold px-1 text-right">{{ dueAmount() }}</td>
                         <td class="fw-bold px-1"></td>
                       </tr>
-                   
                     </tbody>
                     <tbody v-else>
                       <tr>
-                        <td colspan="5" class="py-3 text-center">Cart Empty</td>
+                        <td colspan="5" class="py-3 text-center">Cart Empty  <HasError :form="form" field="cart_items" /></td>
                       </tr>
                     </tbody>
                   </table>
@@ -281,25 +282,42 @@
                     <HasError :form="form" field="paid_by" />
                   </div>
                   <div class="input-group mb-2 row mx-0 px-0">
-                    <div class="input-group-prepend px-0 col-md-4 mx-0">
-                      <label
-                        class="input-group-text col-md-12"
-                        for="inputGroupSelect01"
-                        title=""
+                    <div class="input-group-prepend px-0 col-md-5 mx-0">
+                      <label class="input-group-text col-md-12" for="inputGroupSelect01"
                         >Attach File (If any)
                         <div class="text-danger"></div
                       ></label>
                     </div>
                     <input
                       type="file"
-                      class="form-control"
-                      autocomplete="off"
-                      placeholder=""
-                      name="file"
-                      :class="{ 'is-invalid': form.errors.has('file') }"
+                      class="form-control col-md-8"
+                      placeholder="Choose..."
+                      name="attach_file"
+                      @change="onFileChange"
+                      accept="image/*,application/pdf"
+                      :class="{ 'is-invalid': form.errors.has('attach_file') }"
                     />
-                    <HasError :form="form" field="file" />
+                    <HasError :form="form" field="attach_file" />
+                    [Allow File type:jpeg,png,jpg,gif,svg,pdf & Max Size:2MB]
+                   
                   </div>
+                  <div class="image-item">
+                      <img
+                        v-if="imageUrl && form.attach_file.type!='application/pdf'"
+                        :src="imageUrl"
+                        alt="Image Preview"
+                        width="120"
+                      />
+                      <button
+                        class="remove-button"
+                        type="button"
+                        v-if="imageUrl"
+                        @click="removeSingleImage(image, key)"
+                      >
+                        x
+                      </button>
+                    </div>
+                    <iframe v-if="imageUrl && form.attach_file.type=='application/pdf'"  :src="imageUrl" width="200" height="200"></iframe>
                   <div class="input-group mb-2 row mx-0 px-0">
                     <div class="input-group-prepend px-0 col-md-4 mx-0">
                       <label
@@ -310,7 +328,13 @@
                         <div class="text-danger"></div
                       ></label>
                     </div>
-                    <textarea name="" id="" cols="30" rows="2" class="form-control"></textarea> 
+                    <textarea
+                      name=""
+                      id=""
+                      cols="30"
+                      rows="2"
+                      class="form-control"
+                    ></textarea>
                   </div>
                   <div class="form-group mt-2">
                     <!-- <div v-if="form.progress">Progress: {{ form.progress.percentage }}%</div> -->
@@ -329,16 +353,20 @@
   </div>
 </template>
 <script type="text/javascript">
+import flatpickr from "flatpickr"
+import 'flatpickr/dist/flatpickr.css';
+
 import { mapActions } from "vuex";
 export default {
+
   data() {
     return {
       isSubmitting: false,
       isLoading: false,
       imageUrl: null,
       purchase: false,
+      cartItems:[],
       publicPath: window.publicPath,
-      cartItems: [],
       discountPercentage: 0, // Initialize with no discount
       vatPercentage: 0, // Initialize with no discount
       payAmount: 0,
@@ -355,28 +383,26 @@ export default {
         default: null,
       },
       form: new Form({
-        title: "",
-        isbn: "",
-        genre: "",
-        price: "",
         supplier_id: "",
-        category_id: "",
-        sub_category_id: "",
-        photo: null,
-        buying_discount_percentage: "",
-        selling_discount_percentage: "",
-        buying_vat_percentage: "",
-        selling_vat_percentage: "",
-        publication_year: "",
+        purchase_date: "",
+        // cartItems: [],
+        total_amount:0,
+        discount_percentage:0,
+        discount_amount: 0,
+        vat_percentage:0,
+        vat_amount: 0,
+        net_amount: 0,
+        pay_amount: 0,
+        due_amount: 0,
+        paid_by: "",
+        purchase_note: "",
+        attach_file: null,
       }),
       params: {
         paginate: 6,
         id: "",
         title: "",
-        supplier_id: "",
-        author_id: "",
         category_id: "",
-        sub_category_id: "",
         sort_field: "created_at",
         sort_direction: "desc",
       },
@@ -406,46 +432,78 @@ export default {
   },
   mounted() {
     this.filterFields = { ...this.params };
+    // this.form.cartItems = this.cartItems;
     this.getBooks();
+    flatpickr('#datecalander', {
+      dateFormat: 'Y-m-d', // Customize the date format as needed
+      // Add more Flatpickr options as needed
+    });
   },
   async created() {
     this.fetchCategories();
     this.suppliers = this.$store.getters.getSuppliers;
     if (this.suppliers.length == 0) {
-      const response = await axios.get("/api/get-publishers");
+      const response = await axios.get("/api/get-suppliers");
       this.suppliers = response.data;
     }
     if (!this.isNew) {
       const response = await axios.get(`/api/purchases/${this.$route.params.id}`);
-
-      // console.log(response.data);
-
-      this.form.title = response.data.title;
-      this.form.isbn = response.data.isbn;
-      this.form.photo = response.data.photo;
-      this.form.author_id = response.data.author_id;
-      this.form.publisher_id = response.data.publisher_id;
-      this.form.category_id = response.data.category_id;
-      if (response.data.category_id) {
-        this.getSubCategories();
-      }
-      this.form.sub_category_id = response.data.sub_category_id
-        ? response.data.sub_category_id
-        : "";
-      this.form.price = response.data.price;
-      this.form.publication_year = response.data.publication_year;
-      this.form.buying_discount_percentage = response.data.buying_discount_percentage;
-      this.form.buying_vat_percentage = response.data.buying_vat_percentage;
-      this.form.selling_discount_percentage = response.data.selling_discount_percentage;
-      this.form.selling_vat_percentage = response.data.selling_vat_percentage;
-      this.form.genere = response.data.genere;
+      this.form.supplier_id = response.data.purchase.supplier_id;
+      this.form.purchase_date = response.data.purchase.purchase_date;
+      this.form.attach_file = response.data.purchase.attach_file;
+      this.cartItems = response.data.purchase_details;
+      this.form.paid_by = response.data.purchase.paid_by;
+      this.form.purchase_note = response.data.purchase.purchase_note;
       this.imageUrl =
-        `${window.publicPath}assets/img/purchase/thumbnail/` + response.data.photo;
+        `${window.publicPath}assets/img/purchase/thumbnail/` + response.data.purchase.attach_file;
       this.purchase = true;
     }
   },
   methods: {
     ...mapActions(["fetchCategories"]),
+   
+    onFileChange(e) {
+      let selectedFile = e.target.files[0];
+      if (selectedFile) {
+        const allowedFileTypes = [
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/svg",
+          "application/pdf",
+        ];
+        if (selectedFile.size > 2048 * 1024) {
+          // Change this to your desired maximum file size in bytes
+          this.form.errors.set(
+            "file",
+            "File size exceeds the maximum allowed size."
+          );
+          Notification.error("File size exceeds the maximum allowed size.");
+        }
+        if (!allowedFileTypes.includes(selectedFile.type)) {
+          this.form.errors.set(
+            "file",
+            " File type is not supported. Please choose a valid file type."
+          );
+          Notification.error(
+            " File type is not supported. Please choose a valid file type."
+          );
+        }
+         this.form.attach_file = selectedFile;
+
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          this.imageUrl = e.target.result;
+        };
+        reader.readAsDataURL(selectedFile);
+      }
+    },
+    removeSingleImage(image, index) {
+      this.imageUrl = null;
+      this.form.attach_file = null;
+    },
     async getBooks(page = 1) {
       this.isLoading = true;
       await axios
@@ -518,8 +576,8 @@ export default {
     },
     updateQuantity(index) {
       // Ensure quantity is a positive number
-      if (this.cartItems[index].quantity < 0) {
-        this.cartItems[index].quantity = 0;
+      if (this.cartItems[index].quantity < 1) {
+        this.cartItems[index].quantity = 1;
       }
     },
     updateDiscount() {
@@ -549,18 +607,22 @@ export default {
     calculateDiscountAmount() {
       const totalBeforeDiscount = this.calculateTotal();
       const discountAmount = (totalBeforeDiscount * this.discountPercentage) / 100;
+      this.form.discount_percentage = this.discountPercentage;
+      this.form.discount_amount = discountAmount;
       // const totalAfterDiscount = totalBeforeDiscount - discountAmount;
       return discountAmount.toFixed(2);
     },
     calculateVatAmount() {
       const totalBeforeDiscount = this.calculateTotal();
       const vatAmount = (totalBeforeDiscount * this.vatPercentage) / 100;
+      this.form.vat_percentage = this.vatPercentage;
+      this.form.vat_amount = vatAmount;
       return vatAmount.toFixed(2);
     },
     calculateTotal() {
       return this.cartItems.reduce((total, item) => {
         const res = total + item.price * item.quantity;
-        // this.form.total_amount = res;
+        this.form.total_amount = res;
         return res;
       }, 0);
     },
@@ -570,21 +632,31 @@ export default {
       const totalAfterDiscount = totalBeforeDiscount - discountAmount;
       const vatAmount = (totalAfterDiscount * this.vatPercentage) / 100;
       const totalWithVAT = totalAfterDiscount + vatAmount;
+      this.form.net_amount=totalWithVAT;
       return totalWithVAT.toFixed(2);
     },
     dueAmount() {
       const netAmount = this.calculateNetTotal();
       const dueAmount = netAmount - this.payAmount;
+      this.form.pay_amount=this.payAmount;
+      this.form.due_amount=dueAmount;
       return dueAmount.toFixed(2);
     },
     async submitForm() {
       this.isSubmitting = true;
+      console.log(this.cartItems);
+      // console.log(this.form.cartItems);
       if (this.isNew) {
         await this.form
-          .post("/api/purchases", this.form)
+          .post("/api/purchases",  {
+          params: {
+            cart_items: this.cartItems,
+            ...this.form,
+          },
+        })
           .then(() => {
             this.$router.push({ name: "purchases" });
-            Notification.success(`Create purchase ${this.form.name} successfully!`);
+            Notification.success(`Create purchase successfully!`);
           })
           .catch((error) => {
             // console.log(error);
@@ -622,17 +694,6 @@ export default {
           Notification.error(error);
         }
       }
-    },
-    getSubCategories() {
-      axios
-        .get("/api/get-category-wise-sub-categories", {
-          params: {
-            category_id: this.form.category_id,
-          },
-        })
-        .then((response) => {
-          this.sub_categories = response.data;
-        });
     },
     resetData() {
       this.form.clear();

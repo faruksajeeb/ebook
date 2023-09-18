@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Lib\Webspice;
 use App\Models\purchase;
+use App\Models\PurchaseDetail;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -37,9 +38,16 @@ class PurchaseController extends Controller
             $sortField = request('sort_field', 'created_at');
             if (!in_array($sortField, [
                 'id',
-                'title',
-                'price',
-                'stock_quantity',
+                'purchase_date',
+                'total_amount',
+                'discount_percentage',
+                'discount_amount',
+                'vat_percentage',
+                'vat_amount',
+                'net_amount',
+                'pay_amount',
+                'due_amount',
+                'paid_by',
             ])) {
                 $sortField = 'created_at';
             }
@@ -50,18 +58,23 @@ class PurchaseController extends Controller
 
             $filled = array_filter(request([
                 'id',
-                'title',
-                'publisher_id',
-                'author_id',
-                'category_id',
-                'sub_category_id',
-                'stock_quantity',
-                'price',
+                'purchase_date',
+                'supplier_id',
+                'total_amount',
+                'discount_percentage',
             ]));
 
-            $purchases = Purchase::with(['publisher', 'author', 'category', 'sub_category'])->when(count($filled) > 0, function ($query) use ($filled) {
+            $purchases = Purchase::with(['supplier'])->when(count($filled) > 0, function ($query) use ($filled) {
                 foreach ($filled as $column => $value) {
-                    $query->where($column, 'LIKE', '%' . $value . '%');
+                    if ($column == 'purchase_date') {
+                        $dateExplode = explode(" to ", $value);
+                        $startDate = $dateExplode[0];
+                        $endDate = $dateExplode[1];
+                        $query->whereBetween($column, [$startDate, $endDate]);
+                    } else {
+                        $query->where($column, 'LIKE', '%' . $value . '%');
+                    }
+
                 }
 
             })->when(request('search', '') != '', function ($query) use ($searchTerm) {
@@ -80,6 +93,7 @@ class PurchaseController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         #permission verfy
         // $this->webspice->permissionVerify('purchase.create');
 
@@ -87,54 +101,72 @@ class PurchaseController extends Controller
 
         $request->validate(
             [
-                'title' => ['required', 'min:1', 'max:1000', Rule::unique('purchases')->where(function ($query) use ($request) {
-                    return $query->where('title', $request->title)
-                        ->where('publisher_id', $request->publisher_id)
-                        ->where('author_id', $request->author_id);
-                })],
-                'publisher_id' => 'required',
-                'author_id' => 'required',
-                'buying_discount_percentage' => 'required|numeric',
-                'selling_discount_percentage' => 'required|numeric',
-                'buying_vat_percentage' => 'required|numeric',
-                'selling_vat_percentage' => 'required|numeric',
-                'price' => ['required', 'numeric', 'min:0.01'],
-                'publication_year' => ['required', 'integer', 'between:1950,2050', 'date_format:Y'],
-                'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'supplier_id' => 'required',
+                'purchase_date' => 'required',
+                'cart_items' => ['required', 'array', function ($attribute, $value, $fail) {
+                    if (empty($value)) {
+                        $fail('The cart must contain at least one item.');
+                    }
+                }],
+                'attach_file' => 'nullable|mimes:jpeg,png,jpg,gif,svg,pdf|max:2048',
             ],
             [
-                'title.unique' => 'The purchase (title,publisher_id,author_id) has already been taken.',
+                'cart_items.required' => 'The cart must contain at least one item.',
             ]
         );
 
         try {
             // $this->purchases->create($data);
             $input = $request->all();
-            // dd($input);
-            if ($request->hasFile('photo')) {
-                $image = Image::make($request->file('photo'));
-                $imageName = time() . '-' . $request->file('photo')->getClientOriginalName();
+            //  dd($input);
+            if ($request->hasFile('attach_file')) {
+                // $image = Image::make($request->file('attach_file'));
+                // $imageName = time() . '-' . $request->file('attach_file')->getClientOriginalName();
 
                 $destinationPath = 'assets/img/purchase/';
-                $uploadSuccess = $image->save($destinationPath . $imageName);
+
+                
+                $file = $request->file('attach_file');
+                $filename = time() . '-' . $file->getClientOriginalName();
+                $uploadSuccess = $file->move(public_path($destinationPath), $filename);
+
+
+                // $uploadSuccess = $image->save($destinationPath . $imageName);
 
                 /**
                  * Generate Thumbnail Image Upload on Folder Code
                  */
-                $destinationPathThumbnail = public_path('assets/img/purchase/thumbnail/');
-                $image->resize(50, 50);
-                $image->save($destinationPathThumbnail . $imageName);
+                // $destinationPathThumbnail = public_path('assets/img/purchase/thumbnail/');
+                // $image->resize(50, 50);
+                // $image->save($destinationPathThumbnail . $imageName);
 
-                // $file = $request->file('photo');
-                // $filename = $file->getClientOriginalName();
-                // $uploadedPath = $file->move(public_path($destinationPath), $filename);
                 if ($uploadSuccess) {
-                    $input['photo'] = $imageName;
+                    $input['attach_file'] = $filename;
                 }
             }
             $input['created_by'] = $this->webspice->getUserId();
-            // dd($input);
-            $this->purchases->create($input);
+
+            // dd($input['cart_items']);
+            # if Cart Items
+            if (count($input['cart_items']) > 0) {
+                $inserted = Purchase::create($input);
+                $purchaseId = $inserted->id;
+                foreach ($input['cart_items'] as $item) {
+                    if ($item['quantity'] <= 0) {continue;}
+                    PurchaseDetail::create([
+                        'purchase_id' => $purchaseId,
+                        'book_id' => $item['id'],
+                        'quantity' => $item['quantity'],
+                        'unit_price' => $item['price'],
+                        'sub_total' => $item['quantity'] * $item['price'],
+                        'discount_percentage' => 0,
+                        'discount_amount' => 0,
+                        'vat_percentage' => 0,
+                        'vat_amount' => 0,
+                        'net_sub_total' => $item['quantity'] * $item['price'],
+                    ]);
+                }
+            }
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -149,8 +181,16 @@ class PurchaseController extends Controller
     public function show($id)
     {
         try {
-            $purchase = Purchase::with(['publisher', 'author', 'category', 'sub_category'])->find($id);
-            return $purchase;
+            $purchase = Purchase::with('supplier')->find($id);
+            // foreach($purchase->purchaseDetails as $item){
+            //     dd($item->book->toArray());
+            // }
+            $purchaseDetails = PurchaseDetail::with(['book'])->where('purchase_id', $id)->get();
+            $data = [
+                'purchase' => $purchase,
+                'purchase_details' => $purchaseDetails,
+            ];
+            return $data;
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(

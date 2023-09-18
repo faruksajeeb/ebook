@@ -4,7 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Purchase extends Model
@@ -24,7 +27,7 @@ class Purchase extends Model
         'pay_amount',
         'due_amount',
         'paid_by',
-        'file',
+        'attach_file',
         'status',
         'created_at',
         'updated_at',
@@ -45,29 +48,51 @@ class Purchase extends Model
     {
         $term = "%$term%";
         $query->where(function ($q) use ($term) {
-            // $q->where('id','LIKE',$term);
-            $q->where('title', 'LIKE', $term);
-            $q->orWhere('isbn', 'LIKE', $term);
-            $q->orWhere('genre', 'LIKE', $term);
-            // $q->orWhereHas('categories',function($q) use($term){
-            //     $q->where('category_name','LIKE',$term);
-            // });
+            $q->where('id','LIKE',$term);
+            $q->orWhere('purchase_date', 'LIKE', $term);
+            $q->orWhereHas('supplier',function($q) use($term){
+                $q->where('supplier_name','LIKE',$term);
+            });
         });
     }
-    public function publisher() : BelongsTo
+    public function supplier() : BelongsTo
     {
-        return $this->belongsTo(Publisher::class)->withTrashed()->withDefault(['value'=>'']);
+        return $this->belongsTo(Supplier::class)->withTrashed()->withDefault(['value'=>'']);
     }
-    public function author() : BelongsTo
+
+    function purchaseDetails()
     {
-        return $this->belongsTo(Author::class)->withTrashed()->withDefault(['value'=>'']);
+        // return $this->hasMany(PurchaseDetail::class);
+        return $this->hasMany(PurchaseDetail::class,'purchase_id','id')->orderBy('book_id');
     }
-    public function category() : BelongsTo
+
+    function activePurchaseDetails()
     {
-        return $this->belongsTo(Category::class)->withTrashed()->withDefault(['value'=>'']);
+        return $this->hasMany(PurchaseDetail::class)->where('status', 1);
     }
-    public function sub_category() : BelongsTo
+
+    public function latestPurchaseDetails(): HasOne
     {
-        return $this->belongsTo(SubCategory::class)->withTrashed()->withDefault(['value'=>'']);
+        return $this->hasOne(PurchaseDetail::class)->latestOfMany();
+    }
+
+    public function oldestPurchaseDetails(): HasOne
+    {
+        return $this->hasOne(PurchaseDetail::class)->oldestOfMany();
+    }
+
+    public function largestPurchaseDetails(): HasOne
+    {
+        return $this->hasOne(PurchaseDetail::class)->ofMany('id', 'max');
+    }
+
+    public function currentPurchaseDetails(): HasOne
+    {
+        return $this->hasOne(PurchaseDetail::class)->ofMany([
+            'created_at' => 'max',
+            'id' => 'max',
+        ], function (Builder $query) {
+            $query->where('published_at', '<', now());
+        });
     }
 }

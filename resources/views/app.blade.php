@@ -81,7 +81,6 @@
             content: '\f105';
         }
     </style>
-
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 
@@ -100,7 +99,13 @@
     <script src="{{ asset('assets/js/faizaan-admin.min.js') }}"></script>
     {{-- <script src="{{ asset('assets/vendor/chart.js/Chart.min.js') }}"></script>
     <script src="{{ asset('assets/js/demo/chart-area-demo.js') }}"></script> --}}
-    <script>        
+   
+{{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> --}}
+   <script>    
+    // creates multiple instances
+    // const flatpickr = require("flatpickr");
+// flatpickr(".datecalender");    
         window.publicPath = "{{ asset('') }}";
         window.env = <?php echo json_encode([
             'APP_NAME' => env('APP_NAME'),
