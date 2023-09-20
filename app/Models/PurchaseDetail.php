@@ -20,6 +20,7 @@ class PurchaseDetail extends Model
         'vat_percentage',
         'vat_amount',
         'net_sub_total',
+        'flag',
     ];
 
     

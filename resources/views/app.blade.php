@@ -80,6 +80,10 @@
         .sidebar .nav-item .nav-link-layer-two[data-toggle="collapse"].collapsed::after {
             content: '\f105';
         }
+        .reset {
+            all: revert;
+            border:1px solid #CCC;
+        }
     </style>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>

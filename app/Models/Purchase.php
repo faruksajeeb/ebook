@@ -26,6 +26,7 @@ class Purchase extends Model
         'net_amount',
         'pay_amount',
         'due_amount',
+        'courtesy_total_amount',
         'paid_by',
         'attach_file',
         'status',

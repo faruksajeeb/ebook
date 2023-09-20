@@ -357,14 +357,14 @@
                       >
                     </td>
                     <td class="text-nowrap">{{ purchase.supplier.supplier_name }}</td>
-                    <td class="text-nowrap">{{ purchase.purchaseDetails }}</td>
-                    <td class="text-nowrap">{{ purchase.discount_percentage }}</td>
-                    <td class="text-nowrap">{{ purchase.discount_amount }}</td>
-                    <td class="text-nowrap">{{ purchase.vat_percentage }}</td>
-                    <td class="text-nowrap">{{ purchase.vat_amount }}</td>
-                    <td class="text-nowrap">{{ purchase.net_amount }}</td>
-                    <td class="text-nowrap">{{ purchase.pay_amount }}</td>
-                    <td class="text-nowrap">{{ purchase.due_amount }}</td>
+                    <td class="text-nowrap text-right">{{ purchase.total_amount }}</td>
+                    <td class="text-nowrap text-center">{{ purchase.discount_percentage }}</td>
+                    <td class="text-nowrap text-right">{{ purchase.discount_amount }}</td>
+                    <td class="text-nowrap text-center">{{ purchase.vat_percentage }}</td>
+                    <td class="text-nowrap text-right">{{ purchase.vat_amount }}</td>
+                    <td class="text-nowrap text-right">{{ purchase.net_amount }}</td>
+                    <td class="text-nowrap text-right">{{ purchase.pay_amount }}</td>
+                    <td class="text-nowrap text-right">{{ purchase.due_amount }}</td>
                     <td class="text-nowrap">{{ purchase.paid_by }}</td>
 
                     <td class="text-right text-nowrap">
