@@ -12,9 +12,7 @@ use App\Models\SupplierPayment;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Fluent;
 use Image;
 
 class PurchaseController extends Controller
@@ -101,9 +99,6 @@ class PurchaseController extends Controller
         // dd($request->all());
         #permission verfy
         // $this->webspice->permissionVerify('purchase.create');
-
-        // Unique check __> purchase name, author, publisher
-
         $validator = $request->validate(
             [
                 'supplier_id' => 'required',
@@ -170,21 +165,22 @@ class PurchaseController extends Controller
                     }
                 }
                 // Insert into supplier payment if pay-amount is grater than 0
-                if($request->pay_amount>=0){
+                if ($request->pay_amount >= 0) {
                     SupplierPayment::create([
                         'supplier_id' => $request->supplier_id,
                         'purchase_id' => $purchaseId,
-                        'payment_date' =>$request->purchase_date,
+                        'payment_date' => $request->purchase_date,
                         'payment_amount' => $request->pay_amount,
                         'payment_method' => $request->payment_method,
-                        'paid_by' =>$request->paid_by ,
+                        'paid_by' => $request->paid_by,
                         'payment_description' => $request->payment_description,
                         // 'file' => ,
+                        'transaction_type' => 'invoice_create',
                         'created_by' => $this->webspice->getUserId(),
                     ]);
                 }
             }
-           
+
             // dd($input['cart_items']);
             # if Cart Items
             if ($request->cart_items != null && count($request->cart_items) > 0) {
@@ -268,12 +264,12 @@ class PurchaseController extends Controller
             $purchase = Purchase::with('supplier')->find($id);
             // $purchaseRegularDetails = PurchaseDetail::with(['book'])->where('purchase_id', $id)->where('flag', 'regular_item')->get();
             $purchaseRegularDetails = PurchaseDetail::leftJoin('books', 'purchase_details.book_id', '=', 'books.id')
-            ->select('books.id','books.title','purchase_details.unit_price as price', 'purchase_details.quantity','purchase_details.sub_total')
-            ->where('purchase_details.purchase_id', $id)->where('purchase_details.flag', 'regular_item')->get();
+                ->select('books.id', 'books.title', 'purchase_details.unit_price as price', 'purchase_details.quantity', 'purchase_details.sub_total')
+                ->where('purchase_details.purchase_id', $id)->where('purchase_details.flag', 'regular_item')->get();
             $purchaseCourtesyDetails = PurchaseDetail::leftJoin('books', 'purchase_details.book_id', '=', 'books.id')
-            ->select('books.id','books.title','purchase_details.unit_price', 'purchase_details.quantity as courtesy_quantity','purchase_details.sub_total')->where('purchase_id', $id)->where('flag', 'courtesy_copy')->get();
+                ->select('books.id', 'books.title', 'purchase_details.unit_price', 'purchase_details.quantity as courtesy_quantity', 'purchase_details.sub_total')->where('purchase_id', $id)->where('flag', 'courtesy_copy')->get();
 
-            $paymentInfo = SupplierPayment::where('purchase_id',$id)->get();
+            $paymentInfo = SupplierPayment::where('purchase_id', $id)->get();
             $data = [
                 'purchase' => $purchase,
                 'purchase_regular_details' => $purchaseRegularDetails,
@@ -292,6 +288,7 @@ class PurchaseController extends Controller
 
     public function update(Request $request, $id)
     {
+
         dd($request->all());
         // dd($request->isMethod('put'));
         #permission verfy
@@ -302,60 +299,119 @@ class PurchaseController extends Controller
 
         $request->validate(
             [
-                'title' => ['required', 'min:1', 'max:1000', Rule::unique('purchases')->ignore($id, 'id')->where(function ($query) use ($request) {
-                    return $query->where('title', $request->title)
-                        ->where('publisher_id', $request->publisher_id)
-                        ->where('author_id', $request->author_id);
-                })],
-                'publisher_id' => 'required',
-                'author_id' => 'required',
-                'buying_discount_percentage' => 'required',
-                'selling_discount_percentage' => 'required',
-                'buying_vat_percentage' => 'required',
-                'selling_vat_percentage' => 'required',
-                'price' => ['required', 'numeric', 'min:0.01'],
-                'publication_year' => 'required',
-            ],
-            [
-                'title.unique' => 'The purchase (title,publisher_id,author_id) has already been taken.',
+                'supplier_id' => 'required',
+                'purchase_date' => 'required',
+                'pay_amount' => 'numeric|min:0', // Ensure pay_amount is a number and greater than or equal to 0
+                // 'payment_method' => 'required_if:pay_amount,0', // payment_method is required if pay_amount is greater than 0
+                'payment_method' => Rule::requiredIf($request->pay_amount > 0), // payment_method is required if pay_amount is greater than 0
+                'payment_description' => Rule::requiredIf($request->pay_amount > 0), // payment_method is required if pay_amount is greater than 0
+                'paid_by' => Rule::requiredIf($request->pay_amount > 0), // payment_method is required if pay_amount is greater than 0
+                'attach_file' => 'nullable|mimes:jpeg,png,jpg,gif,svg,pdf|max:2048',
             ]
         );
+        if (($request->cart_items == null || count($request->cart_items) == 0) && ($request->courtesy_cart_items == null || count($request->courtesy_cart_items) <= 0)) {
+            return response()->json(
+                [
+                    'error' => 'The cart/ courtesy cart must contain at least one item.',
+                ], 401);
+        }
+
         try {
             $input = $request->all();
-            if ($request->hasFile('photo')) {
-                $image = Image::make($request->file('photo'));
-                $imageName = time() . '-' . $request->file('photo')->getClientOriginalName();
+            if ($request->hasFile('attach_file')) {
 
                 $destinationPath = 'assets/img/purchase/';
-                $uploadSuccess = $image->save($destinationPath . $imageName);
+                // $uploadSuccess = $image->save($destinationPath . $imageName);
 
-                /**
-                 * Generate Thumbnail Image Upload on Folder Code
-                 */
-                $destinationPathThumbnail = public_path('assets/img/purchase/thumbnail/');
-                $image->resize(50, 50);
-                $image->save($destinationPathThumbnail . $imageName);
+                $file = $request->file('attach_file');
+                $filename = time() . '-' . $file->getClientOriginalName();
+                $uploadSuccess = $file->move(public_path($destinationPath), $filename);
                 if ($uploadSuccess) {
                     //Delete Old File
                     $imgExist = Purchase::where('id', $id)->first();
-                    $existingImage = $imgExist->photo;
+                    $existingImage = $imgExist->attach_file;
                     if ($existingImage) {
 
                         if (Storage::disk('local')->exists($destinationPath . $existingImage)) {
                             unlink($destinationPath . $existingImage);
                         }
-                        if (Storage::disk('local')->exists($destinationPathThumbnail . $existingImage)) {
-                            unlink($destinationPathThumbnail . $existingImage);
-                        }
                     }
-                    $input['photo'] = $imageName;
+                    $input['attach_file'] = $filename;
                 }
             }
 
             $input['updated_by'] = $this->webspice->getUserId();
-            Purchase::where('id', $id)->update($input);
+
+            // Begin a database transaction
+            \DB::beginTransaction();
+
+            $oldInvoice = Purchase::find($id);
+            if (!$oldInvoice) {
+                // Handle if the invoice does not exist
+                \DB::rollBack();
+                return response()->json(
+                    [
+                        'error' => 'Invoice not found',
+                    ], 401);
+            }
+
+            // Calculate the changes in the invoice amount
+            $invoiceChanges = $this->calculateInvoiceChanges($oldInvoice, $request);
+
+            # Update the balance of the corresponding supplier
+            $supplier = Supplier::find($oldInvoice->supplier_id);
+            if (!$supplier) {
+                // Handle if the supplier does not exist
+                \DB::rollBack();
+                return response()->json(
+                    [
+                        'error' => 'Supplier not found',
+                    ], 401);
+            }
+            $supplier->balance += $invoiceChanges;
+            $supplier->save();
+
+            #  Update the payment history (if exist) of the corresponding supplier
+
+            $supplierPayment = SupplierPayment::where('purchase_id', $id)->latest();
+            if ($supplierPayment) {
+                $supplierPayment->payment_date = $request->purchase_date;
+                $supplierPayment->payment_amount = $request->payment_amount;
+                $supplierPayment->payment_method = $request->payment_method;
+                $supplierPayment->paid_by = $request->paid_by;
+                $supplierPayment->payment_description = $request->payment_description;
+                $supplierPayment->transaction_type = 'invoice_update';
+                $supplierPayment->updated_by = $this->webspice->getUserId();
+                $supplierPayment->save();
+            } else {
+                // Insert into supplier payment if pay-amount is grater than 0
+                if ($request->pay_amount >= 0) {
+                    $paymentTransaction = new SupplierPayment([
+                        'supplier_id' => $request->supplier_id,
+                        'purchase_id' => $id,
+                        'payment_date' => $request->purchase_date,
+                        'payment_amount' => $request->pay_amount,
+                        'payment_method' => $request->payment_method,
+                        'paid_by' => $request->paid_by,
+                        'payment_description' => $request->payment_description,
+                        // 'file' => ,
+                        'transaction_type' => 'invoice_update',
+                        'created_by' => $this->webspice->getUserId(),
+                    ]);
+                    $paymentTransaction->save();
+                }
+            }
+
+            $oldInvoice->update($input);
+
+            $this->updateSaleDetails($request, $id);
+
+            // Commit the database transaction
+            \DB::commit();
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
+            // Handle errors
+            \DB::rollback();
             return response()->json(
                 [
                     'error' => $e->getMessage(),
@@ -364,6 +420,128 @@ class PurchaseController extends Controller
         // return redirect()->route('purchases.index');
     }
 
+    public function updateSaleDetails($request, $id)
+    {
+
+# Get the existing purchase details for the invoice
+        $regularItemExistingPurchaseDetails = PurchaseDetail::where('purchase_id', $id)->where('flag', 'regular_item')->get();
+        $regularExistingIds = $regularItemExistingPurchaseDetails->pluck('book_id')->toArray();
+# Identify items to remove (existing items not in the update request)
+        $regularItemsToRemoveBookIds = array_diff($regularExistingIds, array_column($request->cart_items, 'id'));
+        $regularItemsToRemoveIds = $regularItemExistingPurchaseDetails->whereIn('book_id', $regularItemsToRemoveBookIds)->pluck('id')->toArray();
+#   dd($regularItemsToRemoveIds);
+        PurchaseDetail::whereIn('id', $regularItemsToRemoveIds)->delete();
+
+        if ($request->cart_items) {
+            foreach ($request->cart_items as $detailData) {
+
+                $purchaseDetail = PurchaseDetail::where('purchase_id', $id)->where('flag', 'regular_item')->where('book_id', $detailData['id'])->first();
+                //dd($purchaseDetail->toArray());
+                if (!$purchaseDetail) {
+                    // If the item doesn't have an ID, it's a new item, so create it
+                    PurchaseDetail::create([
+                        'purchase_id' => $id,
+                        'book_id' => $detailData['id'],
+                        'quantity' => $detailData['quantity'],
+                        'unit_price' => $detailData['price'],
+                        'sub_total' => $detailData['quantity'] * $detailData['price'],
+                        'discount_percentage' => 0,
+                        'discount_amount' => 0,
+                        'vat_percentage' => 0,
+                        'vat_amount' => 0,
+                        'net_sub_total' => $detailData['quantity'] * $detailData['price'],
+                        'flag' => 'regular_item',
+                    ]);
+                } else {
+                    // If the item has an ID, it's an existing item, so update it
+                    $$purchaseDetail->update([
+                        'quantity' => $detailData['quantity'],
+                        'unit_price' => $detailData['price'],
+                        'sub_total' => $detailData['quantity'] * $detailData['price'],
+                        'discount_percentage' => 0,
+                        'discount_amount' => 0,
+                        'vat_percentage' => 0,
+                        'vat_amount' => 0,
+                        'net_sub_total' => $detailData['quantity'] * $detailData['price'],
+                    ]);
+                }
+
+                dd('PENDING');
+                // Update the quantity of the corresponding book
+                $book = Book::find($item['id']);
+
+                if ($book) {
+                    // Ensure the quantity is not negative
+                    $newQuantity = $book->stock_quantity + $item['courtesy_quantity'];
+                    if ($newQuantity >= 0) {
+                        $book->stock_quantity = $newQuantity;
+                        $book->save();
+                    } else {
+                        // Handle insufficient quantity error
+                        return response()->json(['error' => 'Insufficient quantity in stock.']);
+                    }
+                }
+            }
+        }
+
+        # Get the existing purchase details for the invoice
+        $courtesyItemExistingPurchaseDetails = PurchaseDetail::where('purchase_id', $id)->where('flag', 'courtesy_copy')->get();
+        $courtesyExistingIds = $courtesyItemExistingPurchaseDetails->pluck('book_id')->toArray();
+
+        # Identify items to remove (existing items not in the update request)
+        $courtesyItemsToRemoveBookIds = array_diff($courtesyExistingIds, array_column($request->courtesy_cart_items, 'id'));
+        $courtesyItemsToRemoveIds = $courtesyItemExistingPurchaseDetails->whereIn('book_id', $courtesyItemsToRemoveBookIds)->pluck('id')->toArray();
+#   dd($courtesyItemsToRemoveIds);
+        PurchaseDetail::whereIn('id', $courtesyItemsToRemoveIds)->delete();
+
+        if ($request->courtesy_cart_items) {
+            foreach ($request->courtesy_cart_items as $detailData) {
+
+                $purchaseDetail = PurchaseDetail::where('purchase_id', $id)->where('flag', 'courtesy_copy')->where('book_id', $detailData['id'])->first();
+                //dd($purchaseDetail->toArray());
+                if (!$purchaseDetail) {
+                    // If the item doesn't have an ID, it's a new item, so create it
+                    PurchaseDetail::create([
+                        'purchase_id' => $id,
+                        'book_id' => $detailData['id'],
+                        'quantity' => $detailData['quantity'],
+                        'unit_price' => $detailData['price'],
+                        'sub_total' => $detailData['quantity'] * $detailData['price'],
+                        'discount_percentage' => 0,
+                        'discount_amount' => 0,
+                        'vat_percentage' => 0,
+                        'vat_amount' => 0,
+                        'net_sub_total' => $detailData['quantity'] * $detailData['price'],
+                        'flag' => 'courtesy_copy',
+                    ]);
+                } else {
+                    // If the item has an ID, it's an existing item, so update it
+                    $$purchaseDetail->update([
+                        'quantity' => $detailData['quantity'],
+                        'unit_price' => $detailData['price'],
+                        'sub_total' => $detailData['quantity'] * $detailData['price'],
+                        'discount_percentage' => 0,
+                        'discount_amount' => 0,
+                        'vat_percentage' => 0,
+                        'vat_amount' => 0,
+                        'net_sub_total' => $detailData['quantity'] * $detailData['price'],
+                    ]);
+                }
+
+                dd('PENDING');
+                // Update the quantity of the corresponding book
+            }
+        }
+    }
+
+    private function calculateInvoiceChanges($oldInvoice, $newInvoiceData)
+    {
+        $oldTotal = $oldInvoice->due_amount;
+        $newTotal = $newInvoiceData->due_amount;
+        $invoiceChanges = $newTotal - $oldTotal;
+
+        return $invoiceChanges;
+    }
     public function destroy($id)
     {
         #permission verfy
