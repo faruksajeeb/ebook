@@ -5,8 +5,8 @@
         <!-- Simple Tables -->
         <div class="card">
           <div class="card-header py-3">
-            <h3 class="m-0 font-weight-bold" title="">Purchase List</h3>
-            <p class="text-secondary m-0">Stores information about each purchase</p>
+            <h3 class="m-0 font-weight-bold" title="">Sale List</h3>
+            <p class="text-secondary m-0">Stores information about each sale</p>
           </div>
           <div class="card-body p-0 m-0">
             <div class="row p-2">
@@ -24,7 +24,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Search by purchase date, supplier name. (Type and Enter)"
+                  placeholder="Search by sale date, customer name. (Type and Enter)"
                   v-model="search"
                 />
                 <button @click="downloadFile" class="btn my-btn-success export-btn">
@@ -39,11 +39,11 @@
                 />
 
                 <router-link
-                  to="/purchases/create"
+                  to="/sales/create"
                   class="z-index-1 btn my-btn-primary float-right"
                 >
                   <i class="fa fa-solid fa-plus"></i>
-                  Add purchase
+                  Add sale
                 </router-link>
               </div>
             </div>
@@ -76,8 +76,8 @@
                       >
                     </th>
                     <th scope="col" class="text-nowrap">
-                      <a href="#" @click.prevent="changeShort('purchase_date')">
-                        Purchase Date</a
+                      <a href="#" @click.prevent="changeShort('sale_date')">
+                        Sale Date</a
                       >
                       <span
                         v-if="
@@ -94,7 +94,7 @@
                         >↓</span
                       >
                     </th>
-                    <th class="text-center text-nowrap" scope="col">Supplier</th>
+                    <th class="text-center text-nowrap" scope="col">Customer</th>
                     <th class="text-center text-nowrap" scope="col">
                       <a href="#" @click.prevent="changeShort('total_amount')"
                         >Total Amount</a
@@ -285,22 +285,22 @@
                         id="datecalander"
                         class="form-control-sm"
                         style="width: 100%"
-                        v-model="params.purchase_date"
+                        v-model="params.sale_date"
                       />
                     </th>
                     <th class="text-nowarp px-1" colspan="1" style="min-width: 200px">
                       <select
-                        v-model="params.supplier_id"
+                        v-model="params.customer_id"
                         style="width: 100%"
                         class="form-select-sm"
                       >
-                        <option value="" selected>--select supplier--</option>
+                        <option value="" selected>--select customer--</option>
                         <option
-                          :value="supplier.id"
-                          v-for="supplier in suppliers"
-                          :key="supplier.id"
+                          :value="customer.id"
+                          v-for="customer in customers"
+                          :key="customer.id"
                         >
-                          {{ supplier.supplier_name }}
+                          {{ customer.customer_name }}
                         </option>
                       </select>
                     </th>
@@ -333,44 +333,44 @@
                     <th></th>
                   </tr>
                 </thead>
-                <tbody v-if="purchases && paginator.totalRecords > 0">
-                  <tr v-for="purchase in purchases.data" :key="purchase.id">
+                <tbody v-if="sales && paginator.totalRecords > 0">
+                  <tr v-for="sale in sales.data" :key="sale.id">
                     <!-- <td class="text-center">
                       <input
                         type="checkbox"
-                        :value="purchase.id"
+                        :value="sale.id"
                         v-model="checked"
                         class="form-check-input"
                       />
                     </td> -->
                     <td style="width: 60px !important" class="text-nowrap">
-                      {{ purchase.id }}
+                      {{ sale.id }}
                     </td>
 
                     <td class="text-nowrap">
                       <a
-                        @click="openModal(purchase.id)"
+                        @click="openModal(sale.id)"
                         href="#"
                         data-toggle="modal"
                         data-target="#recordModal"
-                        >{{ purchase.purchase_date }}</a
+                        >{{ sale.sale_date }}</a
                       >
                     </td>
-                    <td class="text-nowrap">{{ purchase.supplier.supplier_name }}</td>
-                    <td class="text-nowrap text-right">{{ purchase.total_amount }}</td>
-                    <td class="text-nowrap text-center">{{ purchase.discount_percentage }}</td>
-                    <td class="text-nowrap text-right">{{ purchase.discount_amount }}</td>
-                    <td class="text-nowrap text-center">{{ purchase.vat_percentage }}</td>
-                    <td class="text-nowrap text-right">{{ purchase.vat_amount }}</td>
-                    <td class="text-nowrap text-right">{{ purchase.net_amount }}</td>
-                    <td class="text-nowrap text-right">{{ purchase.pay_amount }}</td>
-                    <td class="text-nowrap text-right">{{ purchase.due_amount }}</td>
-                    <td class="text-nowrap">{{ purchase.paid_by }}</td>
+                    <td class="text-nowrap">{{ sale.customer.customer_name }}</td>
+                    <td class="text-nowrap text-right">{{ sale.total_amount }}</td>
+                    <td class="text-nowrap text-center">{{ sale.discount_percentage }}</td>
+                    <td class="text-nowrap text-right">{{ sale.discount_amount }}</td>
+                    <td class="text-nowrap text-center">{{ sale.vat_percentage }}</td>
+                    <td class="text-nowrap text-right">{{ sale.vat_amount }}</td>
+                    <td class="text-nowrap text-right">{{ sale.net_amount }}</td>
+                    <td class="text-nowrap text-right">{{ sale.pay_amount }}</td>
+                    <td class="text-nowrap text-right">{{ sale.due_amount }}</td>
+                    <td class="text-nowrap">{{ sale.paid_by }}</td>
 
                     <td class="text-right text-nowrap">
                       <div class="btn-group" option="group">
                         <button
-                          @click="openModal(purchase.id)"
+                          @click="openModal(sale.id)"
                           class="btn btn-sm my-btn-primary"
                           data-toggle="modal"
                           data-target="#recordModal"
@@ -378,17 +378,17 @@
                           <i class="fa fa-eye"></i> View
                         </button>
                         <!-- <router-link
-                          :to="`/purchases/${purchase.id}`"
+                          :to="`/sales/${sale.id}`"
                           class="btn btn-sm my-btn-primary"
                           ><i class="fa fa-eye"></i> View</router-link
                         > -->
                         <router-link
-                          :to="`/purchases/${purchase.id}/edit`"
+                          :to="`/sales/${sale.id}/edit`"
                           class="btn btn-sm btn-primary px-2 mx-1"
                           ><i class="fa fa-edit"></i> Edit</router-link
                         >
                         <a
-                          @click="deletepurchase(purchase.id)"
+                          @click="deletesale(sale.id)"
                           class="btn btn-sm btn-danger px-2 disabled"
                         >
                           <font color="#ffffff"
@@ -422,9 +422,9 @@
               <div class="col-md-6">
                 <pagination
                   align="right"
-                  :data="purchases"
+                  :data="sales"
                   :limit="5"
-                  @pagination-change-page="getPurchases"
+                  @pagination-change-page="getSales"
                 ></pagination>
               </div>
             </div>
@@ -434,7 +434,7 @@
     </div>
     <!--Row-->
     <!-- Bootstrap Modal -->
-    <ViewPurchase :record="record" :fileExtension="fileExtension" />
+    <ViewSale :record="record" :fileExtension="fileExtension" />
     <!-- Modal End -->
   </div>
 </template>
@@ -443,16 +443,16 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.css";
 
 import { mapActions } from "vuex";
-import ViewPurchase from "./ViewPurchase.vue";
+import ViewSale from "./ViewSale.vue";
 export default {
-  name: "purchase",
-  components: { ViewPurchase },
+  name: "sale",
+  components: { ViewSale },
   data() {
     return {
       fileExtention: null,
       record: {},
       sub_categories: [],
-      purchasePhotoUrl: null,
+      salePhotoUrl: null,
       publicPath: window.publicPath,
       checked: [],
       paginator: {
@@ -462,15 +462,15 @@ export default {
         current_page: "",
         per_page: "",
       },
-      purchases: {
+      sales: {
         type: Object,
         default: null,
       },
       params: {
         paginate: 5,
         id: "",
-        purchase_date: "",
-        supplier_id: "",
+        sale_date: "",
+        customer_id: "",
         total_amount: "",
         discount_percentage: "",
         sort_field: "created_at",
@@ -484,15 +484,15 @@ export default {
   },
   async created() {
     // this.fetchCategories();
-    this.suppliers = this.$store.getters.getSuppliers;
-    if (this.suppliers.length == 0) {
-      const response = await axios.get("/api/get-suppliers");
-      this.suppliers = response.data;
+    this.customers = this.$store.getters.getCustomers;
+    if (this.customers.length == 0) {
+      const response = await axios.get("/api/get-customers");
+      this.customers = response.data;
     }
   },
   mounted() {
     this.filterFields = { ...this.params };
-    this.getPurchases();
+    this.getSales();
     flatpickr("#datecalander", {
       mode: "range",
       dateFormat: "Y-m-d", // Customize the date format as needed
@@ -502,13 +502,13 @@ export default {
   watch: {
     params: {
       handler() {
-        this.getPurchases();
+        this.getSales();
       },
       deep: true,
     },
     search(val, old) {
       if (val.length >= 3 || old.length >= 3) {
-        this.getPurchases();
+        this.getSales();
       }
     },
   },
@@ -519,12 +519,12 @@ export default {
   },
   methods: {
     ...mapActions(["fetchCategories"]),
-    async getPurchases(page = 1) {
+    async getSales(page = 1) {
       this.isLoading = true;
       await axios
         // .get(`/api/products?page=${page}`)
-        // .get(`/api/products?page=${page}&purchase_id=${this.params.purchase_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
-        .get("/api/purchases", {
+        // .get(`/api/products?page=${page}&sale_id=${this.params.sale_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
+        .get("/api/sales", {
           params: {
             page,
             search: this.search.length >= 3 ? this.search : "",
@@ -534,7 +534,7 @@ export default {
         .then((response) => {
           console.log(response.data);
           this.isLoading = false;
-          this.purchases = response.data;
+          this.sales = response.data;
           this.paginator.totalRecords = response.data.total;
           // if (response.data.total <= 0) {
           //   document.querySelector(".loading-section").innerText = "No Record Found!.";
@@ -568,7 +568,7 @@ export default {
     refreshData() {
       this.isRefreshing = true;
       this.params = { ...this.filterFields };
-      this.getPurchases();
+      this.getSales();
     },
     changeShort(field) {
       if (this.params.sort_field === field) {
@@ -580,7 +580,7 @@ export default {
       }
       // this.getProducts();
     },
-    deletepurchase(id) {
+    deletesale(id) {
       Swal.fire({
         allowOutsideClick: false,
         title: "Are you sure?",
@@ -593,9 +593,9 @@ export default {
       }).then((result) => {
         if (result.value) {
           axios
-            .delete("/api/purchases/" + id)
+            .delete("/api/sales/" + id)
             .then(() => {
-              this.getPurchases();
+              this.getSales();
               Notification.success("Data has been deleted successfully.");
             })
             .catch((error) => {
@@ -604,7 +604,7 @@ export default {
                 this.errors = error.response.data.errors;
                 Notification.error(error.response.statusText);
               } else if (error.response.status === 401) {
-                // statusText = "Unpurchaseized";
+                // statusText = "Unsaleized";
                 this.errors = {};
                 Notification.error(error.response.data.error);
               } else {
@@ -616,12 +616,12 @@ export default {
     },
     downloadFile() {
       let loader =
-        '<span class="spinner-border spinner-border-sm" purchase="status" aria-hidden="true" ></span> Exporting...';
+        '<span class="spinner-border spinner-border-sm" sale="status" aria-hidden="true" ></span> Exporting...';
       document.querySelector(".export-btn").innerHTML = loader;
       try {
         axios
           // .get("/api/products-export")
-          .get("/api/purchase-export", { responseType: "arraybuffer" })
+          .get("/api/sale-export", { responseType: "arraybuffer" })
           .then((response) => {
             if (response.status == 200) {
               document.querySelector(".export-btn").innerText = "Export to Excel";
@@ -629,7 +629,7 @@ export default {
               var fileURL = window.URL.createObjectURL(new Blob([response.data]));
               var fileLink = document.createElement("a");
               fileLink.href = fileURL;
-              fileLink.setAttribute("download", "purchase_list.xlsx");
+              fileLink.setAttribute("download", "sale_list.xlsx");
               document.body.appendChild(fileLink);
               fileLink.click();
             } else {
@@ -643,9 +643,9 @@ export default {
     },
     exportPdf() {
       let loader =
-        '<span class="spinner-border spinner-border-sm" purchase="status" aria-hidden="true" ></span>  Exporting...PDF';
+        '<span class="spinner-border spinner-border-sm" sale="status" aria-hidden="true" ></span>  Exporting...PDF';
       document.querySelector(".export-btn-pdf").innerHTML = loader;
-      axios.get("/api/purchase-export-pdf", { responseType: "blob" }).then((response) => {
+      axios.get("/api/sale-export-pdf", { responseType: "blob" }).then((response) => {
         document.querySelector(".export-btn-pdf").innerText = "Export PDF";
         Notification.success("Exported Successfully");
         var fileURL = window.URL.createObjectURL(
@@ -653,7 +653,7 @@ export default {
         );
         var fileLink = document.createElement("a");
         fileLink.href = fileURL;
-        fileLink.setAttribute("download", "purchase_list.pdf");
+        fileLink.setAttribute("download", "sale_list.pdf");
         document.body.appendChild(fileLink);
         fileLink.click();
       });
@@ -661,10 +661,10 @@ export default {
     openModal(id) {
       // Fetch the record details from the server using Axios or a similar library
       axios
-        .get(`api/purchases/${id}`)
+        .get(`api/sales/${id}`)
         .then((response) => {
           this.record = response.data;
-          const fileName = response.data.purchase.attach_file;
+          const fileName = response.data.sale.attach_file;
           const parts = fileName.split(".");
           if (parts.length > 1) {
             // Get the last part as the file extension

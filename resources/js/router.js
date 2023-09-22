@@ -69,6 +69,11 @@ import ManageBook from "./components/book/ManageBook.vue";
 import PurchaseForm from "./components/purchase/PurchaseForm.vue";
 import ManagePurchase from "./components/purchase/ManagePurchase.vue";
 
+
+// Sale Files
+import SaleForm from "./components/sale/SaleForm.vue";
+import ManageSale from "./components/sale/ManageSale.vue";
+
 // Employee Files
 import AddEmployee from "./components/employee/create.vue";
 import ManageEmployee from "./components/employee/index.vue";
@@ -511,6 +516,31 @@ export const routes = [
     meta: { title: "Edit Purchase" },
     beforeEnter: guard,
 },
+
+
+// Sale Paths
+{
+    name: "sales",
+    path: "/sales",
+    component: ManageSale,
+    meta: { title: "Manage Sale" },
+    beforeEnter: guard,
+},
+{
+    name: "sales.create",
+    path: "/sales/create",
+    component: SaleForm,
+    meta: { title: "Add Sale" },
+    beforeEnter: guard,
+},
+{
+    name: "sales.edit",
+    path: "/sales/:id/edit",
+    component: SaleForm,
+    meta: { title: "Edit Sale" },
+    beforeEnter: guard,
+},
+
     { name: "add-product", path: "/add-product", component: AddProduct },
     {
         name: "manage-product",

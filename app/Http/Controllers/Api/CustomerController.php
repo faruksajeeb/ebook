@@ -283,9 +283,9 @@ class CustomerController extends Controller
         // return redirect()->route('customers.index')->withSuccess(__('All customers restored successfully.'));
     }
 
-    public function getcustomers()
+    public function getCustomers()
     {
-        $data = customer::where('status', 1)->get();
+        $data = Customer::where('status', 1)->get();
         return response()->json($data);
     }
 

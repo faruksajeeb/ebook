@@ -58,4 +58,9 @@ export default {
             return response.data;
         });
     },
+    fetchCustomers(){
+        return apiClient.get("/get-customers").then(function (response) {
+            return response.data;
+        });
+    },
 };

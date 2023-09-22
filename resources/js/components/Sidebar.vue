@@ -225,8 +225,8 @@
         </a>
         <div id="collapseSale" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <router-link class="collapse-item" to="/add-employee">Add Sale</router-link>
-            <router-link class="collapse-item" to="/manage-employee">Manage Sale</router-link>
+            <router-link class="collapse-item" to="/sales/create">Add Sale</router-link>
+            <router-link class="collapse-item" to="/sales">Manage Sale</router-link>
           </div>
         </div>
       </li>     

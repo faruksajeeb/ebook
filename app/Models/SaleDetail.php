@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PurchaseDetail extends Model
+class SaleDetail extends Model
 {
     use HasFactory,SoftDeletes;
     public $fillable = [
-        'purchase_id',
+        'sale_id',
         'book_id',
         'quantity',
         'unit_price',
@@ -35,8 +35,8 @@ class PurchaseDetail extends Model
     {
         return $this->belongsTo(Book::class)->withTrashed()->withDefault(['value'=>'']);
     }
-    public function purchase() : BelongsTo
+    public function sale() : BelongsTo
     {
-        return $this->belongsTo(Purchase::class)->withTrashed()->withDefault(['value'=>'']);
+        return $this->belongsTo(Sale::class)->withTrashed()->withDefault(['value'=>'']);
     }
 }

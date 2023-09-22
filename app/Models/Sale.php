@@ -10,14 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Purchase extends Model
+class Sale extends Model
 {
     use HasFactory,SoftDeletes; 
-    protected $table = 'purchases';
+    protected $table = 'sales';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'supplier_id',
-        'purchase_date',
+        'customer_id',
+        'sale_date',
         'total_amount',
         'discount_percentage',
         'discount_amount',
@@ -28,7 +28,7 @@ class Purchase extends Model
         'due_amount',
         'courtesy_total_amount',
         'attach_file',
-        'purchase_note',
+        'sale_note',
         'status',
         'created_at',
         'updated_at',
@@ -50,46 +50,46 @@ class Purchase extends Model
         $term = "%$term%";
         $query->where(function ($q) use ($term) {
             $q->where('id','LIKE',$term);
-            $q->orWhere('purchase_date', 'LIKE', $term);
-            $q->orWhereHas('supplier',function($q) use($term){
-                $q->where('supplier_name','LIKE',$term);
+            $q->orWhere('sale_date', 'LIKE', $term);
+            $q->orWhereHas('customer',function($q) use($term){
+                $q->where('customer_name','LIKE',$term);
             });
         });
     }
-    public function supplier() : BelongsTo
+    public function customer() : BelongsTo
     {
-        return $this->belongsTo(Supplier::class)->withTrashed()->withDefault(['value'=>'']);
+        return $this->belongsTo(Customer::class)->withTrashed()->withDefault(['value'=>'']);
     }
 
-    function purchaseDetails()
+    function saleDetails()
     {
-        // return $this->hasMany(PurchaseDetail::class);
-        return $this->hasMany(PurchaseDetail::class,'purchase_id','id')->orderBy('book_id');
+        // return $this->hasMany(SaleDetail::class);
+        return $this->hasMany(SaleDetail::class,'sale_id','id')->orderBy('book_id');
     }
 
-    function activePurchaseDetails()
+    function activeSaleDetails()
     {
-        return $this->hasMany(PurchaseDetail::class)->where('status', 1);
+        return $this->hasMany(SaleDetail::class)->where('status', 1);
     }
 
-    public function latestPurchaseDetails(): HasOne
+    public function latestSaleDetails(): HasOne
     {
-        return $this->hasOne(PurchaseDetail::class)->latestOfMany();
+        return $this->hasOne(SaleDetail::class)->latestOfMany();
     }
 
-    public function oldestPurchaseDetails(): HasOne
+    public function oldestSaleDetails(): HasOne
     {
-        return $this->hasOne(PurchaseDetail::class)->oldestOfMany();
+        return $this->hasOne(SaleDetail::class)->oldestOfMany();
     }
 
-    public function largestPurchaseDetails(): HasOne
+    public function largestSaleDetails(): HasOne
     {
-        return $this->hasOne(PurchaseDetail::class)->ofMany('id', 'max');
+        return $this->hasOne(SaleDetail::class)->ofMany('id', 'max');
     }
 
-    public function currentPurchaseDetails(): HasOne
+    public function currentSaleDetails(): HasOne
     {
-        return $this->hasOne(PurchaseDetail::class)->ofMany([
+        return $this->hasOne(SaleDetail::class)->ofMany([
             'created_at' => 'max',
             'id' => 'max',
         ], function (Builder $query) {

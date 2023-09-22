@@ -4,10 +4,10 @@
       <div class="card shadow-sm my-2">
         <div class="card-header py-2 my-bg-success">
           <h3 class="text-white-900" v-if="isNew">
-            <i class="fa fa-plus"></i> Add Purchase
+            <i class="fa fa-plus"></i> Add Sale
           </h3>
           <h3 class="text-white-900" v-else>
-            <i class="fa fa-pencil"></i> Edit Purchase
+            <i class="fa fa-pencil"></i> Edit Sale
           </h3>
           <!-- <p class="text-white m-0">
             ফরমের লাল তারকা (<span class="text-danger">*</span>) চিহ্নিত ঘরগুলো অবশ্যই
@@ -16,7 +16,7 @@
         </div>
         <div class="card-body p-3">
           <div class="form">
-            <div v-if="!isNew && !purchase">
+            <div v-if="!isNew && !sale">
               <!-- <LoadingSpinner /> -->
             </div>
             <div class="row">
@@ -114,7 +114,7 @@
                 <AlertError :form="form" />
                 <form
                   id="form"
-                  class="purchase"
+                  class="sale"
                   enctype="multipart/form-data"
                   @submit.prevent="submitForm"
                   @keydown="form.onKeydown($event)"
@@ -122,25 +122,25 @@
                   <div class="input-group mb-2 row mx-0 px-0">
                     <div class="input-group-prepend px-0 col-md-4 mx-0">
                       <label class="input-group-text col-md-12" for="inputGroupSelect01"
-                        >Supplier
+                        >Customer
                         <div class="text-danger">*</div></label
                       >
                     </div>
                     <select
                       class="custom-select mx-0 pe-0"
-                      v-model="form.supplier_id"
-                      :class="{ 'is-invalid': form.errors.has('supplier_id') }"
+                      v-model="form.customer_id"
+                      :class="{ 'is-invalid': form.errors.has('customer_id') }"
                     >
                       <option value="" disabled selected>Choose...</option>
                       <option
-                        :value="supplier.id"
-                        v-for="supplier in suppliers"
-                        :key="supplier.id"
+                        :value="customer.id"
+                        v-for="customer in customers"
+                        :key="customer.id"
                       >
-                        {{ supplier.supplier_name }}
+                        {{ customer.customer_name }}
                       </option>
                     </select>
-                    <HasError :form="form" field="supplier_id" />
+                    <HasError :form="form" field="customer_id" />
                   </div>
                   <div class="input-group mb-2 row mx-0 px-0">
                     <div class="input-group-prepend px-0 col-md-4 mx-0">
@@ -148,7 +148,7 @@
                         class="input-group-text col-md-12"
                         for="inputGroupSelect01"
                         title=""
-                        >Purchase Date
+                        >Sale Date
                         <div class="text-danger">*</div></label
                       >
                     </div>
@@ -157,16 +157,16 @@
                       class="form-control datecalender"
                       id="datecalander"
                       autocomplete="off"
-                      placeholder="Choose purchase date"
-                      name="purchase_date"
-                      v-model="form.purchase_date"
-                      :class="{ 'is-invalid': form.errors.has('purchase_date') }"
+                      placeholder="Choose sale date"
+                      name="sale_date"
+                      v-model="form.sale_date"
+                      :class="{ 'is-invalid': form.errors.has('sale_date') }"
                     />
-                    <HasError :form="form" field="purchase_date" />
+                    <HasError :form="form" field="sale_date" />
                   </div>
                   <fieldset class="reset my-1 p-1" style="background-color: #c9f4aa">
                     <legend class="text-white my-btn-primary p-1 reset">
-                      ক্রয়কৃত কপি:
+                      বিক্রয় কপি: 
                     </legend>
                     <table class="table table-sm">
                       <thead>
@@ -327,7 +327,7 @@
                       <tbody v-else>
                         <tr>
                           <td colspan="5" class="py-3 text-center">
-                            <div v-if="!isNew && !purchase">
+                            <div v-if="!isNew && !sale">
                               <LoadingSpinner />
                             </div>
                             Cart Empty <HasError :form="form" field="cart_items" />
@@ -391,7 +391,7 @@
                       <tbody v-else>
                         <tr>
                           <td colspan="5" class="py-3 text-center">
-                            <div v-if="!isNew && !purchase">
+                            <div v-if="!isNew && !sale">
                               <LoadingSpinner />
                             </div>
                             Cart Empty <HasError :form="form" field="cart_items" />
@@ -448,7 +448,7 @@
                         class="input-group-text col-md-12"
                         for="inputGroupSelect01"
                         title=""
-                        >Purchase Note:
+                        >Sale Note:
                         <div class="text-danger"></div
                       ></label>
                     </div>
@@ -458,16 +458,16 @@
                       cols="30"
                       rows="2"
                       class="form-control"
-                      v-model="form.purchase_note"
-                      >{{ form.purchase_note }}</textarea
+                      v-model="form.sale_note"
+                      >{{ form.sale_note }}</textarea
                     >
                   </div>
                   <div class="form-group mt-2">
                     <!-- <div v-if="form.progress">Progress: {{ form.progress.percentage }}%</div> -->
                     <router-link 
-                          to="/purchases"
+                          to="/sales"
                           class="btn btn-lg btn-primary px-2 mx-1"
-                          ><i class="fa fa-list"></i> Manage Purchase</router-link
+                          ><i class="fa fa-list"></i> Manage Sale</router-link
                         >
                     <save-button v-if="isNew" :is-submitting="isSubmitting"></save-button>
                     <save-changes-button
@@ -496,7 +496,7 @@ export default {
       isSubmitting: false,
       isLoading: false,
       imageUrl: null,
-      purchase: false,
+      sale: false,
       cartItems: [],
       courtesyCartItems: [],
       publicPath: window.publicPath,
@@ -511,14 +511,14 @@ export default {
         current_page: "",
         per_page: "",
       },
-      suppliers: [],
+      customers: [],
       books: {
         type: Object,
         default: null,
       },
       form: new Form({
-        supplier_id: "",
-        purchase_date: "",
+        customer_id: "",
+        sale_date: "",
         // cartItems: [],
         total_amount: 0,
         courtesy_total_amount: 0,
@@ -532,7 +532,7 @@ export default {
         paid_by: "",
         payment_method: "",
         payment_description: "",
-        purchase_note: "",
+        sale_note: "",
         attach_file: null,
       }),
       params: {
@@ -578,23 +578,23 @@ export default {
   },
   async created() {
     this.fetchCategories();
-    this.suppliers = this.$store.getters.getSuppliers;
-    if (this.suppliers.length == 0) {
-      const response = await axios.get("/api/get-suppliers");
-      this.suppliers = response.data;
+    this.customers = this.$store.getters.getCustomers;
+    if (this.customers.length == 0) {
+      const response = await axios.get("/api/get-customers");
+      this.customers = response.data;
     }
     if (!this.isNew) {
-      const response = await axios.get(`/api/purchases/${this.$route.params.id}`);
+      const response = await axios.get(`/api/sales/${this.$route.params.id}`);
 
-      this.purchase = true;
-      this.form.supplier_id = response.data.purchase.supplier_id;
-      this.form.purchase_date = response.data.purchase.purchase_date;
+      this.sale = true;
+      this.form.customer_id = response.data.sale.customer_id;
+      this.form.sale_date = response.data.sale.sale_date;
 
-      this.form.attach_file = response.data.purchase.attach_file;
-      this.cartItems = response.data.purchase_regular_details;
-      this.courtesyCartItems = response.data.purchase_courtesy_details;
-      this.payAmount = response.data.purchase.pay_amount;
-      this.form.pay_amount = response.data.purchase.pay_amount;
+      this.form.attach_file = response.data.sale.attach_file;
+      this.cartItems = response.data.sale_regular_details;
+      this.courtesyCartItems = response.data.sale_courtesy_details;
+      this.payAmount = response.data.sale.pay_amount;
+      this.form.pay_amount = response.data.sale.pay_amount;
 
       if (response.data.payment_details.length > 0) {
         this.form.payment_method = response.data.payment_details[0].payment_method;
@@ -602,12 +602,12 @@ export default {
         this.form.payment_description =
           response.data.payment_details[0].payment_description;
       }
-      this.form.purchase_note = response.data.purchase.purchase_note;
+      this.form.sale_note = response.data.sale.sale_note;
 
       this.imageUrl =
-        `${window.publicPath}assets/img/purchase/` + response.data.purchase.attach_file;
+        `${window.publicPath}assets/img/sale/` + response.data.sale.attach_file;
 
-      const fileName = response.data.purchase.attach_file;
+      const fileName = response.data.sale.attach_file;
       if (fileName) {
         const parts = fileName.split(".");
         if (parts.length > 1) {
@@ -853,11 +853,10 @@ export default {
     },
     async submitForm() {
       this.isSubmitting = true;
-      console.log(this.cartItems);
       // console.log(this.form.cartItems);
       if (this.isNew) {
         await this.form
-          .post("/api/purchases", {
+          .post("/api/sales", {
             params: {
               cart_items: this.cartItems,
               courtesy_cart_items: this.courtesyCartItems,
@@ -865,8 +864,8 @@ export default {
             },
           })
           .then(() => {
-            this.$router.push({ name: "purchases" });
-            Notification.success(`Create purchase successfully!`);
+            this.$router.push({ name: "sales" });
+            Notification.success(`Create sale successfully!`);
           })
           .catch((error) => {
             // console.log(error);
@@ -874,7 +873,7 @@ export default {
               this.errors = error.response.data.errors;
               Notification.error("Validation Errors!");
             } else if (error.response.status === 401) {
-              // statusText = "Unpurchaseized";
+              // statusText = "Unsaleized";
               this.errors = {};
               Notification.error(error.response.data.error);
             } else {
@@ -888,7 +887,7 @@ export default {
       } else {
         try {
           await this.form
-            .post(`/api/purchases/${this.$route.params.id}`, {
+            .post(`/api/sales/${this.$route.params.id}`, {
               params: {
                 cart_items: this.cartItems,
                 courtesy_cart_items: this.courtesyCartItems,
@@ -896,8 +895,8 @@ export default {
               },
             })
             .then((response) => {
-              Notification.success("purchase info updated");
-              this.$router.push("/purchases");
+              Notification.success("sale info updated");
+              this.$router.push("/sales");
             })
             .catch((error) => {
               Notification.error(error);

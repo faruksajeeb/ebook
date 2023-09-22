@@ -5,29 +5,29 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Lib\Webspice;
 use App\Models\Book;
-use App\Models\purchase;
-use App\Models\PurchaseDetail;
-use App\Models\Supplier;
-use App\Models\SupplierPayment;
+use App\Models\Sale;
+use App\Models\SaleDetail;
+use App\Models\Customer;
+use App\Models\CustomerPayment;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 // use Image;
 
-class PurchaseController extends Controller
+class SaleController extends Controller
 {
     public $webspice;
-    protected $purchase;
-    protected $purchases;
-    protected $purchaseid;
+    protected $sale;
+    protected $sales;
+    protected $saleid;
     public $tableName;
 
-    public function __construct(purchase $purchase, Webspice $webspice)
+    public function __construct(Sale $sale, Webspice $webspice)
     {
         $this->webspice = $webspice;
-        $this->purchases = $purchase;
-        $this->tableName = 'purchases';
+        $this->sales = $sale;
+        $this->tableName = 'sales';
         $this->middleware('JWT');
     }
 
@@ -41,7 +41,7 @@ class PurchaseController extends Controller
             $sortField = request('sort_field', 'created_at');
             if (!in_array($sortField, [
                 'id',
-                'purchase_date',
+                'sale_date',
                 'total_amount',
                 'discount_percentage',
                 'discount_amount',
@@ -61,15 +61,15 @@ class PurchaseController extends Controller
 
             $filled = array_filter(request([
                 'id',
-                'purchase_date',
-                'supplier_id',
+                'sale_date',
+                'customer_id',
                 'total_amount',
                 'discount_percentage',
             ]));
 
-            $purchases = Purchase::with(['supplier'])->when(count($filled) > 0, function ($query) use ($filled) {
+            $sales = Sale::with(['customer'])->when(count($filled) > 0, function ($query) use ($filled) {
                 foreach ($filled as $column => $value) {
-                    if ($column == 'purchase_date') {
+                    if ($column == 'sale_date') {
                         $dateExplode = explode(" to ", $value);
                         $startDate = $dateExplode[0];
                         $endDate = $dateExplode[1];
@@ -84,7 +84,7 @@ class PurchaseController extends Controller
                 $query->search(trim($searchTerm));
             })->orderBy($sortField, $sortDirection)->paginate($paginate);
 
-            return response()->json($purchases);
+            return response()->json($sales);
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -98,11 +98,11 @@ class PurchaseController extends Controller
     {
         // dd($request->all());
         #permission verfy
-        // $this->webspice->permissionVerify('purchase.create');
-        $validator = $request->validate(
+        // $this->webspice->permissionVerify('sale.create');
+        $request->validate(
             [
-                'supplier_id' => 'required',
-                'purchase_date' => 'required',
+                'customer_id' => 'required',
+                'sale_date' => 'required',
                 'pay_amount' => 'numeric|min:0', // Ensure pay_amount is a number and greater than or equal to 0
                 // 'payment_method' => 'required_if:pay_amount,0', // payment_method is required if pay_amount is greater than 0
                 'payment_method' => Rule::requiredIf($request->pay_amount > 0), // payment_method is required if pay_amount is greater than 0
@@ -131,7 +131,7 @@ class PurchaseController extends Controller
                 // $image = Image::make($request->file('attach_file'));
                 // $imageName = time() . '-' . $request->file('attach_file')->getClientOriginalName();
 
-                $destinationPath = 'assets/img/purchase/';
+                $destinationPath = 'assets/img/sale/';
 
                 $file = $request->file('attach_file');
                 $filename = time() . '-' . $file->getClientOriginalName();
@@ -142,7 +142,7 @@ class PurchaseController extends Controller
                 /**
                  * Generate Thumbnail Image Upload on Folder Code
                  */
-                // $destinationPathThumbnail = public_path('assets/img/purchase/thumbnail/');
+                // $destinationPathThumbnail = public_path('assets/img/sale/thumbnail/');
                 // $image->resize(50, 50);
                 // $image->save($destinationPathThumbnail . $imageName);
 
@@ -152,25 +152,25 @@ class PurchaseController extends Controller
             }
             $input['created_by'] = $this->webspice->getUserId();
 
-            $inserted = Purchase::create($input);
-            $purchaseId = $inserted->id;
-            if ($purchaseId) {
-                // Update the balance of the corresponding supplier
-                $supplier = Supplier::find($request->supplier_id);
-                if ($supplier) {
+            $inserted = Sale::create($input);
+            $saleId = $inserted->id;
+            if ($saleId) {
+                // Update the balance of the corresponding customer
+                $customer = Customer::find($request->customer_id);
+                if ($customer) {
                     // Ensure the balance is not negative
-                    $newBalance = $supplier->balance + $request->due_amount;
+                    $newBalance = $customer->balance + $request->due_amount;
                     if ($newBalance >= 0) {
-                        $supplier->balance = $newBalance;
-                        $supplier->save();
+                        $customer->balance = $newBalance;
+                        $customer->save();
                     }
                 }
-                // Insert into supplier payment if pay-amount is grater than 0
+                // Insert into customer payment if pay-amount is grater than 0
                 if ($request->pay_amount > 0) {
-                    SupplierPayment::create([
-                        'supplier_id' => $request->supplier_id,
-                        'purchase_id' => $purchaseId,
-                        'payment_date' => $request->purchase_date,
+                    CustomerPayment::create([
+                        'customer_id' => $request->customer_id,
+                        'sale_id' => $saleId,
+                        'payment_date' => $request->sale_date,
                         'payment_amount' => $request->pay_amount,
                         'payment_method' => $request->payment_method,
                         'paid_by' => $request->paid_by,
@@ -187,8 +187,8 @@ class PurchaseController extends Controller
             if ($request->cart_items != null && count($request->cart_items) > 0) {
                 foreach ($input['cart_items'] as $item) {
                     if ($item['quantity'] <= 0) {continue;}
-                    PurchaseDetail::create([
-                        'purchase_id' => $purchaseId,
+                    SaleDetail::create([
+                        'sale_id' => $saleId,
                         'book_id' => $item['id'],
                         'quantity' => $item['quantity'],
                         'unit_price' => $item['price'],
@@ -219,8 +219,8 @@ class PurchaseController extends Controller
             if ($request->courtesy_cart_items != null && count($request->courtesy_cart_items) > 0) {
                 foreach ($input['courtesy_cart_items'] as $item) {
                     if ($item['courtesy_quantity'] <= 0) {continue;}
-                    PurchaseDetail::create([
-                        'purchase_id' => $purchaseId,
+                    SaleDetail::create([
+                        'sale_id' => $saleId,
                         'book_id' => $item['id'],
                         'quantity' => $item['courtesy_quantity'],
                         'unit_price' => $item['unit_price'],
@@ -267,19 +267,19 @@ class PurchaseController extends Controller
     public function show($id)
     {
         try {
-            $purchase = Purchase::with('supplier')->find($id);
-            // $purchaseRegularDetails = PurchaseDetail::with(['book'])->where('purchase_id', $id)->where('flag', 'regular_item')->get();
-            $purchaseRegularDetails = PurchaseDetail::leftJoin('books', 'purchase_details.book_id', '=', 'books.id')
-                ->select('books.id', 'books.title', 'purchase_details.unit_price as price', 'purchase_details.quantity', 'purchase_details.sub_total')
-                ->where('purchase_details.purchase_id', $id)->where('purchase_details.flag', 'regular_item')->get();
-            $purchaseCourtesyDetails = PurchaseDetail::leftJoin('books', 'purchase_details.book_id', '=', 'books.id')
-                ->select('books.id', 'books.title', 'purchase_details.unit_price', 'purchase_details.quantity as courtesy_quantity', 'purchase_details.sub_total')->where('purchase_id', $id)->where('flag', 'courtesy_copy')->get();
+            $sale = Sale::with('customer')->find($id);
+            // $saleRegularDetails = SaleDetail::with(['book'])->where('sale_id', $id)->where('flag', 'regular_item')->get();
+            $saleRegularDetails = SaleDetail::leftJoin('books', 'sale_details.book_id', '=', 'books.id')
+                ->select('books.id', 'books.title', 'sale_details.unit_price as price', 'sale_details.quantity', 'sale_details.sub_total')
+                ->where('sale_details.sale_id', $id)->where('sale_details.flag', 'regular_item')->get();
+            $saleCourtesyDetails = SaleDetail::leftJoin('books', 'sale_details.book_id', '=', 'books.id')
+                ->select('books.id', 'books.title', 'sale_details.unit_price', 'sale_details.quantity as courtesy_quantity', 'sale_details.sub_total')->where('sale_id', $id)->where('flag', 'courtesy_copy')->get();
 
-            $paymentInfo = SupplierPayment::where('purchase_id', $id)->get();
+            $paymentInfo = CustomerPayment::where('sale_id', $id)->get();
             $data = [
-                'purchase' => $purchase,
-                'purchase_regular_details' => $purchaseRegularDetails,
-                'purchase_courtesy_details' => $purchaseCourtesyDetails,
+                'sale' => $sale,
+                'sale_regular_details' => $saleRegularDetails,
+                'sale_courtesy_details' => $saleCourtesyDetails,
                 'payment_details' => $paymentInfo,
             ];
             return $data;
@@ -299,15 +299,15 @@ class PurchaseController extends Controller
         // dd($request->file('attach_file'));
         // dd($request->isMethod('put'));
         #permission verfy
-        // $this->webspice->permissionVerify('purchase.edit');
+        // $this->webspice->permissionVerify('sale.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 
         $request->validate(
             [
-                'supplier_id' => 'required',
-                'purchase_date' => 'required',
+                'customer_id' => 'required',
+                'sale_date' => 'required',
                 'pay_amount' => 'numeric|min:0', // Ensure pay_amount is a number and greater than or equal to 0
                 // 'payment_method' => 'required_if:pay_amount,0', // payment_method is required if pay_amount is greater than 0
                 'payment_method' => Rule::requiredIf($request->pay_amount > 0), // payment_method is required if pay_amount is greater than 0
@@ -327,7 +327,7 @@ class PurchaseController extends Controller
             $input = $request->all();
             if ($request->hasFile('attach_file')) {
 
-                $destinationPath = 'assets/img/purchase/';
+                $destinationPath = 'assets/img/sale/';
                 // $uploadSuccess = $image->save($destinationPath . $imageName);
 
                 $file = $request->file('attach_file');
@@ -335,7 +335,7 @@ class PurchaseController extends Controller
                 $uploadSuccess = $file->move(public_path($destinationPath), $filename);
                 if ($uploadSuccess) {
                     //Delete Old File
-                    $imgExist = Purchase::where('id', $id)->first();
+                    $imgExist = Sale::where('id', $id)->first();
                     $existingImage = $imgExist->attach_file;
                     if ($existingImage) {
 
@@ -352,7 +352,7 @@ class PurchaseController extends Controller
             // Begin a database transaction
             \DB::beginTransaction();
 
-            $oldInvoice = Purchase::find($id);
+            $oldInvoice = Sale::find($id);
             if (!$oldInvoice) {
                 // Handle if the invoice does not exist
                 \DB::rollBack();
@@ -362,62 +362,62 @@ class PurchaseController extends Controller
                     ], 401);
             }
 
-            $previousSupplierID = $oldInvoice->supplier_id;
-            $newSupplierID = $request->supplier_id;
+            $previousSupplierID = $oldInvoice->customer_id;
+            $newSupplierID = $request->customer_id;
             # Check Supplier Changes
             if ($previousSupplierID != $newSupplierID) {
 
-                // Update the previous supplier's balance
-                Supplier::where('id', $previousSupplierID)->decrement('balance', $oldInvoice->due_amount);
+                // Update the previous customer's balance
+                Customer::where('id', $previousSupplierID)->decrement('balance', $oldInvoice->due_amount);
 
-                // Update the new supplier's balance
-                Supplier::where('id', $newSupplierID)->increment('balance', $request->due_amount);
+                // Update the new customer's balance
+                Customer::where('id', $newSupplierID)->increment('balance', $request->due_amount);
 
             } else {
                 // Calculate the changes in the invoice amount
                 $invoiceChanges = $this->calculateInvoiceChanges($oldInvoice, $request);
-                # Update the balance of the corresponding supplier
-                $supplier = Supplier::find($previousSupplierID);
-                if (!$supplier) {
-                    // Handle if the supplier does not exist
+                # Update the balance of the corresponding customer
+                $customer = Customer::find($previousSupplierID);
+                if (!$customer) {
+                    // Handle if the customer does not exist
                     \DB::rollBack();
                     return response()->json(
                         [
                             'error' => 'Supplier not found',
                         ], 401);
                 }
-                $supplier->balance += $invoiceChanges;
-                $supplier->save();
+                $customer->balance += $invoiceChanges;
+                $customer->save();
             }
 
-            #  Update the payment history (if exist) of the corresponding supplier
+            #  Update the payment history (if exist) of the corresponding customer
 
-            $supplierPayment = SupplierPayment::where('purchase_id', $id)->latest()->first();
+            $customerPayment = CustomerPayment::where('sale_id', $id)->latest()->first();
 
-            if ($supplierPayment) {
+            if ($customerPayment) {
                 if ($request->pay_amount != 0) {
 
-                    $supplierPayment->supplier_id = $request->supplier_id;
-                    $supplierPayment->payment_date = $request->purchase_date;
-                    $supplierPayment->payment_amount = $request->pay_amount;
-                    $supplierPayment->payment_method = $request->payment_method;
-                    $supplierPayment->paid_by = $request->paid_by;
-                    $supplierPayment->payment_description = $request->payment_description;
-                    $supplierPayment->transaction_type = 'invoice_update';
-                    $supplierPayment->updated_by = $this->webspice->getUserId();
-                    $supplierPayment->save();
+                    $customerPayment->customer_id = $request->customer_id;
+                    $customerPayment->payment_date = $request->sale_date;
+                    $customerPayment->payment_amount = $request->pay_amount;
+                    $customerPayment->payment_method = $request->payment_method;
+                    $customerPayment->paid_by = $request->paid_by;
+                    $customerPayment->payment_description = $request->payment_description;
+                    $customerPayment->transaction_type = 'invoice_update';
+                    $customerPayment->updated_by = $this->webspice->getUserId();
+                    $customerPayment->save();
                 } else {
-                    // SupplierPayment::where('id', $supplierPayment->id)->delete();
-                    $supplierPayment->delete();
+                    // CustomerPayment::where('id', $customerPayment->id)->delete();
+                    $customerPayment->delete();
                 }
 
             } else {
-                // Insert into supplier payment if pay-amount is grater than 0
+                // Insert into customer payment if pay-amount is grater than 0
                 if ($request->pay_amount > 0) {
                     $paymentTransaction = new SupplierPayment([
-                        'supplier_id' => $request->supplier_id,
-                        'purchase_id' => $id,
-                        'payment_date' => $request->purchase_date,
+                        'customer_id' => $request->customer_id,
+                        'sale_id' => $id,
+                        'payment_date' => $request->sale_date,
                         'payment_amount' => $request->pay_amount,
                         'payment_method' => $request->payment_method,
                         'paid_by' => $request->paid_by,
@@ -445,15 +445,15 @@ class PurchaseController extends Controller
                     'error' => $e->getMessage(),
                 ], 401);
         }
-        // return redirect()->route('purchases.index');
+        // return redirect()->route('sales.index');
     }
 
     public function updateSaleDetails($request, $id)
     {
 
-# Get the existing purchase details for the invoice
-        $regularItemExistingPurchaseDetails = PurchaseDetail::where('purchase_id', $id)->where('flag', 'regular_item')->get();
-        $regularExistingIds = $regularItemExistingPurchaseDetails->pluck('book_id')->toArray();
+# Get the existing sale details for the invoice
+        $regularItemExistingSaleDetails = SaleDetail::where('sale_id', $id)->where('flag', 'regular_item')->get();
+        $regularExistingIds = $regularItemExistingSaleDetails->pluck('book_id')->toArray();
         # Identify items to remove (existing items not in the update request)
         if (!empty($request->cart_items)) {
             // Use array_column on $items
@@ -464,7 +464,7 @@ class PurchaseController extends Controller
         }
         $regularItemsToRemoveBookIds = array_diff($regularExistingIds, $regColumnValues);
         #adjust with coresponding book before remove
-        $removeItems = $regularItemExistingPurchaseDetails->whereIn('book_id', $regularItemsToRemoveBookIds);
+        $removeItems = $regularItemExistingSaleDetails->whereIn('book_id', $regularItemsToRemoveBookIds);
         foreach ($removeItems as $removeItem) {
             $book = Book::find($removeItem->book_id);
             if ($book) {
@@ -482,18 +482,18 @@ class PurchaseController extends Controller
                 }
             }
         }
-        $regularItemsToRemoveIds = $regularItemExistingPurchaseDetails->whereIn('book_id', $regularItemsToRemoveBookIds)->pluck('id')->toArray();
+        $regularItemsToRemoveIds = $regularItemExistingSaleDetails->whereIn('book_id', $regularItemsToRemoveBookIds)->pluck('id')->toArray();
 #   dd($regularItemsToRemoveIds);
-        PurchaseDetail::whereIn('id', $regularItemsToRemoveIds)->delete();
+        SaleDetail::whereIn('id', $regularItemsToRemoveIds)->delete();
 
         if ($request->cart_items) {
             foreach ($request->cart_items as $detailData) {
 
-                $purchaseDetail = PurchaseDetail::where('purchase_id', $id)->where('flag', 'regular_item')->where('book_id', $detailData['id'])->first();
-                //dd($purchaseDetail->toArray());
+                $saleDetail = SaleDetail::where('sale_id', $id)->where('flag', 'regular_item')->where('book_id', $detailData['id'])->first();
+                //dd($saleDetail->toArray());
                 $book = Book::find($detailData['id']);
 
-                if (!$purchaseDetail) {
+                if (!$saleDetail) {
                     // Update the quantity of the corresponding book
                     if ($book) {
                         // Ensure the quantity is not negative
@@ -504,8 +504,8 @@ class PurchaseController extends Controller
                         }
                     }
                     // If the item doesn't have an ID, it's a new item, so create it
-                    PurchaseDetail::create([
-                        'purchase_id' => $id,
+                    SaleDetail::create([
+                        'sale_id' => $id,
                         'book_id' => $detailData['id'],
                         'quantity' => $detailData['quantity'],
                         'unit_price' => $detailData['price'],
@@ -522,7 +522,7 @@ class PurchaseController extends Controller
                     // Update the quantity of the corresponding book
                     if ($book) {
                         // Ensure the quantity is not negative
-                        $itemQtyChanges = $detailData['quantity'] - $purchaseDetail->quantity;
+                        $itemQtyChanges = $detailData['quantity'] - $saleDetail->quantity;
                         // $newQuantity = $book->stock_quantity + $detailData['quantity'];
                         // if ($newQuantity >= 0) {
                         $book->stock_quantity += $itemQtyChanges;
@@ -531,7 +531,7 @@ class PurchaseController extends Controller
                     }
                 }
                 // If the item has an ID, it's an existing item, so update it
-                $purchaseDetail->update([
+                $saleDetail->update([
                     'quantity' => $detailData['quantity'],
                     'unit_price' => $detailData['price'],
                     'sub_total' => $detailData['quantity'] * $detailData['price'],
@@ -545,9 +545,9 @@ class PurchaseController extends Controller
             }
         }
 
-        # Get the existing purchase details for the invoice
-        $courtesyItemExistingPurchaseDetails = PurchaseDetail::where('purchase_id', $id)->where('flag', 'courtesy_copy')->get();
-        $courtesyExistingIds = $courtesyItemExistingPurchaseDetails->pluck('book_id')->toArray();
+        # Get the existing sale details for the invoice
+        $courtesyItemExistingSaleDetails = SaleDetail::where('sale_id', $id)->where('flag', 'courtesy_copy')->get();
+        $courtesyExistingIds = $courtesyItemExistingSaleDetails->pluck('book_id')->toArray();
         if (!empty($request->courtesy_cart_items)) {
             // Use array_column on $items
             $columnValues = array_column($request->courtesy_cart_items, 'id');
@@ -558,7 +558,7 @@ class PurchaseController extends Controller
         # Identify items to remove (existing items not in the update request)
         $courtesyItemsToRemoveBookIds = array_diff($courtesyExistingIds, $columnValues);
 
-        $removeCourtesyItems = $courtesyItemExistingPurchaseDetails->whereIn('book_id', $courtesyItemsToRemoveBookIds);
+        $removeCourtesyItems = $courtesyItemExistingSaleDetails->whereIn('book_id', $courtesyItemsToRemoveBookIds);
         foreach ($removeCourtesyItems as $removeItem) {
             $book = Book::find($removeItem->book_id);
             if ($book) {
@@ -576,17 +576,17 @@ class PurchaseController extends Controller
                 }
             }
         }
-        $courtesyItemsToRemoveIds = $courtesyItemExistingPurchaseDetails->whereIn('book_id', $courtesyItemsToRemoveBookIds)->pluck('id')->toArray();
+        $courtesyItemsToRemoveIds = $courtesyItemExistingSaleDetails->whereIn('book_id', $courtesyItemsToRemoveBookIds)->pluck('id')->toArray();
 #       dd($courtesyItemsToRemoveIds);
-        PurchaseDetail::whereIn('id', $courtesyItemsToRemoveIds)->delete();
+        SaleDetail::whereIn('id', $courtesyItemsToRemoveIds)->delete();
         if ($request->courtesy_cart_items) {
             foreach ($request->courtesy_cart_items as $detailData) {
 
-                $purchaseDetail = PurchaseDetail::where('purchase_id', $id)->where('flag', 'courtesy_copy')->where('book_id', $detailData['id'])->first();
-                //dd($purchaseDetail->toArray());
+                $saleDetail = SaleDetail::where('sale_id', $id)->where('flag', 'courtesy_copy')->where('book_id', $detailData['id'])->first();
+                //dd($saleDetail->toArray());
 
                 $book = Book::find($detailData['id']);
-                if (!$purchaseDetail) {
+                if (!$saleDetail) {
                     // Update the quantity of the corresponding book
                     if ($book) {
                         // Ensure the quantity is not negative
@@ -597,8 +597,8 @@ class PurchaseController extends Controller
                         }
                     }
                     // If the item doesn't have an ID, it's a new item, so create it
-                    PurchaseDetail::create([
-                        'purchase_id' => $id,
+                    SaleDetail::create([
+                        'sale_id' => $id,
                         'book_id' => $detailData['id'],
                         'quantity' => $detailData['courtesy_quantity'],
                         'unit_price' => $detailData['unit_price'],
@@ -614,13 +614,13 @@ class PurchaseController extends Controller
                 } else {
                     // Update the quantity of the corresponding book
                     if ($book) {
-                        $itemQtyChanges = $detailData['courtesy_quantity'] - $purchaseDetail->quantity;
+                        $itemQtyChanges = $detailData['courtesy_quantity'] - $saleDetail->quantity;
                         $book->stock_quantity += $itemQtyChanges;
                         $book->save();
                         // }
                     }
                     // If the item has an ID, it's an existing item, so update it
-                    $purchaseDetail->update([
+                    $saleDetail->update([
                         'quantity' => $detailData['courtesy_quantity'],
                         'unit_price' => $detailData['unit_price'],
                         'sub_total' => $detailData['courtesy_quantity'] * $detailData['unit_price'],
@@ -647,13 +647,13 @@ class PurchaseController extends Controller
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('purchase.delete');
+        // $this->webspice->permissionVerify('sale.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 
-            $purchase = $this->purchases->findById($id);
-            $purchase->delete();
+            $sale = $this->sales->findById($id);
+            $sale->delete();
         } catch (Exception $e) {
             // $this->webspice->message('error', $e->getMessage());
             return response()->json(
@@ -668,12 +668,12 @@ class PurchaseController extends Controller
     {
         return response()->json(['error' => 'Unauthenticated.'], 401);
         #permission verfy
-        $this->webspice->permissionVerify('purchase.force_delete');
+        $this->webspice->permissionVerify('sale.force_delete');
         try {
             #decrypt value
             $id = $this->webspice->encryptDecrypt('decrypt', $id);
-            $purchase = Purchase::withTrashed()->findOrFail($id);
-            $purchase->forceDelete();
+            $sale = Sale::withTrashed()->findOrFail($id);
+            $sale->forceDelete();
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
@@ -682,37 +682,37 @@ class PurchaseController extends Controller
     public function restore($id)
     {
         #permission verfy
-        $this->webspice->permissionVerify('purchase.restore');
+        $this->webspice->permissionVerify('sale.restore');
         try {
             $id = $this->webspice->encryptDecrypt('decrypt', $id);
-            $purchase = Purchase::withTrashed()->findOrFail($id);
-            $purchase->restore();
+            $sale = Sale::withTrashed()->findOrFail($id);
+            $sale->restore();
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
-        // return redirect()->route('purchases.index', ['status' => 'archived'])->withSuccess(__('User restored successfully.'));
-        return redirect()->route('purchases.index');
+        // return redirect()->route('sales.index', ['status' => 'archived'])->withSuccess(__('User restored successfully.'));
+        return redirect()->route('sales.index');
     }
 
     public function restoreAll()
     {
         #permission verfy
-        $this->webspice->permissionVerify('purchase.restore');
+        $this->webspice->permissionVerify('sale.restore');
         try {
-            $purchases = Purchase::onlyTrashed()->get();
-            foreach ($purchases as $purchase) {
-                $purchase->restore();
+            $sales = Sale::onlyTrashed()->get();
+            foreach ($sales as $sale) {
+                $sale->restore();
             }
         } catch (Exception $e) {
             $this->webspice->message('error', $e->getMessage());
         }
-        return redirect()->route('purchases.index');
-        // return redirect()->route('purchases.index')->withSuccess(__('All purchases restored successfully.'));
+        return redirect()->route('sales.index');
+        // return redirect()->route('sales.index')->withSuccess(__('All sales restored successfully.'));
     }
 
-    public function getpurchases()
+    public function getsales()
     {
-        $data = Purchase::where('status', 1)->get();
+        $data = Sale::where('status', 1)->get();
         return response()->json($data);
     }
 

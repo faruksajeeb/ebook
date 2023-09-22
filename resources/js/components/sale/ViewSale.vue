@@ -9,7 +9,7 @@
     <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h3 class="modal-title" id="recordModalLabel">Purchase Details</h3>
+          <h3 class="modal-title" id="recordModalLabel">Sale Details</h3>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -17,35 +17,35 @@
         <div class="modal-body">
           <!-- Display record details here -->
 
-          <div v-if="record.purchase">
+          <div v-if="record.sale">
             <div class="row">
               <div class="col-md-5">
-                <h4>Purchase ID: {{ record.purchase.id }}</h4>
+                <h4>Sale ID: {{ record.sale.id }}</h4>
                 <table class="table">
                   <tr>
-                    <td>Purchase Date</td>
-                    <td>{{ record.purchase.purchase_date }}</td>
+                    <td>Sale Date</td>
+                    <td>{{ record.sale.sale_date }}</td>
                   </tr>
                   <tr>
-                    <td>Supplier</td>
-                    <td>{{ record.purchase.supplier.supplier_name }}</td>
+                    <td>Customer</td>
+                    <td>{{ record.sale.customer.customer_name }}</td>
                   </tr>
                   <tr>
                     <td>Paid By:</td>
-                    <td>{{ record.purchase.paid_by }}</td>
+                    <td>{{ record.sale.paid_by }}</td>
                   </tr>
                   <tr>
-                    <td>Purchase Note:</td>
-                    <td>{{ record.purchase.purchase_note }}</td>
+                    <td>Sale Note:</td>
+                    <td>{{ record.sale.sale_note }}</td>
                   </tr>
                 </table>
 
                 <fieldset class="reset">
                   <legend class="reset p-1">Attached File (If Any)</legend>
                   <iframe
-                    v-if="record.purchase.attach_file != null && fileExtension == 'pdf'"
+                    v-if="record.sale.attach_file != null && fileExtension == 'pdf'"
                     :src="
-                      `${publicPath}assets/img/purchase/` + record.purchase.attach_file
+                      `${publicPath}assets/img/sale/` + record.sale.attach_file
                     "
                     width="100%"
                     height="400"
@@ -53,16 +53,16 @@
                   <img
                     v-else
                     :src="
-                      `${publicPath}assets/img/purchase/` + record.purchase.attach_file
+                      `${publicPath}assets/img/sale/` + record.sale.attach_file
                     "
-                    alt="Purchase File"
+                    alt="Sale File"
                     width="250"
                     class="img-fluid"
                   />
                 </fieldset>
               </div>
               <div class="col-md-7">
-                <fieldset class="reset" v-if="record.purchase_regular_details.length > 0">
+                <fieldset class="reset" v-if="record.sale_regular_details.length > 0">
                   <legend class="reset h5 p-2 bg-success text-white">
                     Regular Item Details
                   </legend>
@@ -76,7 +76,7 @@
                     </thead>
                     <tbody>
                       <tr
-                        v-for="(item, index) in record.purchase_regular_details"
+                        v-for="(item, index) in record.sale_regular_details"
                         :key="item.id"
                       >
                         <td>{{ index + 1 }}</td>
@@ -90,43 +90,43 @@
                       <tr>
                         <td class="text-left fw-bold" colspan="4">Total</td>
                         <td class="text-right fw-bold">
-                          {{ record.purchase.total_amount.toFixed(2) }}
+                          {{ record.sale.total_amount.toFixed(2) }}
                         </td>
                       </tr>
                       <tr>
                         <td class="text-left fw-bold" colspan="3">Discount</td>
                         <td class="text-center fw-bold">
-                          {{ record.purchase.discount_percentage }}%
+                          {{ record.sale.discount_percentage }}%
                         </td>
                         <td class="text-right fw-bold">
-                          {{ record.purchase.discount_amount.toFixed(2) }}
+                          {{ record.sale.discount_amount.toFixed(2) }}
                         </td>
                       </tr>
                       <tr>
                         <td class="text-left fw-bold" colspan="3">Vat</td>
                         <td class="text-center fw-bold">
-                          {{ record.purchase.vat_percentage }}%
+                          {{ record.sale.vat_percentage }}%
                         </td>
                         <td class="text-right fw-bold">
-                          {{ record.purchase.vat_amount.toFixed(2) }}
+                          {{ record.sale.vat_amount.toFixed(2) }}
                         </td>
                       </tr>
                       <tr>
                         <td class="text-left fw-bold" colspan="4">Net Amount</td>
                         <td class="text-right fw-bold">
-                          {{ record.purchase.net_amount.toFixed(2) }}
+                          {{ record.sale.net_amount.toFixed(2) }}
                         </td>
                       </tr>
                       <tr>
                         <td class="text-left fw-bold" colspan="4">Pay Amount</td>
                         <td class="text-right fw-bold">
-                          {{ record.purchase.pay_amount.toFixed(2) }}
+                          {{ record.sale.pay_amount.toFixed(2) }}
                         </td>
                       </tr>
                       <tr>
                         <td class="text-left fw-bold" colspan="4">Due Amount</td>
                         <td class="text-right fw-bold">
-                          {{ record.purchase.due_amount.toFixed(2) }}
+                          {{ record.sale.due_amount.toFixed(2) }}
                         </td>
                       </tr>
                     </tfoot>
@@ -182,7 +182,7 @@
                 </fieldset>
                 <fieldset
                   class="reset mt-3"
-                  v-if="record.purchase_courtesy_details.length > 0"
+                  v-if="record.sale_courtesy_details.length > 0"
                 >
                   <legend class="reset h5 p-2 bg-danger text-white">
                     Courtesy Item Details (সৌজন্য সংখ্যা)
@@ -196,7 +196,7 @@
                       <th class="text-right">Sub Total</th>
                     </thead>
                     <tbody>
-                      <tr v-for="(item, index) in record.purchase_courtesy_details">
+                      <tr v-for="(item, index) in record.sale_courtesy_details">
                         <td>{{ index + 1 }}</td>
                         <td>{{ item.title }}</td>
                         <td class="text-right">{{ item.unit_price.toFixed(2) }}</td>
@@ -206,7 +206,7 @@
                       <tr>
                         <td class="text-left fw-bold" colspan="4">Total</td>
                         <td class="text-right fw-bold">
-                          {{ record.purchase.courtesy_total_amount }}
+                          {{ record.sale.courtesy_total_amount }}
                         </td>
                       </tr>
                     </tbody>
@@ -221,8 +221,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <router-link v-if="record.purchase"  data-dismiss="modal"
-                          :to="`/purchases/${record.purchase.id}/edit`"
+          <router-link v-if="record.sale"  data-dismiss="modal"
+                          :to="`/sales/${record.sale.id}/edit`"
                           class="btn btn-primary px-2 mx-1"
                           ><i class="fa fa-edit"></i> Edit</router-link
                         >
