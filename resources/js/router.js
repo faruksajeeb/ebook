@@ -111,6 +111,10 @@ import Pos from "./components/pos/pointofsale.vue";
 import Order from "./components/order/order.vue";
 import ViewOrder from "./components/order/vieworder.vue";
 import SearchOrder from "./components/order/search.vue";
+
+import ReportIndex from "./components/report/Index.vue";
+
+
 function guard(to, from, next){
     if(User.loggedIn()) {
         // or however you store your logged in state
@@ -676,6 +680,12 @@ export const routes = [
         path: "/searchorder",
         component: SearchOrder,
         name: "searchorder",
+        beforeEnter: guard,
+    },
+    {
+        path: "/reports",
+        component: ReportIndex,
+        name: "ReportIndex",
         beforeEnter: guard,
     },
 ];

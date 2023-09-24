@@ -145,10 +145,10 @@ Route::middleware('JWT')->group(function () {
     Route::post('/search/order', [PosController::class, 'SearchOrderDate']);
 
 // Admin Dashboard Route
-
-    Route::get('/today/sell', [DashboardController::class, 'TodaySell']);
-    Route::get('/today/income', [DashboardController::class, 'TodayIncome']);
-    Route::get('/today/due', [DashboardController::class, 'TodayDue']);
-    Route::get('/today/expense', [DashboardController::class, 'TodayExpense']);
-    Route::get('/today/stockout', [DashboardController::class, 'Stockout']);
+    Route::get('/report/today-sale', [DashboardController::class, 'todaySale']);
+    Route::get('/report/today-purchase', [DashboardController::class, 'todayPurchase']);
+    Route::get('/report/total-due', [DashboardController::class, 'totalDue']);
+    Route::get('/report/total-customer', [DashboardController::class, 'totalCustomer']);
+    Route::get('/report/out-of-stock', [DashboardController::class, 'outOfStock']);
+    Route::get('/report/stock-alerts', [DashboardController::class, 'stockAlerts']);
 });

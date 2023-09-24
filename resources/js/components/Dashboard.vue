@@ -12,14 +12,14 @@
               <!-- Earnings (Monthly) Card Example -->
               <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card h-100">
-                  <div class="card-body">
+                  <div class="card-body p-4">
                     <div class="row align-items-center">
                       <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-uppercase mb-1">Today Sell Amount</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">${{ todaysell }}</div>
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Today Sale Amount</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">৳ {{ todaySale }}</div>
                         <div class="mt-2 mb-0 text-muted text-xs">
-                          <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                          <span>Since last month</span>
+                          <!-- <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                          <span>Since last month</span> -->
                         </div>
                       </div>
                       <div class="col-auto">
@@ -32,15 +32,15 @@
               <!-- Earnings (Annual) Card Example -->
               <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card h-100">
-                  <div class="card-body">
+                  <div class="card-body p-4">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-uppercase mb-1">Today Income</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$ {{ income }} </div>
-                        <div class="mt-2 mb-0 text-muted text-xs">
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Today Purchase Amount</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">৳ {{ todayPurchase }} </div>
+                        <!-- <div class="mt-2 mb-0 text-muted text-xs">
                           <span class="text-success mr-2"><i class="fas fa-arrow-up"></i> 12%</span>
                           <span>Since last years</span>
-                        </div>
+                        </div> -->
                       </div>
                       <div class="col-auto">
                         <i class="fas fa-shopping-cart fa-2x text-success"></i>
@@ -52,18 +52,18 @@
               <!-- New User Card Example -->
               <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card h-100">
-                  <div class="card-body">
+                  <div class="card-body p-4">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-uppercase mb-1">Today Due</div>
-                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">$ {{ due }} </div>
-                        <div class="mt-2 mb-0 text-muted text-xs">
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Total Due</div>
+                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">৳ {{ totalDue }} </div>
+                        <!-- <div class="mt-2 mb-0 text-muted text-xs">
                           <span class="text-success mr-2"><i class="fas fa-arrow-up"></i> 20.4%</span>
                           <span>Since last month</span>
-                        </div>
+                        </div> -->
                       </div>
                       <div class="col-auto">
-                        <i class="fas fa-users fa-2x text-info"></i>
+                        <i class="fas fa-2x text-info">৳</i>
                       </div>
                     </div>
                   </div>
@@ -72,18 +72,18 @@
               <!-- Pending Requests Card Example -->
               <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card h-100">
-                  <div class="card-body">
+                  <div class="card-body p-4">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-uppercase mb-1">Today Expense</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$ {{ expense }} </div>
-                        <div class="mt-2 mb-0 text-muted text-xs">
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Total Customers</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"> {{ totalCustomer }} </div>
+                        <!-- <div class="mt-2 mb-0 text-muted text-xs">
                           <span class="text-danger mr-2"><i class="fas fa-arrow-down"></i> 1.10%</span>
                           <span>Since yesterday</span>
-                        </div>
+                        </div> -->
                       </div>
                       <div class="col-auto">
-                        <i class="fas fa-comments fa-2x text-warning"></i>
+                        <i class="fas fa-users fa-2x text-warning"></i>
                       </div>
                     </div>
                   </div>
@@ -130,25 +130,28 @@
                       <thead class="thead-light">
                         <tr>
                         <th>Name</th>
-                        <th>Code</th>
-                        <th>Photo</th>
-                         
-                        <th>Buying Price</th>
+                        <th>Photo</th>                         
+                        <th>Price</th>
                         <th>Status</th>
-                        <th>Quantity</th>
-                        
+                        <th>Quantity</th>                        
                       </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="product in products" :key="product.id">
-                        <td> {{ product.product_name }} </td>
-                        <td> {{ product.product_code }} </td>
-                        <td><img :src="product.image" id="em_photo"></td>
+                        <tr v-for="product in out_of_stocks" :key="product.id">
+                        <td> {{ product.title }} </td>
+                        <td><img
+                        :src="
+                          `${publicPath}assets/img/book/thumbnail/` +
+                          product.photo
+                        "
+                        alt=""
+                        width="30"
+                      /></td>
                         
-                        <td>{{ product.buying_price }}</td>
-  <td v-if="product.product_quantity  >= 1 "><span class="badge badge-success">Available </span></td>
+                        <td>{{ product.price }}</td>
+  <td v-if="product.stock_quantity  >= 1 "><span class="badge badge-success">Available </span></td>
    <td v-else=" "><span class="badge badge-danger">Stock Out </span></td>
-                         <td>{{ product.product_quantity }}</td>
+                         <td>{{ product.stock_quantity }}</td>
              
                       </tr>
                       </tbody>
@@ -160,24 +163,25 @@
               <div class="col-xl-4 col-lg-5">
                 <div class="card mb-4">
                   <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Products Sold</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Stock Alert</h6>
                     <div class="dropdown no-arrow">
-                      <a class="dropdown-toggle btn btn-primary btn-sm" href="#" role="button" id="dropdownMenuLink"
+                    <i class="fas fa-bell text-danger"></i>
+                      <!-- <a class="dropdown-toggle btn btn-primary btn-sm" href="#" role="button" id="dropdownMenuLink"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Month <i class="fas fa-chevron-down"></i>
-                      </a>
-                      <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                      </a> -->
+                      <!-- <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                         aria-labelledby="dropdownMenuLink">
                         <div class="dropdown-header">Select Periode</div>
                         <a class="dropdown-item" href="#">Today</a>
                         <a class="dropdown-item" href="#">Week</a>
                         <a class="dropdown-item active" href="#">Month</a>
                         <a class="dropdown-item" href="#">This Year</a>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                   <div class="card-body">
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                       <div class="small text-gray-500">Oblong T-Shirt
                         <div class="small float-right"><b>600 of 800 Items</b></div>
                       </div>
@@ -185,52 +189,28 @@
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 80%" aria-valuenow="80"
                           aria-valuemin="0" aria-valuemax="100"></div>
                       </div>
-                    </div>
-                    <div class="mb-3">
-                      <div class="small text-gray-500">Gundam 90'Editions
-                        <div class="small float-right"><b>500 of 800 Items</b></div>
-                      </div>
-                      <div class="progress" style="height: 12px;">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 70%" aria-valuenow="70"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                    <div class="mb-3">
-                      <div class="small text-gray-500">Rounded Hat
-                        <div class="small float-right"><b>455 of 800 Items</b></div>
-                      </div>
-                      <div class="progress" style="height: 12px;">
-                        <div class="progress-bar bg-danger" role="progressbar" style="width: 55%" aria-valuenow="55"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                    <div class="mb-3">
-                      <div class="small text-gray-500">Indomie Goreng
-                        <div class="small float-right"><b>400 of 800 Items</b></div>
-                      </div>
-                      <div class="progress" style="height: 12px;">
-                        <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                    <div class="mb-3">
-                      <div class="small text-gray-500">Remote Control Car Racing
-                        <div class="small float-right"><b>200 of 800 Items</b></div>
-                      </div>
-                      <div class="progress" style="height: 12px;">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 30%" aria-valuenow="30"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
+                    </div> -->
+                    <table class="table ">
+                      <thead>
+                        <th>Name</th>
+                        <th>Qty.</th>
+                      </thead>
+                      <tbody>
+                        <tr v-for="item in stock_alerts">
+                            <td>{{item.title}}</td>  
+                            <td class="text-center">{{item.stock_quantity}}</td>  
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
-                  <div class="card-footer text-center">
+                  <!-- <div class="card-footer text-center">
                     <a class="m-0 small text-primary card-link" href="#">View More <i
                         class="fas fa-chevron-right"></i></a>
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <!-- Invoice Example -->
-              <div class="col-xl-8 col-lg-7 mb-4">
+              <!-- <div class="col-xl-8 col-lg-7 mb-4">
                 <div class="card">
                   <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Invoice</h6>
@@ -289,9 +269,9 @@
                   </div>
                   <div class="card-footer"></div>
                 </div>
-              </div>
+              </div> -->
               <!-- Message From Customer-->
-              <div class="col-xl-4 col-lg-5 ">
+              <!-- <div class="col-xl-4 col-lg-5 ">
                 <div class="card">
                   <div class="card-header py-4 bg-primary d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-light">Message From Customer</h6>
@@ -332,16 +312,9 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
-            <!--Row-->
-
-            <div class="row">
-              <div class="col-lg-12 text-center">
-                <p>Do you like this template ? you can download from <a href="https://github.com/indrijunanda/RuangAdmin"
-                    class="btn btn-primary btn-sm" target="_blank"><i class="fab fa-fw fa-github"></i>&nbsp;GitHub</a></p>
-              </div>
-            </div>
+    
     </div>
 </template>
 <script>
@@ -353,45 +326,53 @@ export default {
   },
   data(){
     return{
-      todaysell:'',
-      income:'',
-      due:'',
-      expense:0,
-      products:''
+      publicPath: window.publicPath,
+      todaySale:0,
+      todayPurchase:0,
+      totalDue:0,
+      totalCustomer:0,
+      out_of_stocks:[],
+      stock_alerts:[],
     }
   },
   mounted(){
-    this.TodaySell();
-    this.TodayIncome();
-    this.TodayDue();
-    this.TodayExpense();
-    this.StockOut();
+    this.TodaySale();
+    this.TodayPurchase();
+    this.TotalDue();
+    this.TotalCustomer();
+    this.OutOfStock();
+    this.StockAlerts();
  },
   methods:{
-     TodaySell(){
-      axios.get('/api/today/sell')
-        .then(({data}) => (this.todaysell = data))
+    TodaySale(){
+      axios.get('/api/report/today-sale')
+        .then(({data}) => (this.todaySale = data))
         .catch()
      },
-     TodayIncome(){
-      axios.get('/api/today/income')
-        .then(({data}) => (this.income = data))
+     TodayPurchase(){
+      axios.get('/api/report/today-purchase')
+        .then(({data}) => (this.todayPurchase = data))
         .catch()
      },
-     TodayDue(){
-      axios.get('/api/today/due')
-        .then(({data}) => (this.due = data))
+     TotalDue(){
+      axios.get('/api/report/total-due')
+        .then(({data}) => (this.totalDue = data))
         .catch()
      },
-     TodayExpense(){
-      axios.get('/api/today/expense')
-        .then(({data}) => (this.expense = data))
+     TotalCustomer(){
+      axios.get('/api/report/total-customer')
+        .then(({data}) => (this.totalCustomer = data))
         .catch()
      },
 
-     StockOut(){
-      axios.get('/api/today/stockout')
-        .then(({data}) => (this.products = data))
+     OutOfStock(){
+      axios.get('/api/report/out-of-stock')
+        .then(({data}) => (this.out_of_stocks = data))
+        .catch()
+     },
+     StockAlerts(){
+      axios.get('/api/report/stock-alerts')
+        .then(({data}) => (this.stock_alerts = data))
         .catch()
      },
 

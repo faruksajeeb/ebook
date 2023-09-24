@@ -10,39 +10,46 @@ class DashboardController extends Controller
 {
 
 
-    public function TodaySell()
+    public function TodaySale()
     {
-        $date = date('d/m/Y');
-        $sell = DB::table('orders')->where('order_date', $date)->sum('total');
-        return response()->json($sell);
+        $date = date('Y-m-d');
+        $sale = DB::table('sales')->where('sale_date', $date)->sum('net_amount');
+        return response()->json($sale);
     }
 
-    public function TodayIncome()
+    public function TodayPurchase()
     {
-        $date = date('d/m/Y');
-        $income = DB::table('orders')->where('order_date', $date)->sum('pay');
-        return response()->json($income);
+        $date = date('Y-m-d');
+        $purchase = DB::table('purchases')->where('purchase_date', $date)->sum('net_amount');
+        return response()->json($purchase);
     }
 
-    public function TodayDue()
+    public function TotalDue()
     {
-        $date = date('d/m/Y');
-        $todaydue = DB::table('orders')->where('order_date', $date)->sum('due');
-        return response()->json($todaydue);
+        $dueBalance = DB::table('customers')->where('balance','>', 0)->sum('balance');
+        return response()->json($dueBalance);
+    }
+    public function TotalAdvance()
+    {
+        $advanceBalance = DB::table('customers')->where('balance','<', 0)->sum('balance');
+        return response()->json($advanceBalance);
     }
 
 
-    public function TodayExpense()
+    public function totalCustomer()
     {
-        $date = date('d/m/Y');
-        $expense = DB::table('expenses')->where('expense_date', $date)->sum('amount');
-        return response()->json($expense);
+        $res = DB::table('customers')->where('status', 1)->count();
+        return response()->json($res);
     }
 
-    public function Stockout()
+    public function outOfStock()
     {
-
-        $product = DB::table('products')->where('product_quantity', '<', '1')->get();
+        $product = DB::table('books')->where('stock_quantity', '<', 1)->get();
+        return response()->json($product);
+    }
+    public function stockAlerts()
+    {
+        $product = DB::table('books')->whereBetween('stock_quantity', [1,4])->get();
         return response()->json($product);
     }
 }

@@ -26,7 +26,7 @@
       <li class="nav-item">
           <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUserMgt"
             aria-expanded="true" aria-controls="collapseUserMgt">
-            <i class="far fa-fw fa-window-maximize"></i>
+            <i class="far fa-fw fa-folder-open"></i>
             <span>User Management</span>
           </a>
           <div id="collapseUserMgt" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
@@ -77,7 +77,7 @@
       <li class="nav-item">
           <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMatserDataMgt"
             aria-expanded="true" aria-controls="collapseMatserDataMgt">
-            <i class="far fa-fw fa-window-maximize"></i>
+            <i class="far fa-fw fa-folder-open"></i>
             <span>Master Data</span>
           </a>
           <div id="collapseMatserDataMgt" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
@@ -320,6 +320,12 @@
         <router-link class="nav-link" to="/damage-items">
           <i class="fab fa-fw fa-wpforms"></i>
           <span>Damage Items</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/reports">
+          <i class="fas fa-file-image"></i>
+          <span>Reports</span>
         </router-link>
       </li>
 <!--       
