@@ -74,6 +74,10 @@ import ManagePurchase from "./components/purchase/ManagePurchase.vue";
 import SaleForm from "./components/sale/SaleForm.vue";
 import ManageSale from "./components/sale/ManageSale.vue";
 
+// CustomerPayment Files
+import CustomerPaymentForm from "./components/customer_payment/CustomerPaymentForm.vue";
+import ManageCustomerPayment from "./components/customer_payment/ManageCustomerPayment.vue";
+
 // Employee Files
 import AddEmployee from "./components/employee/create.vue";
 import ManageEmployee from "./components/employee/index.vue";
@@ -538,6 +542,29 @@ export const routes = [
     path: "/sales/:id/edit",
     component: SaleForm,
     meta: { title: "Edit Sale" },
+    beforeEnter: guard,
+},
+
+// Customer Payments
+{
+    name: "customer_payments",
+    path: "/customer_payments",
+    component: ManageCustomerPayment,
+    meta: { title: "Manage Customer Payment" },
+    beforeEnter: guard,
+},
+{
+    name: "customer_payments.create",
+    path: "/customer_payments/create",
+    component: CustomerPaymentForm,
+    meta: { title: "Add Customer Payment" },
+    beforeEnter: guard,
+},
+{
+    name: "customer_payments.edit",
+    path: "/customer_payments/:id/edit",
+    component: CustomerPaymentForm,
+    meta: { title: "Edit Customer Payment" },
     beforeEnter: guard,
 },
 

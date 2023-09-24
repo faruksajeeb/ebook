@@ -287,10 +287,7 @@
                               :class="{ 'is-invalid': form.errors.has('payment_method') }"
                             >
                               <option value="" selected>--select payment method--</option>
-                              <option value="cash">--Cash--</option>
-                              <option value="card">--Card--</option>
-                              <option value="cheque">--Cheque--</option>
-                              <option value="others">--Others--</option>
+                              <option :value="payment_method.id" v-for="payment_method in payment_methods">{{ payment_method.name }}</option>
                             </select>
                             <HasError :form="form" field="payment_method" />
                           </td>
@@ -512,6 +509,7 @@ export default {
         per_page: "",
       },
       suppliers: [],
+      payment_methods: [],
       books: {
         type: Object,
         default: null,
@@ -582,6 +580,11 @@ export default {
     if (this.suppliers.length == 0) {
       const response = await axios.get("/api/get-suppliers");
       this.suppliers = response.data;
+    }
+    this.payment_methods = this.$store.getters.getPaymentMethods;
+    if (this.payment_methods.length == 0) {
+      const response = await axios.get("/api/get-payment-methods");
+      this.payment_methods = response.data;
     }
     if (!this.isNew) {
       const response = await axios.get(`/api/purchases/${this.$route.params.id}`);

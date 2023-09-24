@@ -84,6 +84,7 @@ class CustomerController extends Controller
             [
                 'customer_phone' => 'required|regex:/^[a-zA-Z 0-9]+$/u|min:3|max:20|unique:customers',
                 'customer_name' => 'required',
+                'discount_percentage' => 'numeric|required|min:0',
                 'customer_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ],
             [
@@ -160,6 +161,7 @@ class CustomerController extends Controller
             [
                 'customer_phone' => 'required|regex:/^[a-zA-Z 0-9]+$/u|min:3|max:20|unique:customers,customer_phone,' . $id,
                 'customer_name' => 'required',
+                'discount_percentage' => 'numeric|required|min:0',
                 'customer_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ],
             [
@@ -176,6 +178,7 @@ class CustomerController extends Controller
             $customer->customer_phone = $request->customer_phone;
             $customer->customer_email = $request->customer_email;
             $customer->customer_address = $request->customer_address;
+            $customer->discount_percentage = $request->discount_percentage;
             if ($request->hasFile('customer_photo')) {
                 $image = Image::make($request->file('customer_photo'));
                 $imageName = time() . '-' . $request->file('customer_photo')->getClientOriginalName();
@@ -287,6 +290,28 @@ class CustomerController extends Controller
     {
         $data = Customer::where('status', 1)->get();
         return response()->json($data);
+    }
+
+    
+    public function getBalance($id)
+    {
+        $customer = Customer::find($id);
+
+        if ($customer) {
+            return response()->json(['balance' => $customer->balance]);
+        } else {
+            return response()->json(['message' => 'Customer not found'], 404);
+        }
+    }
+    public function getDiscountPercentage($id)
+    {
+        $customer = Customer::find($id);
+
+        if ($customer) {
+            return response()->json(['discount_percentage' => $customer->discount_percentage]);
+        } else {
+            return response()->json(['message' => 'Customer not found'], 404);
+        }
     }
 
 }

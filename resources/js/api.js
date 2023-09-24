@@ -63,4 +63,9 @@ export default {
             return response.data;
         });
     },
+    fetchPaymentMethods(){
+        return apiClient.get("/get-payment-methods").then(function (response) {
+            return response.data;
+        });
+    },
 };

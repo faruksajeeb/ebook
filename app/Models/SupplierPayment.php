@@ -47,4 +47,9 @@ class SupplierPayment extends Model
             // });
         });
     }
+
+    public function payment_method()
+    {
+       return $this->belongsTo(Option::class, 'id', 'payment_method')->withTrashed()->withDefault(['name' => '']);
+    }
 }

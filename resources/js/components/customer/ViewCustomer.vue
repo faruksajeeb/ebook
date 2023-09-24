@@ -42,6 +42,14 @@
                     <td>Address</td>
                     <td>{{ record.customer_address }}</td>
                   </tr>
+                  <tr>
+                    <td title="Posetive=Due, (-)Negetive=Advanced">Balance</td>
+                    <td>{{ record.balance }}</td>
+                  </tr>
+                  <tr>
+                    <td>Discount Percentage</td>
+                    <td>{{ record.discount_percentage }}%</td>
+                  </tr>
                 </table>
               </div>
             </div>

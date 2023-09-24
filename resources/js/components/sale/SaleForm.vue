@@ -3,12 +3,8 @@
     <div class="col-md-12 offset-md-0">
       <div class="card shadow-sm my-2">
         <div class="card-header py-2 my-bg-success">
-          <h3 class="text-white-900" v-if="isNew">
-            <i class="fa fa-plus"></i> Add Sale
-          </h3>
-          <h3 class="text-white-900" v-else>
-            <i class="fa fa-pencil"></i> Edit Sale
-          </h3>
+          <h3 class="text-white-900" v-if="isNew"><i class="fa fa-plus"></i> Add Sale</h3>
+          <h3 class="text-white-900" v-else><i class="fa fa-pencil"></i> Edit Sale</h3>
           <!-- <p class="text-white m-0">
             ফরমের লাল তারকা (<span class="text-danger">*</span>) চিহ্নিত ঘরগুলো অবশ্যই
             পূরণ করুন। অন্যান্য ঘরগুলো পূরণ ঐচ্ছিক।
@@ -47,7 +43,7 @@
                     <div class="card h-100">
                       <div class="card-body">
                         <div class="row align-items-center">
-                          <div class="col mr-2">
+                          <div class="col mr-2 pb-0 mb-0">
                             <div
                               class="text-xs font-weight-bold text-center text-uppercase mb-1"
                             >
@@ -72,22 +68,30 @@
                                 {{ book.author.author_name }}</span
                               >
                             </div>
+                            <div class="text-center">
+                              <small>Available Stock: {{ book.stock_quantity }}</small>
+                            </div>
                           </div>
                         </div>
                       </div>
                       <div class="card-footer text-center py-1">
-                        <button
-                          @click="addToCart(book)"
-                          :class="`btn btn-sm m-1  my-btn-primary addToCart${book.id}`"
-                        >
-                          <i class="fa fa-plus"></i> Add To Cart
-                        </button>
-                        <button
-                          @click="addToCourtesyCart(book)"
-                          :class="`btn btn-sm m-1  my-btn-danger addToCourtesyCart${book.id}`"
-                        >
-                          <i class="fa fa-plus"></i> সৌজন্য কপি
-                        </button>
+                        <div v-if="book.stock_quantity >= 1">
+                          <button
+                            @click="addToCart(book)"
+                            :class="`btn btn-sm m-1  my-btn-primary addToCart${book.id}`"
+                          >
+                            <i class="fa fa-plus"></i> Add To Cart
+                          </button>
+                          <button
+                            @click="addToCourtesyCart(book)"
+                            :class="`btn btn-sm m-1  my-btn-danger addToCourtesyCart${book.id}`"
+                          >
+                            <i class="fa fa-plus"></i> সৌজন্য কপি
+                          </button>
+                        </div>
+                        <div v-else="">
+                          <span class="badge badge-danger py-2">Out of stock</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -109,7 +113,7 @@
               </div>
               <div
                 class="col-md-6 py-2"
-                style="border-radius: 5px; border: 2px solid #c9f4aa"
+                style="border-radius: 5px; border: 2px solid #c9f4aa; "
               >
                 <AlertError :form="form" />
                 <form
@@ -119,7 +123,7 @@
                   @submit.prevent="submitForm"
                   @keydown="form.onKeydown($event)"
                 >
-                  <div class="input-group mb-2 row mx-0 px-0">
+                  <div class="input-group mb-1 row mx-0 px-0">
                     <div class="input-group-prepend px-0 col-md-4 mx-0">
                       <label class="input-group-text col-md-12" for="inputGroupSelect01"
                         >Customer
@@ -129,6 +133,7 @@
                     <select
                       class="custom-select mx-0 pe-0"
                       v-model="form.customer_id"
+                      @change="getDiscountPercentage()"
                       :class="{ 'is-invalid': form.errors.has('customer_id') }"
                     >
                       <option value="" disabled selected>Choose...</option>
@@ -142,7 +147,7 @@
                     </select>
                     <HasError :form="form" field="customer_id" />
                   </div>
-                  <div class="input-group mb-2 row mx-0 px-0">
+                  <div class="input-group mb-1 row mx-0 px-0">
                     <div class="input-group-prepend px-0 col-md-4 mx-0">
                       <label
                         class="input-group-text col-md-12"
@@ -160,13 +165,14 @@
                       placeholder="Choose sale date"
                       name="sale_date"
                       v-model="form.sale_date"
+                      @input="clearError('sale_date')"
                       :class="{ 'is-invalid': form.errors.has('sale_date') }"
                     />
                     <HasError :form="form" field="sale_date" />
                   </div>
                   <fieldset class="reset my-1 p-1" style="background-color: #c9f4aa">
                     <legend class="text-white my-btn-primary p-1 reset">
-                      বিক্রয় কপি: 
+                      বিক্রয় কপি:
                     </legend>
                     <table class="table table-sm">
                       <thead>
@@ -236,7 +242,6 @@
                               style="width: 50px"
                               v-model="vatPercentage"
                               @input="updateVat"
-                              
                             />
                           </td>
                           <td class="text-bold px-1 text-right">
@@ -244,6 +249,22 @@
                           </td>
                           <td class="text-bold px-1"></td>
                         </tr>
+                        <tr>
+                          <td class="text-bold px-1" colspan="2">Shipping Cost</td>
+                          <td class="text-bold px-1">
+                           
+                          </td>
+                          <td class="text-bold px-1 text-right">
+                            <input
+                              type="number"
+                              style="width: 100px"
+                              v-model="form.shipping_amount"
+                              @input="updateShippingCost"
+                            />
+                          </td>
+                          <td class="text-bold px-1"></td>
+                        </tr>
+                        
                         <tr>
                           <td class="fw-bold px-1" colspan="2">NET TOTAL</td>
                           <td class="fw-bold px-1"></td>
@@ -283,25 +304,27 @@
                             <select
                               name="payment_method"
                               v-model="form.payment_method"
+                              @change="clearError('payment_method')"
                               class="form-select"
                               :class="{ 'is-invalid': form.errors.has('payment_method') }"
                             >
                               <option value="" selected>--select payment method--</option>
-                              <option value="cash">--Cash--</option>
-                              <option value="card">--Card--</option>
-                              <option value="cheque">--Cheque--</option>
-                              <option value="others">--Others--</option>
+                              <option :value="payment_method.id" v-for="payment_method in payment_methods">{{ payment_method.name }}</option>
                             </select>
                             <HasError :form="form" field="payment_method" />
                           </td>
                         </tr>
                         <tr v-show="payAmount > 0">
-                          <td class="fw-bold px-1" colspan="1">Payment Descriptin</td>
+                          <td class="fw-bold px-1" colspan="1">
+                            Payment Descriptin
+                            <div class="text-danger">*</div>
+                          </td>
                           <td class="fw-bold px-1" colspan="4">
                             <input
                               type="text"
                               class="form-control"
                               v-model="form.payment_description"
+                              @input="clearError('payment_description')"
                               :class="{
                                 'is-invalid': form.errors.has('payment_description'),
                               }"
@@ -311,18 +334,23 @@
                           </td>
                         </tr>
                         <tr v-show="payAmount > 0">
-                          <td class="fw-bold px-1" colspan="1">Paid By</td>
+                          <td class="fw-bold px-1" colspan="1">
+                            Paid By
+                            <div class="text-danger">*</div>
+                          </td>
                           <td class="fw-bold px-1" colspan="4">
                             <input
                               type="text"
                               class="form-control"
                               v-model="form.paid_by"
+                              @input="clearError('paid_by')"
                               :class="{ 'is-invalid': form.errors.has('paid_by') }"
                               placeholder="Enter paid by"
                             />
                             <HasError :form="form" field="paid_by" />
                           </td>
                         </tr>
+                        
                       </tbody>
                       <tbody v-else>
                         <tr>
@@ -414,6 +442,7 @@
                       placeholder="Choose..."
                       name="attach_file"
                       @change="onFileChange"
+                      @input="clearError('attach_file')"
                       accept="image/*,application/pdf"
                       :class="{ 'is-invalid': form.errors.has('attach_file') }"
                     />
@@ -448,6 +477,26 @@
                         class="input-group-text col-md-12"
                         for="inputGroupSelect01"
                         title=""
+                        >Shipping Address:
+                        <div class="text-danger"></div
+                      ></label>
+                    </div>
+                    <textarea
+                      name=""
+                      id=""
+                      cols="30"
+                      rows="2"
+                      class="form-control"
+                      v-model="form.shipping_address"
+                      >{{ form.shipping_address }}</textarea
+                    >
+                  </div>
+                  <div class="input-group mb-2 row mx-0 px-0">
+                    <div class="input-group-prepend px-0 col-md-4 mx-0">
+                      <label
+                        class="input-group-text col-md-12"
+                        for="inputGroupSelect01"
+                        title=""
                         >Sale Note:
                         <div class="text-danger"></div
                       ></label>
@@ -464,11 +513,9 @@
                   </div>
                   <div class="form-group mt-2">
                     <!-- <div v-if="form.progress">Progress: {{ form.progress.percentage }}%</div> -->
-                    <router-link 
-                          to="/sales"
-                          class="btn btn-lg btn-primary px-2 mx-1"
-                          ><i class="fa fa-list"></i> Manage Sale</router-link
-                        >
+                    <router-link to="/sales" class="btn btn-lg btn-primary px-2 mx-1"
+                      ><i class="fa fa-list"></i> Manage Sale</router-link
+                    >
                     <save-button v-if="isNew" :is-submitting="isSubmitting"></save-button>
                     <save-changes-button
                       v-else
@@ -512,6 +559,7 @@ export default {
         per_page: "",
       },
       customers: [],
+      payment_methods: [],
       books: {
         type: Object,
         default: null,
@@ -534,6 +582,8 @@ export default {
         payment_description: "",
         sale_note: "",
         attach_file: null,
+        shipping_amount: 0,
+        shipping_address: "",
       }),
       params: {
         paginate: 6,
@@ -579,6 +629,11 @@ export default {
   async created() {
     this.fetchCategories();
     this.customers = this.$store.getters.getCustomers;
+    this.payment_methods = this.$store.getters.getPaymentMethods;
+    if (this.payment_methods.length == 0) {
+      const response = await axios.get("/api/get-payment-methods");
+      this.payment_methods = response.data;
+    }
     if (this.customers.length == 0) {
       const response = await axios.get("/api/get-customers");
       this.customers = response.data;
@@ -615,7 +670,7 @@ export default {
           this.fileExtension = parts[parts.length - 1].toLowerCase();
         }
       }
-    }else{     
+    } else {
       this.resetData();
     }
   },
@@ -659,6 +714,15 @@ export default {
         };
         reader.readAsDataURL(selectedFile);
       }
+    },
+    async getDiscountPercentage() {
+      this.form.errors.clear('customer_id');
+      // this.isLoading = true;
+      const customerId = this.form.customer_id;
+      const response = await axios.get(`/api/get-customer-discount-percentage/${customerId}`);
+      // this.isLoading = false;
+      this.form.discount_percentage = response.data.discount_percentage;
+      this.discountPercentage = response.data.discount_percentage;
     },
     removeSingleImage(image, index) {
       this.imageUrl = null;
@@ -770,7 +834,17 @@ export default {
         this.courtesyCartItems[index].unit_price = 0;
       }
     },
-    updateQuantity(index) {
+    async updateQuantity(index) {
+      const bookId = this.cartItems[index].id;
+      const bookTitle = this.cartItems[index].title;
+      const response = await axios.get(`/api/get-stock-quantity/${bookId}`);
+      const stockQuantity = response.data.stock_quantity;
+      if (stockQuantity < this.cartItems[index].quantity) {
+        Notification.error(
+          `Item '${bookTitle}' insufficient stock quantity! available stock:${stockQuantity}`
+        );
+        this.cartItems[index].quantity = stockQuantity;
+      }
       // Ensure quantity is a positive number
       if (this.cartItems[index].quantity < 1) {
         this.cartItems[index].quantity = 1;
@@ -804,6 +878,12 @@ export default {
         this.payAmount = 0;
       } else if (this.payAmount > netTotal) {
         this.payAmount = netTotal;
+      }
+    },
+    updateShippingCost() {
+      this.calculateNetTotal();
+      if (this.form.shipping_amount < 0) {
+        this.form.shipping_amount = 0;
       }
     },
     calculateDiscountAmount() {
@@ -840,9 +920,9 @@ export default {
       const discountAmount = (totalBeforeDiscount * this.discountPercentage) / 100;
       const totalAfterDiscount = totalBeforeDiscount - discountAmount;
       const vatAmount = (totalAfterDiscount * this.vatPercentage) / 100;
-      const totalWithVAT = totalAfterDiscount + vatAmount;
-      this.form.net_amount = totalWithVAT;
-      return totalWithVAT.toFixed(2);
+      const totalWithVATShippingCost = totalAfterDiscount + vatAmount + this.form.shipping_amount;
+      this.form.net_amount = totalWithVATShippingCost;
+      return totalWithVATShippingCost.toFixed(2);
     },
     dueAmount() {
       const netAmount = this.calculateNetTotal();
@@ -914,11 +994,18 @@ export default {
       this.form.clear();
       this.form.reset();
     },
+    clearError(fieldName) {
+      this.form.errors.clear(fieldName);
+    },
   },
 };
 </script>
 
 <style type="text/css" scoped>
+td{
+  padding: 1px;
+  font-size:12px;
+}
 ul {
   list-style-type: none;
   margin: 0;

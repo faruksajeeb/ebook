@@ -23,6 +23,8 @@ class Sale extends Model
         'discount_amount',
         'vat_percentage',
         'vat_amount',
+        'shipping_amount',
+        'shipping_address',
         'net_amount',
         'pay_amount',
         'due_amount',

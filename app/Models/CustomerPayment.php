@@ -6,18 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Customer extends Model
+class CustomerPayment extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $table = 'customers';
+    protected $table = 'customer_payments';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'customer_name',
-        'customer_email',
-        'customer_phone',
-        'customer_address',
-        'customer_photo',
-        'discount_percentage',
+        'customer_id',
+        'sale_id',
+        'payment_date',
+        'payment_amount',
+        'payment_method',
+        'paid_by',
+        'payment_description',
+        'file',
         'created_by',
         'updated_at',
         'created_at',
@@ -46,9 +48,15 @@ class Customer extends Model
         });
     }
 
-    public function payments()
+    public function customer()
     {
-        return $this->hasMany(CustomerPayment::class);
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function payment_method()
+    {
+    //    return $this->belongsTo(Option::class,  'payment_method','id')->withTrashed()->withDefault(['name' => '']);
+       return $this->hasOne(Option::class, 'id', 'payment_method')->withTrashed()->withDefault(['name' => '']);
     }
 
 }

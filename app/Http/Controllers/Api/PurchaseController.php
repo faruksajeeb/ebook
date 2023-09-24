@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+
 // use Image;
 
 class PurchaseController extends Controller
@@ -529,18 +530,18 @@ class PurchaseController extends Controller
                         $book->save();
                         // }
                     }
+                    // If the item has an ID, it's an existing item, so update it
+                    $purchaseDetail->update([
+                        'quantity' => $detailData['quantity'],
+                        'unit_price' => $detailData['price'],
+                        'sub_total' => $detailData['quantity'] * $detailData['price'],
+                        'discount_percentage' => 0,
+                        'discount_amount' => 0,
+                        'vat_percentage' => 0,
+                        'vat_amount' => 0,
+                        'net_sub_total' => $detailData['quantity'] * $detailData['price'],
+                    ]);
                 }
-                // If the item has an ID, it's an existing item, so update it
-                $purchaseDetail->update([
-                    'quantity' => $detailData['quantity'],
-                    'unit_price' => $detailData['price'],
-                    'sub_total' => $detailData['quantity'] * $detailData['price'],
-                    'discount_percentage' => 0,
-                    'discount_amount' => 0,
-                    'vat_percentage' => 0,
-                    'vat_amount' => 0,
-                    'net_sub_total' => $detailData['quantity'] * $detailData['price'],
-                ]);
 
             }
         }

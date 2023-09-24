@@ -305,4 +305,15 @@ class BookController extends Controller
         return response()->json($data);
     }
 
+    public function getStockQuantity($productId)
+    {
+        $product = Book::find($productId);
+
+        if ($product) {
+            return response()->json(['stock_quantity' => $product->stock_quantity]);
+        } else {
+            return response()->json(['message' => 'Book not found'], 404);
+        }
+    }
+
 }

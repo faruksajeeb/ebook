@@ -13,6 +13,7 @@ const store = createStore({
             publishers: [],
             suppliers: [],
             customers: [],
+            payment_methods: [],
             user: {
                 permissions: [],
             },
@@ -65,6 +66,12 @@ const store = createStore({
                 state.customers = customers;
             });
             return state.customers;
+        },
+        getPaymentMethods: (state) => {
+            api.fetchPaymentMethods().then((payment_methods) => {
+                state.payment_methods = payment_methods;
+            });
+            return state.payment_methods;
         },
     },
     mutations: {

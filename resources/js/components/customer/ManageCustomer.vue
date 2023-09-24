@@ -97,9 +97,10 @@
                         >↓</span
                       >
                     </th>
-                    <th class="text-right">Customer Phone</th>
-                    <th class="text-right">Customer Email</th>
-                    <th class="text-right">Customer Address</th>
+                    <th class="text-right"  title="Posetive=Due, (-)Negetive=Advanced">Balance</th>
+                    <th class="text-right">Phone</th>
+                    <th class="text-right">Email</th>
+                    <th class="text-right">Address</th>
                     <th class="text-right">Action</th>
                   </tr>
                   <tr>
@@ -121,6 +122,7 @@
                         v-model="params.customer_name"
                       />
                     </th>
+                    <th></th>
                     <th>
                       <input
                         type="text"
@@ -165,11 +167,12 @@
                           `${publicPath}assets/img/customer/thumbnail/` +
                           customer.customer_photo
                         "
-                        alt="Customer Photo"
+                        alt=""
                         width="50"
                       />
                     </td>
                     <td>{{ customer.customer_name }}</td>
+                    <td>{{ customer.balance }}</td>
                     <td>{{ customer.customer_phone }}</td>
                     <td>{{ customer.customer_email }}</td>
                     <td>{{ customer.customer_address }}</td>

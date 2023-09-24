@@ -74,7 +74,7 @@ class OptionGroupController extends Controller
 
         $request->validate(
             [
-                'name' => 'required|regex:/^[a-zA-Z ]+$/u|min:3|max:20|unique:option_groups',
+                'name' => 'required|min:3|max:500|unique:option_groups',
             ],
             [
                 'name.required' => 'option group Name field is required.',
@@ -127,7 +127,7 @@ class OptionGroupController extends Controller
 
         $request->validate(
             [
-                'name' => 'required|regex:/^[a-zA-Z ]+$/u|min:3|max:20|unique:option_groups,name,' . $id,
+                'name' => 'required|min:3|max:500|unique:option_groups,name,' . $id,
             ],
             [
                 'name.required' => 'option_group Name field is required.',

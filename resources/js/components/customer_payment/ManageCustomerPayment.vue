@@ -5,8 +5,8 @@
         <!-- Simple Tables -->
         <div class="card">
           <div class="card-header py-3">
-            <h3 class="m-0 font-weight-bold" title="">Sale List</h3>
-            <p class="text-secondary m-0">Stores information about each sale</p>
+            <h3 class="m-0 font-weight-bold" title="">Customer Payments</h3>
+            <p class="text-secondary m-0">Stores information about each customer payment</p>
           </div>
           <div class="card-body p-0 m-0">
             <div class="row p-2">
@@ -24,7 +24,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Search by sale date, customer name. (Type and Enter)"
+                  placeholder="Search by payment date, customer name. (Type and Enter)"
                   v-model="search"
                 />
                 <button @click="downloadFile" class="btn my-btn-success export-btn">
@@ -39,11 +39,11 @@
                 />
 
                 <router-link
-                  to="/sales/create"
+                  to="/customer_payments/create"
                   class="z-index-1 btn my-btn-primary float-right"
                 >
                   <i class="fa fa-solid fa-plus"></i>
-                  Add sale
+                  Add Payment
                 </router-link>
               </div>
             </div>
@@ -76,8 +76,8 @@
                       >
                     </th>
                     <th scope="col" class="text-nowrap">
-                      <a href="#" @click.prevent="changeShort('sale_date')">
-                        Sale Date</a
+                      <a href="#" @click.prevent="changeShort('payment_date')">
+                        Payment Date</a
                       >
                       <span
                         v-if="
@@ -96,8 +96,8 @@
                     </th>
                     <th class="text-center text-nowrap" scope="col">Customer</th>
                     <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('total_amount')"
-                        >Total Amount</a
+                      <a href="#" @click.prevent="changeShort('payment_amount')"
+                        >Payment Amount</a
                       >
                       <span
                         v-if="
@@ -114,139 +114,8 @@
                         >↓</span
                       >
                     </th>
-                    <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('discount_percentage')"
-                        >Discount Percentage</a
-                      >
-                      <span
-                        v-if="
-                          this.params.sort_field == 'id' &&
-                          this.params.sort_direction == 'asc'
-                        "
-                        >↑</span
-                      >
-                      <span
-                        v-if="
-                          this.params.sort_field == 'id' &&
-                          this.params.sort_direction == 'desc'
-                        "
-                        >↓</span
-                      >
-                    </th>
-                    <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('discount_amount')"
-                        >Discount Amount</a
-                      >
-                      <span
-                        v-if="
-                          this.params.sort_field == 'id' &&
-                          this.params.sort_direction == 'asc'
-                        "
-                        >↑</span
-                      >
-                      <span
-                        v-if="
-                          this.params.sort_field == 'id' &&
-                          this.params.sort_direction == 'desc'
-                        "
-                        >↓</span
-                      >
-                    </th>
-                    <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('vat_percentage')"
-                        >Vat Percentage</a
-                      >
-                      <span
-                        v-if="
-                          this.params.sort_field == 'id' &&
-                          this.params.sort_direction == 'asc'
-                        "
-                        >↑</span
-                      >
-                      <span
-                        v-if="
-                          this.params.sort_field == 'id' &&
-                          this.params.sort_direction == 'desc'
-                        "
-                        >↓</span
-                      >
-                    </th>
-                    <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('vat_amount')"
-                        >Vat Amount</a
-                      >
-                      <span
-                        v-if="
-                          this.params.sort_field == 'id' &&
-                          this.params.sort_direction == 'asc'
-                        "
-                        >↑</span
-                      >
-                      <span
-                        v-if="
-                          this.params.sort_field == 'id' &&
-                          this.params.sort_direction == 'desc'
-                        "
-                        >↓</span
-                      >
-                    </th>
-                    <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('net_amount')"
-                        >Net Amount</a
-                      >
-                      <span
-                        v-if="
-                          this.params.sort_field == 'id' &&
-                          this.params.sort_direction == 'asc'
-                        "
-                        >↑</span
-                      >
-                      <span
-                        v-if="
-                          this.params.sort_field == 'id' &&
-                          this.params.sort_direction == 'desc'
-                        "
-                        >↓</span
-                      >
-                    </th>
-                    <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('pay_amount')"
-                        >Pay Amount</a
-                      >
-                      <span
-                        v-if="
-                          this.params.sort_field == 'id' &&
-                          this.params.sort_direction == 'asc'
-                        "
-                        >↑</span
-                      >
-                      <span
-                        v-if="
-                          this.params.sort_field == 'id' &&
-                          this.params.sort_direction == 'desc'
-                        "
-                        >↓</span
-                      >
-                    </th>
-                    <th class="text-center text-nowrap" scope="col">
-                      <a href="#" @click.prevent="changeShort('due_amount')"
-                        >Due Amount</a
-                      >
-                      <span
-                        v-if="
-                          this.params.sort_field == 'id' &&
-                          this.params.sort_direction == 'asc'
-                        "
-                        >↑</span
-                      >
-                      <span
-                        v-if="
-                          this.params.sort_field == 'id' &&
-                          this.params.sort_direction == 'desc'
-                        "
-                        >↓</span
-                      >
-                    </th>
+                    <th class="text-center text-nowrap" scope="col">Payment Method</th>
+                   
                     <th class="text-center text-nowrap" scope="col">
                       <a href="#" @click.prevent="changeShort('paid_by')">Paid By</a>
                       <span
@@ -285,7 +154,7 @@
                         id="datecalander"
                         class="form-control-sm"
                         style="width: 100%"
-                        v-model="params.sale_date"
+                        v-model="params.payment_date"
                       />
                     </th>
                     <th class="text-nowarp px-1" colspan="1" style="min-width: 200px">
@@ -310,70 +179,62 @@
                         placeholder="Search By Total Amount"
                         class="form-control-sm"
                         style="width: 100%"
-                        v-model="params.total_amount"
+                        v-model="params.payment_amount"
                       />
-                    </th>
-
-                    <th>
-                      <input
-                        type="text"
-                        placeholder="Search By Discount Pecentage"
-                        class="form-control-sm"
+                    </th>  
+                    <th class="text-nowarp px-1" colspan="1" style="min-width: 200px">
+                      <select
+                        v-model="params.payment_method"
                         style="width: 100%"
-                        v-model="params.discount_percentage"
-                      />
-                    </th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
+                        class="form-select-sm"
+                      >
+                        <option value="" selected>--select payment method--</option>
+                        <option
+                          :value="payment_method.id"
+                          v-for="payment_method in payment_methods"
+                          :key="payment_method.id"
+                        >
+                          {{ payment_method.name }}
+                        </option>
+                      </select>
+                    </th>               
                     <th></th>
                     <th></th>
                   </tr>
                 </thead>
-                <tbody v-if="sales && paginator.totalRecords > 0">
-                  <tr v-for="sale in sales.data" :key="sale.id">
+                <tbody v-if="customer_payments && paginator.totalRecords > 0">
+                  <tr v-for="customer_payment in customer_payments.data" :key="customer_payment.id">
                     <!-- <td class="text-center">
                       <input
                         type="checkbox"
-                        :value="sale.id"
+                        :value="customer_payment.id"
                         v-model="checked"
                         class="form-check-input"
                       />
                     </td> -->
                     <td style="width: 60px !important" class="text-nowrap">
-                      {{ sale.id }}
+                      {{ customer_payment.id }}
                     </td>
 
                     <td class="text-nowrap">
                       <a
-                        @click="openModal(sale.id)"
+                        @click="openModal(customer_payment.id)"
                         href="#"
                         data-toggle="modal"
                         data-target="#recordModal"
-                        >{{ sale.sale_date }}</a
+                        >{{ customer_payment.payment_date }}</a
                       >
                     </td>
-                    <td class="text-nowrap">{{ sale.customer.customer_name }}</td>
-                    <td class="text-nowrap text-right">{{ sale.total_amount }}</td>
-                    <td class="text-nowrap text-center">{{ sale.discount_percentage }}</td>
-                    <td class="text-nowrap text-right">{{ sale.discount_amount }}</td>
-                    <td class="text-nowrap text-center">{{ sale.vat_percentage }}</td>
-                    <td class="text-nowrap text-right">{{ sale.vat_amount }}</td>
-                    <td class="text-nowrap text-right">{{ sale.net_amount }}</td>
-                    <td class="text-nowrap text-right">{{ sale.pay_amount }}</td>
-                    <td class="text-nowrap text-right">{{ sale.due_amount }}</td>
-                    <td class="text-nowrap">{{ sale.paid_by }}</td>
+                    <td class="text-nowrap">{{ customer_payment.customer.customer_name }}</td>
+                    <td class="text-nowrap text-right">{{ customer_payment.payment_amount }}</td>
+                    <td class="text-nowrap">{{ customer_payment.payment_method.name }}</td>
+                    <td class="text-nowrap">{{ customer_payment.paid_by }}</td>
 
                     <td class="text-right text-nowrap">
                       <div class="btn-group" option="group">
-                        <button @click="exportInvoicePdf(sale.id)" :class="'btn my-btn-danger export-invoice-btn-pdf-'+sale.id">
-                  Export Invoice
-                </button>
+                       
                         <button
-                          @click="openModal(sale.id)"
+                          @click="openModal(customer_payment.id)"
                           class="btn btn-sm my-btn-primary"
                           data-toggle="modal"
                           data-target="#recordModal"
@@ -381,17 +242,17 @@
                           <i class="fa fa-eye"></i> View
                         </button>
                         <!-- <router-link
-                          :to="`/sales/${sale.id}`"
+                          :to="`/customer_payments/${customer_payment.id}`"
                           class="btn btn-sm my-btn-primary"
                           ><i class="fa fa-eye"></i> View</router-link
                         > -->
                         <router-link
-                          :to="`/sales/${sale.id}/edit`"
+                          :to="`/customer_payments/${customer_payment.id}/edit`"
                           class="btn btn-sm btn-primary px-2 mx-1"
                           ><i class="fa fa-edit"></i> Edit</router-link
                         >
                         <a
-                          @click="deletesale(sale.id)"
+                          @click="deleteCustomerPayment(customer_payment.id)"
                           class="btn btn-sm btn-danger px-2 disabled"
                         >
                           <font color="#ffffff"
@@ -425,9 +286,9 @@
               <div class="col-md-6">
                 <pagination
                   align="right"
-                  :data="sales"
+                  :data="customer_payments"
                   :limit="5"
-                  @pagination-change-page="getSales"
+                  @pagination-change-page="getCustomerPayments"
                 ></pagination>
               </div>
             </div>
@@ -437,7 +298,7 @@
     </div>
     <!--Row-->
     <!-- Bootstrap Modal -->
-    <ViewSale :record="record" :fileExtension="fileExtension" />
+    <ViewCustomerPayment :record="record" :fileExtension="fileExtension" />
     <!-- Modal End -->
   </div>
 </template>
@@ -446,16 +307,16 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.css";
 
 import { mapActions } from "vuex";
-import ViewSale from "./ViewSale.vue";
+import ViewCustomerPayment from "./ViewCustomerPayment.vue";
 export default {
-  name: "sale",
-  components: { ViewSale },
+  name: "customer_payment",
+  components: { ViewCustomerPayment },
   data() {
     return {
       fileExtention: null,
       record: {},
-      sub_categories: [],
-      salePhotoUrl: null,
+      payment_methods: [],
+      custmerPaymentPhotoUrl: null,
       publicPath: window.publicPath,
       checked: [],
       paginator: {
@@ -465,17 +326,17 @@ export default {
         current_page: "",
         per_page: "",
       },
-      sales: {
+      customer_payments: {
         type: Object,
         default: null,
       },
       params: {
         paginate: 5,
         id: "",
-        sale_date: "",
+        payment_date: "",
         customer_id: "",
-        total_amount: "",
-        discount_percentage: "",
+        payment_amount: "",
+        payment_method: "",
         sort_field: "created_at",
         sort_direction: "desc",
       },
@@ -492,10 +353,15 @@ export default {
       const response = await axios.get("/api/get-customers");
       this.customers = response.data;
     }
+    this.payment_methods = this.$store.getters.getPaymentMethods;
+    if (this.payment_methods.length == 0) {
+      const response = await axios.get("/api/get-payment-methods");
+      this.payment_methods = response.data;
+    }
   },
   mounted() {
     this.filterFields = { ...this.params };
-    this.getSales();
+    this.getCustomerPayments();
     flatpickr("#datecalander", {
       mode: "range",
       dateFormat: "Y-m-d", // Customize the date format as needed
@@ -505,29 +371,27 @@ export default {
   watch: {
     params: {
       handler() {
-        this.getSales();
+        this.getCustomerPayments();
       },
       deep: true,
     },
     search(val, old) {
       if (val.length >= 3 || old.length >= 3) {
-        this.getSales();
+        this.getCustomerPayments();
       }
     },
   },
   computed: {
-    categories() {
-      return this.$store.state.categories;
-    },
+  
   },
   methods: {
     ...mapActions(["fetchCategories"]),
-    async getSales(page = 1) {
+    async getCustomerPayments(page = 1) {
       this.isLoading = true;
       await axios
         // .get(`/api/products?page=${page}`)
-        // .get(`/api/products?page=${page}&sale_id=${this.params.sale_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
-        .get("/api/sales", {
+        // .get(`/api/products?page=${page}&customer_payment_id=${this.params.customer_payment_id}&sort_field=${this.params.sort_field}&sort_direction=${this.params.sort_direction}`)
+        .get("/api/customer-payments", {
           params: {
             page,
             search: this.search.length >= 3 ? this.search : "",
@@ -537,7 +401,7 @@ export default {
         .then((response) => {
           console.log(response.data);
           this.isLoading = false;
-          this.sales = response.data;
+          this.customer_payments = response.data;
           this.paginator.totalRecords = response.data.total;
           // if (response.data.total <= 0) {
           //   document.querySelector(".loading-section").innerText = "No Record Found!.";
@@ -557,21 +421,11 @@ export default {
           this.isLoading = false;
         });
     },
-    getSubCategories() {
-      axios
-        .get("/api/get-category-wise-sub-categories", {
-          params: {
-            category_id: this.params.category_id,
-          },
-        })
-        .then((response) => {
-          this.sub_categories = response.data;
-        });
-    },
+  
     refreshData() {
       this.isRefreshing = true;
       this.params = { ...this.filterFields };
-      this.getSales();
+      this.getCustomerPayments();
     },
     changeShort(field) {
       if (this.params.sort_field === field) {
@@ -583,7 +437,7 @@ export default {
       }
       // this.getProducts();
     },
-    deletesale(id) {
+    deleteCustomerPayment(id) {
       Swal.fire({
         allowOutsideClick: false,
         title: "Are you sure?",
@@ -596,9 +450,9 @@ export default {
       }).then((result) => {
         if (result.value) {
           axios
-            .delete("/api/sales/" + id)
+            .delete("/api/customer-payments/" + id)
             .then(() => {
-              this.getSales();
+              this.getCustomerPayments();
               Notification.success("Data has been deleted successfully.");
             })
             .catch((error) => {
@@ -619,12 +473,12 @@ export default {
     },
     downloadFile() {
       let loader =
-        '<span class="spinner-border spinner-border-sm" sale="status" aria-hidden="true" ></span> Exporting...';
+        '<span class="spinner-border spinner-border-sm" customer_payment="status" aria-hidden="true" ></span> Exporting...';
       document.querySelector(".export-btn").innerHTML = loader;
       try {
         axios
           // .get("/api/products-export")
-          .get("/api/sale-export", { responseType: "arraybuffer" })
+          .get("/api/customer_payment-export", { responseType: "arraybuffer" })
           .then((response) => {
             if (response.status == 200) {
               document.querySelector(".export-btn").innerText = "Export to Excel";
@@ -632,7 +486,7 @@ export default {
               var fileURL = window.URL.createObjectURL(new Blob([response.data]));
               var fileLink = document.createElement("a");
               fileLink.href = fileURL;
-              fileLink.setAttribute("download", "sale_list.xlsx");
+              fileLink.setAttribute("download", "customer_payment_list.xlsx");
               document.body.appendChild(fileLink);
               fileLink.click();
             } else {
@@ -646,9 +500,9 @@ export default {
     },
     exportPdf() {
       let loader =
-        '<span class="spinner-border spinner-border-sm" sale="status" aria-hidden="true" ></span>  Exporting...PDF';
+        '<span class="spinner-border spinner-border-sm" customer_payment="status" aria-hidden="true" ></span>  Exporting...PDF';
       document.querySelector(".export-btn-pdf").innerHTML = loader;
-      axios.get("/api/sale-export-pdf", { responseType: "blob" }).then((response) => {
+      axios.get("/api/customer_payment-export-pdf", { responseType: "blob" }).then((response) => {
         document.querySelector(".export-btn-pdf").innerText = "Export PDF";
         Notification.success("Exported Successfully");
         var fileURL = window.URL.createObjectURL(
@@ -656,39 +510,19 @@ export default {
         );
         var fileLink = document.createElement("a");
         fileLink.href = fileURL;
-        fileLink.setAttribute("download", "sale_list.pdf");
+        fileLink.setAttribute("download", "customer_payment_list.pdf");
         document.body.appendChild(fileLink);
         fileLink.click();
       });
     },
-    exportInvoicePdf(id) {
-      const saleId = id;
-      let loader =
-        '<span class="spinner-border spinner-border-sm" sale="status" aria-hidden="true" ></span>  Exporting...Invoice';
-      const exportButton = document.querySelector(".export-invoice-btn-pdf-"+saleId);
-      exportButton.innerHTML = loader;
-      exportButton.disabled = true;
-      axios.get(`/api/export-sale-invoice-pdf/${saleId}`, { responseType: "blob" }).then((response) => {
-        exportButton.innerText = "Export Invoice";
-        exportButton.disabled = false;
-        Notification.success("Exported Successfully");
-        var fileURL = window.URL.createObjectURL(
-          new Blob([response.data], { type: "application/pdf" })
-        );
-        var fileLink = document.createElement("a");
-        fileLink.href = fileURL;
-        fileLink.setAttribute("download", "sale_invoice.pdf");
-        document.body.appendChild(fileLink);
-        fileLink.click();
-      });
-    },
+
     openModal(id) {
       // Fetch the record details from the server using Axios or a similar library
       axios
-        .get(`api/sales/${id}`)
+        .get(`api/customer-payments/${id}`)
         .then((response) => {
           this.record = response.data;
-          const fileName = response.data.sale.attach_file;
+          const fileName = response.data.customer_payment.attach_file;
           const parts = fileName.split(".");
           if (parts.length > 1) {
             // Get the last part as the file extension

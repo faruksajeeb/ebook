@@ -76,7 +76,7 @@ class OptionController extends Controller
 
         $request->validate(
             [
-                'name' => 'required|regex:/^[a-zA-Z ]+$/u|min:2|max:20|unique:options',
+                'name' => 'required|min:2|max:500|unique:options',
                 'option_group_id' => 'required',
             ],
             [
@@ -128,7 +128,7 @@ class OptionController extends Controller
 
         $request->validate(
             [
-                'name' => 'required|regex:/^[a-zA-Z ]+$/u|min:2|max:20|unique:options,name,' . $id,
+                'name' => 'required|min:2|max:500|unique:options,name,' . $id,
             ],
             [
                 'name.required' => 'option Name field is required.',
@@ -217,6 +217,15 @@ class OptionController extends Controller
         }
         return redirect()->route('options.index');
         // return redirect()->route('options.index')->withSuccess(__('All options restored successfully.'));
+    }
+
+    public function getDiscountTypes(){
+        $data = Option::where('option_group_id',4)->where('status', 1)->get();
+        return response()->json($data);
+    }
+    public function getPaymentMethods(){
+        $data = Option::where('option_group_id',5)->where('status', 1)->get();
+        return response()->json($data);
     }
 
 }

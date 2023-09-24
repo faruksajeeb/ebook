@@ -16,12 +16,12 @@
       </li> -->
       
      <li class="nav-item my-bg-primary">
-        <router-link class="nav-link  text-light" to="/pos">
+        <router-link class="nav-link  text-light" to="/sales/create">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span >POS</span></router-link>
       </li>
-      <hr class="sidebar-divider">
-      <div style="max-height: 450px; overflow-y: auto;">
+      <hr class="sidebar-divider my-2">
+      <div style="max-height: 500px; overflow-y: auto;">
         
       <li class="nav-item">
           <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUserMgt"
@@ -165,7 +165,7 @@
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCustomer"
           aria-expanded="true" aria-controls="collapseCustomer">
-          <i class="far fa-fw fa-window-maximize"></i>
+          <i class="fas fa-fw fa-users"></i>
           <span>Customers</span>
         </a>
         <div id="collapseCustomer" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
@@ -179,7 +179,7 @@
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSupplier" aria-expanded="true"
           aria-controls="collapseSupplier">
-          <i class="fas fa-fw fa-table"></i>
+          <i class="fas fa-fw fa-users"></i>
           <span>Suppliers</span>
         </a>
         <div id="collapseSupplier" class="collapse" aria-labelledby="headingTable" data-parent="#accordionSidebar">
@@ -220,7 +220,7 @@
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSale"
           aria-expanded="true" aria-controls="collapseSale">
-          <i class="far fa-fw fa-window-maximize"></i>
+          <i class="fas fa-shopping-cart"></i>
           <span>Sales</span>
         </a>
         <div id="collapseSale" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
@@ -231,16 +231,16 @@
         </div>
       </li>     
 
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <router-link class="nav-link" to="/stock">
           <i class="fab fa-fw fa-wpforms"></i>
           <span>Stock</span>
         </router-link>
-      </li>
+      </li> -->
       <li class="nav-item">
           <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePayment"
             aria-expanded="true" aria-controls="collapsePayment">
-            <i class="far fa-fw fa-window-maximize"></i>
+            <i class="fas fa-dollar-sign"></i>
             <span>Payments</span>
           </a>
           <div id="collapsePayment" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
@@ -253,8 +253,8 @@
                     </a>
                     <div id="collapseCustomerPayment" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionPaymentBar">
                       <div class="bg-white py-2  rounded">
-                        <router-link class="collapse-item p-1" to="/roles/create">Add Payment</router-link>
-                        <router-link class="collapse-item p-1" to="/roles">Manage Payment</router-link>
+                        <router-link class="collapse-item p-1" to="/customer_payments/create">Add Payment</router-link>
+                        <router-link class="collapse-item p-1" to="/customer_payments">Manage Payment</router-link>
                       </div>
                   </div>
             </li>
@@ -265,9 +265,48 @@
                     </a>
                     <div id="collapseSupplierPayment" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionPaymentBar">
                       <div class="bg-white py-2  rounded">
-                        <router-link v-if="userPermissions.includes('user.create')" class="collapse-item p-1" to="/users/create">Add Payment</router-link>
+                        <router-link v-if="userPermissions.includes('user.create')" class="collapse-item p-1" to="/supplier_payments/create">Add Payment</router-link>
                       
-                        <router-link v-if="userPermissions.includes('user.manage')"   class="collapse-item p-1" to="/users">Manage Payment</router-link>
+                        <router-link v-if="userPermissions.includes('user.manage')"   class="collapse-item p-1" to="/supplier_payments">Manage Payment</router-link>
+                      
+                      </div>
+                  </div>
+            </li>
+            </ul>           
+            </div>
+          </div>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReturn"
+            aria-expanded="true" aria-controls="collapseReturn">
+            <i class="fas fa-undo"></i>
+            <span>Returns</span>
+          </a>
+          <div id="collapseReturn" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+            <ul id="accordionReturnBar" class="navbar-nav accordion px-3" >
+            <li class="nav-item py-2 ">
+                    <a class="nav-link-layer-two collapsed" href="#" data-toggle="collapse" data-target="#collapseSaleReturn"
+                      aria-expanded="true" aria-controls="collapseSaleReturn">                
+                      <span>Sale Returns</span>
+                    </a>
+                    <div id="collapseSaleReturn" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionReturnBar">
+                      <div class="bg-white py-2  rounded">
+                        <router-link class="collapse-item p-1" to="/sale-returns/create">Add Return</router-link>
+                        <router-link class="collapse-item p-1" to="/sale-returns">Manage Return</router-link>
+                      </div>
+                  </div>
+            </li>
+            <li class="nav-item py-2">
+                    <a class="nav-link-layer-two collapsed" href="#" data-toggle="collapse" data-target="#collapsePurchaseReturn"
+                      aria-expanded="true" aria-controls="collapsePurchaseReturn">                   
+                      <span>Purchase Returns</span>
+                    </a>
+                    <div id="collapsePurchaseReturn" class="collapse ms-0" aria-labelledby="headingBootstrap" data-parent="#accordionReturnBar">
+                      <div class="bg-white py-2  rounded">
+                        <router-link v-if="userPermissions.includes('user.create')" class="collapse-item p-1" to="/purchase-returns/create">Add Return</router-link>
+                      
+                        <router-link v-if="userPermissions.includes('user.manage')"   class="collapse-item p-1" to="/purchase-returns">Manage Return</router-link>
                       
                       </div>
                   </div>
@@ -277,7 +316,13 @@
           </div>
       </li>
 
-      
+ <li class="nav-item">
+        <router-link class="nav-link" to="/damage-items">
+          <i class="fab fa-fw fa-wpforms"></i>
+          <span>Damage Items</span>
+        </router-link>
+      </li>
+<!--       
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEmployee"
           aria-expanded="true" aria-controls="collapseEmployee">
@@ -348,8 +393,8 @@
           <i class="fas fa-fw fa-palette"></i>
           <span>UI Colors</span>
         </a>
-      </li>
-      <hr class="sidebar-divider">
+      </li> -->
+      <!-- <hr class="sidebar-divider">
       <div class="sidebar-heading">
         Examples
       </div>
@@ -375,7 +420,7 @@
           <span>Charts</span>
         </a>
       </li>
-      
+       -->
       
     </div>
       <hr class="sidebar-divider">

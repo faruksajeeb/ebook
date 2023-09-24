@@ -71,6 +71,17 @@
                   <HasError :form="form" field="customer_address" />
                 </div>
                 <div class="form-group">
+                  <label for="">Discount Applied Percentage (%) <span class="text-danger">*</span></label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="Enter Your Discount Percentage"
+                    v-model="form.discount_percentage"
+                    :class="{ 'is-invalid': form.errors.has('discount_percentage') }"
+                  />
+                  <HasError :form="form" field="discount_percentage" />
+                </div>
+                <div class="form-group">
                   <label for="">Customer Photo </label>
                   <input
                     type="file"
@@ -129,6 +140,7 @@ export default {
       customer_photo: null,
       customer_email: "",
       customer_address: "",
+      discount_percentage:"",
     }),
   }),
   computed: {
@@ -146,6 +158,7 @@ export default {
       // this.form.customer_photo = response.data.customer_photo;
       this.form.customer_email = response.data.customer_email;
       this.form.customer_address = response.data.customer_address;
+      this.form.discount_percentage = response.data.discount_percentage;
       this.imageUrl =
         `${window.publicPath}assets/img/customer/thumbnail/` +
         response.data.customer_photo;
