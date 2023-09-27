@@ -169,7 +169,7 @@
                       >
                       <a
                         @click="deleterole(role.id)"
-                        class="btn btn-sm btn-danger px-2 mx-1"
+                        class="btn btn-sm btn-danger disabled px-2 mx-1"
                       >
                         <font color="#ffffff"><i class="fa fa-trash"></i> Delete</font></a
                       >

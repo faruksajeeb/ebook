@@ -392,7 +392,7 @@
                         >
                         <a
                           @click="deletesale(sale.id)"
-                          class="btn btn-sm btn-danger px-2 disabled"
+                          class="btn btn-sm btn-danger disabled px-2 disabled"
                         >
                           <font color="#ffffff"
                             ><i class="fa fa-trash"></i> Delete</font
@@ -689,14 +689,16 @@ export default {
         .then((response) => {
           this.record = response.data;
           const fileName = response.data.sale.attach_file;
-          const parts = fileName.split(".");
-          if (parts.length > 1) {
-            // Get the last part as the file extension
-            this.fileExtension = parts[parts.length - 1].toLowerCase();
-            // alert(this.fileExtension);
-          } else {
-            this.fileExtension = null; // No file extension found
-          }
+          if(fileName){
+            const parts = fileName.split(".");
+            if (parts.length > 1) {
+              // Get the last part as the file extension
+              this.fileExtension = parts[parts.length - 1].toLowerCase();
+              // alert(this.fileExtension);
+            } else {
+              this.fileExtension = null; // No file extension found
+            }
+          }         
         
           // Open the Bootstrap modal
           // $("#recordModal").modal("show");

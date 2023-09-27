@@ -9,7 +9,7 @@
                 <div class="col-lg-12">
                   <div class="login-form">
                     <div class="text-center text-white">
-                      <img src="assets/img/logo/logo.png" width="80" />
+                      <img :src="`${publicPath}assets/img/logo/logo.png`" width="80" />
                       <h1 class="h4 text-white-900 mb-4">LOGIN</h1>
                     </div>
                     <form class="login" @submit.prevent="login"  @keydown="form.onKeydown($event)">
@@ -123,6 +123,7 @@ export default {
   data: () => ({
     submitButtonText: "Log In",
     isSubmitting: false,
+	publicPath: window.publicPath,
     form: new Form({
       email: "ofsajeeb@gmail.com",
       password: "12345678",

@@ -36,6 +36,7 @@
                     <!-- List of available permissions -->
                     <div class="available-permissions">
                       <h5>Available Permissions <span class="text-danger">*</span></h5>
+                      <HasError :form="form" field="selectedPermissions" />
                       <div v-if="permissions.length > 0">
                         <ul>
                           <li v-for="permission in permissions" :key="permission.id">

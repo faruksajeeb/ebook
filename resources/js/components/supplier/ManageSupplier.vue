@@ -95,8 +95,7 @@
                           this.params.sort_field == 'Supplier_name' &&
                           this.params.sort_direction == 'desc'
                         "
-                        >↓</span
-                      >
+                        >↓</span>
                     </th>
                     <th class="text-center"> Phone</th>
                     <th class="text-center"> Email</th>
@@ -188,7 +187,7 @@
                         >
                         <a
                           @click="deleteSupplier(supplier.id)"
-                          class="btn btn-sm btn-danger px-2"
+                          class="btn btn-sm btn-danger disabled px-2"
                         >
                           <font color="#ffffff"
                             ><i class="fa fa-trash"></i> Delete</font

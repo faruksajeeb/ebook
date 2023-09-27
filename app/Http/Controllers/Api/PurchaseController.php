@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Lib\Webspice;
 use App\Models\Book;
-use App\Models\purchase;
+use App\Models\Purchase;
 use App\Models\PurchaseDetail;
 use App\Models\Supplier;
 use App\Models\SupplierPayment;

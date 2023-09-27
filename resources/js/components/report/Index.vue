@@ -16,7 +16,7 @@
           
           ><img
             class="menu-img-settings"
-            src="/assets/img/report_icon/user_report.png?9f2595027f39dc8f7bd793f815d2fdf8"
+            :src="`${publicPath}assets/img/report_icon/user_report.png`"
              />
           <h5 class="menu-link-settings" >Customer Report</h5>
           <p class="menu-link-detail-settings" ></p></a
@@ -26,7 +26,7 @@
           
           ><img
             class="menu-img-settings"
-            src="/assets/img/report_icon/sales_refund_report.png?5fc34a3875def21917b9b9833fc3126a"
+            :src="`${publicPath}assets/img/report_icon/sales_refund_report.png`"
              />
           <h5 class="menu-link-settings" >Sales/Refund Report</h5>
           <p class="menu-link-detail-settings" ></p
@@ -38,7 +38,7 @@
           
           ><img
             class="menu-img-settings"
-            src="/assets/img/report_icon/stock_transfer.png?f7df416b6f5119216f29735302a4a844"
+            :src="`${publicPath}assets/img/report_icon/stock_transfer.png?f7df416b6f5119216f29735302a4a844`"
              />
           <h5 class="menu-link-settings" >Transfer Stock Report</h5>
           <p class="menu-link-detail-settings" ></p></a
@@ -48,7 +48,7 @@
           
           ><img
             class="menu-img-settings"
-            src="/assets/img/report_icon/purchasing.png?3e1cc6b17120ccb9c2cc620f46c04f28"
+            :src="`${publicPath}assets/img/report_icon/purchasing.png?3e1cc6b17120ccb9c2cc620f46c04f28`"
              />
           <h5 class="menu-link-settings" >Purchasing Report</h5>
           <p class="menu-link-detail-settings" ></p
@@ -60,7 +60,7 @@
           
           ><img
             class="menu-img-settings"
-            src="/assets/img/report_icon/income.png?05ae589a33a000bc9059cf62f1a673c8"
+            :src="`${publicPath}assets/img/report_icon/income.png`"
              />
           <h5 class="menu-link-settings" >Income Statement</h5>
           <p class="menu-link-detail-settings" ></p
@@ -71,7 +71,7 @@
           
           ><img
             class="menu-img-settings"
-            src="/assets/img/report_icon/stock.png?ee4b7a5175a94bb3565d182398cc02a1"
+            :src="`${publicPath}assets/img/report_icon/stock.png`"
              />
           <h5 class="menu-link-settings" >Stock Report</h5>
           <p class="menu-link-detail-settings" ></p
@@ -82,7 +82,7 @@
           
           ><img
             class="menu-img-settings"
-            src="/assets/img/report_icon/alert.png?35e0d7745cec417006bdbc09a3717c88"
+            :src="`${publicPath}assets/img/report_icon/alert.png`"
              />
           <h5 class="menu-link-settings" >Stock Alert Report</h5>
           <p class="menu-link-detail-settings" ></p></a
@@ -92,7 +92,7 @@
           
           ><img
             class="menu-img-settings"
-            src="/assets/img/report_icon/activity.png?719a958a9d5be6ead5ca4526adf5fc48"
+            :src="`${publicPath}assets/img/report_icon/activity.png`"
              />
           <h5 class="menu-link-settings" >Activity Report</h5>
           <p class="menu-link-detail-settings" ></p
@@ -101,7 +101,15 @@
     </div>
   </section>
 </template>
-<script></script>
+<script>
+export default {
+data(){
+	 return {	 
+		publicPath: window.publicPath,
+	 }
+	},
+}
+</script>
 <style scoped>
 .row {
   display: flex;

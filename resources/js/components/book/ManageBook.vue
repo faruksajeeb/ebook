@@ -238,7 +238,7 @@
                         >
                         <a
                           @click="deletebook(book.id)"
-                          class="btn btn-sm btn-danger px-2"
+                          class="btn btn-sm btn-danger disabled px-2"
                         >
                           <font color="#ffffff"
                             ><i class="fa fa-trash"></i> Delete</font
@@ -502,7 +502,7 @@ export default {
         document.body.appendChild(fileLink);
         fileLink.click();
       });
-    },
+    },        
     openModal(id) {
       // Fetch the record details from the server using Axios or a similar library
       axios

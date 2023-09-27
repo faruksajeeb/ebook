@@ -192,7 +192,7 @@
                         >
                         <a
                           @click="deleteCustomer(customer.id)"
-                          class="btn btn-sm btn-danger px-2"
+                          class="btn btn-sm btn-danger disabled px-2"
                         >
                           <font color="#ffffff"
                             ><i class="fa fa-trash"></i> Delete</font

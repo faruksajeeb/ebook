@@ -78,39 +78,7 @@ import ManageSale from "./components/sale/ManageSale.vue";
 import CustomerPaymentForm from "./components/customer_payment/CustomerPaymentForm.vue";
 import ManageCustomerPayment from "./components/customer_payment/ManageCustomerPayment.vue";
 
-// Employee Files
-import AddEmployee from "./components/employee/create.vue";
-import ManageEmployee from "./components/employee/index.vue";
-import EditEmployee from "./components/employee/edit.vue";
 
-// Product Files
-import AddProduct from "./components/product/create.vue";
-import ManageProduct from "./components/product/index.vue";
-import EditProduct from "./components/product/edit.vue";
-
-// Expense Files
-import AddExpense from "./components/expense/create.vue";
-import ManageExpense from "./components/expense/index.vue";
-import EditExpense from "./components/expense/edit.vue";
-
-// Salary Component
-import Salary from "./components/salary/all_employee.vue";
-import PaySalary from "./components/salary/create.vue";
-
-import AllSalary from "./components/salary/index.vue";
-import ViewSalary from "./components/salary/view.vue";
-import EditSalary from "./components/salary/edit.vue";
-
-import Stock from "./components/stock/view.vue";
-import EditStock from "./components/stock/edit.vue";
-
-// POS Component
-import Pos from "./components/pos/pointofsale.vue";
-
-// Order Component
-import Order from "./components/order/order.vue";
-import ViewOrder from "./components/order/vieworder.vue";
-import SearchOrder from "./components/order/search.vue";
 
 import ReportIndex from "./components/report/Index.vue";
 
@@ -155,39 +123,7 @@ export const routes = [
         path: "/logout",
         component: Logout,
     },
-    {
-        name: "add-employee",
-        path: "/add-employee",
-        component: AddEmployee,
-        meta: { title: "Add Employee" },
-        beforeEnter: guard,
-    },
-    {
-        name: "manage-employee",
-        path: "/manage-employee",
-        component: ManageEmployee,
-        meta: { title: "Manage Employee" },
-        beforeEnter: guard,
-    },
-    {
-        name: "edit-employee",
-        path: "/edit-employee/:id",
-        component: EditEmployee,
-        meta: { title: "Edit Employee" },
-        beforeEnter: (to, from, next) => {
-            if (User.loggedIn()) {
-                // if (User) {
-                // User is authenticated, allow access
-                next();
-            } else {
-                // User is not authenticated, redirect to login
-                // next('/logout');
-                next("/");
-            }
-        },
-    },
-
-
+   
     // Role Paths
     {
         name: "roles",
@@ -572,116 +508,7 @@ export const routes = [
     beforeEnter: guard,
 },
 
-    { name: "add-product", path: "/add-product", component: AddProduct },
-    {
-        name: "manage-product",
-        path: "/manage-product",
-        component: ManageProduct,
-        meta: { title: "Add Product" },
-        beforeEnter: guard,
-    },
-    {
-        name: "edit-product",
-        path: "/edit-product/:id",
-        component: EditProduct,
-        meta: { title: "Edit Product" },
-        beforeEnter: guard,
-    },
-
-    {
-        name: "add-expense",
-        path: "/add-expense",
-        component: AddExpense,
-        meta: { title: "Add Expense" },
-        beforeEnter: guard,
-    },
-    {
-        name: "manage-expense",
-        path: "/manage-expense",
-        component: ManageExpense,
-        beforeEnter: guard,
-    },
-    {
-        name: "edit-expense",
-        path: "/edit-expense/:id",
-        component: EditExpense,
-        beforeEnter: guard,
-    },
-
-    // Salary Routes
-    {
-        path: "/given-salary",
-        component: Salary,
-        name: "given-salary",
-        beforeEnter: guard,
-    },
-    {
-        path: "/pay-salary/:id",
-        component: PaySalary,
-        name: "pay-salary",
-        beforeEnter: guard,
-    },
-
-    {
-        path: "/salary",
-        component: AllSalary,
-        name: "salary",
-        beforeEnter: guard,
-    },
-    {
-        path: "/view-salary/:id",
-        component: ViewSalary,
-        name: "view-salary",
-        beforeEnter: guard,
-    },
-    {
-        path: "/edit-salary/:id",
-        component: EditSalary,
-        name: "edit-salary",
-        beforeEnter: guard,
-    },
-
-    // Stock Routes
-    {
-        path: "/stock",
-        component: Stock,
-        name: "stock",
-        beforeEnter: guard,
-    },
-    {
-        path: "/edit-stock/:id",
-        component: EditStock,
-        name: "edit-stock",
-        beforeEnter: guard,
-    },
-
-    // POS Routes
-    {
-        path: "/pos",
-        component: Pos,
-        name: "pos",
-        beforeEnter: guard,
-    },
-
-    // Order Routes
-    {
-        path: "/order",
-        component: Order,
-        name: "order",
-        beforeEnter: guard,
-    },
-    {
-        path: "/view-order/:id",
-        component: ViewOrder,
-        name: "view-order",
-        beforeEnter: guard,
-    },
-    {
-        path: "/searchorder",
-        component: SearchOrder,
-        name: "searchorder",
-        beforeEnter: guard,
-    },
+   
     {
         path: "/reports",
         component: ReportIndex,

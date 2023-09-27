@@ -253,7 +253,7 @@
                         >
                         <a
                           @click="deleteCustomerPayment(customer_payment.id)"
-                          class="btn btn-sm btn-danger px-2 disabled"
+                          class="btn btn-sm btn-danger disabled px-2 disabled"
                         >
                           <font color="#ffffff"
                             ><i class="fa fa-trash"></i> Delete</font

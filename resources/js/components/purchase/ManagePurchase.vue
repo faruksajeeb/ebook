@@ -388,8 +388,8 @@
                           ><i class="fa fa-edit"></i> Edit</router-link
                         >
                         <a
-                          @click="deletepurchase(purchase.id)"
-                          class="btn btn-sm btn-danger px-2 disabled"
+                          @click="deletePurchase(purchase.id)"
+                          class="btn btn-sm btn-danger disabled px-2 disabled"
                         >
                           <font color="#ffffff"
                             ><i class="fa fa-trash"></i> Delete</font
@@ -665,15 +665,16 @@ export default {
         .then((response) => {
           this.record = response.data;
           const fileName = response.data.purchase.attach_file;
-          const parts = fileName.split(".");
-          if (parts.length > 1) {
+          if(fileName){
+            const parts = fileName.split(".");
+            if (parts.length > 1) {
             // Get the last part as the file extension
             this.fileExtension = parts[parts.length - 1].toLowerCase();
             // alert(this.fileExtension);
-          } else {
+            } else {
             this.fileExtension = null; // No file extension found
+            }
           }
-        
           // Open the Bootstrap modal
           // $("#recordModal").modal("show");
         })

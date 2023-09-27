@@ -112,6 +112,7 @@ class RoleController extends Controller
     public function store(Request $request)
     {
 
+      //  dd($request->all());
         #permission verfy
         // $this->webspice->permissionVerify('role.create');
 
@@ -129,6 +130,13 @@ class RoleController extends Controller
                 'name.max' => 'The role name may not be greater than 20 characters.',
             ]
         );
+
+        if (($request->selectedPermissions == null || count($request->selectedPermissions) == 0)) {
+            return response()->json(
+                [
+                    'error' => 'The cart/ courtesy cart must contain at least one item.',
+                ], 401);
+        }
 
         $data = array(
             'name' => $request->name,

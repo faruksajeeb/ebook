@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link href="{{ asset('assets/img/logo/logo.png') }}" rel="icon">
-    <title>Faizaan's Shop - Dashboard</title>
+    <title>E Shop - Dashboard</title>
     <link href="{{ asset('assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/css/faizaan-admin.css') }}" rel="stylesheet">

@@ -4,9 +4,9 @@
       class="navbar-nav sidebar sidebar-light accordion" id="accordionSidebar">
       <router-link to="/dashboard" class="sidebar-brand d-flex align-items-center justify-content-center">
         <div class="sidebar-brand-icon">
-          <img src="assets/img/logo/logo.png">
+          <img :src="`${publicPath}assets/img/logo/logo.png`">
         </div>
-        <div class="sidebar-brand-text mx-3">Faizaan's Shop</div>
+        <div class="sidebar-brand-text mx-3">E Shop</div>
       </router-link>
       <hr class="sidebar-divider my-0">
       <!-- <li class="nav-item active">
@@ -439,6 +439,11 @@
 import { mapActions } from 'vuex';
 export default {
     name: 'Sidebar',
+	data(){
+	 return {	 
+		publicPath: window.publicPath,
+	 }
+	},
     mounted() {
     this.fetchUserPermissions(); // Fetch user permissions when the component is mounted
     },
