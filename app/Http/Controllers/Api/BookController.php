@@ -29,7 +29,8 @@ class BookController extends Controller
 
     public function index()
     {
-
+        #permission verfy
+        $this->webspice->permissionVerify('book.manage');
         try {
             $paginate = request('paginate', 5);
             $searchTerm = request('search', '');
@@ -81,7 +82,7 @@ class BookController extends Controller
     public function store(Request $request)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('book.create');
+        $this->webspice->permissionVerify('book.create');
 
         // Unique check __> book name, author, publisher
 
@@ -164,7 +165,7 @@ class BookController extends Controller
     {
         // dd($request->isMethod('put'));
         #permission verfy
-        // $this->webspice->permissionVerify('book.edit');
+        $this->webspice->permissionVerify('book.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
@@ -236,7 +237,7 @@ class BookController extends Controller
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('book.delete');
+        $this->webspice->permissionVerify('book.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);

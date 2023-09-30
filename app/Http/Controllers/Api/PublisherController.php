@@ -29,6 +29,8 @@ class PublisherController extends Controller
     public function index()
     {
 
+        #permission verfy
+        $this->webspice->permissionVerify('publisher.manage');
         try {
             $paginate = request('paginate', 5);
             $searchTerm = request('search', '');
@@ -78,7 +80,7 @@ class PublisherController extends Controller
     public function store(Request $request)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('publisher.create');
+        $this->webspice->permissionVerify('publisher.create');
 
         $request->validate(
             [
@@ -151,7 +153,7 @@ class PublisherController extends Controller
     {
         // dd($request->isMethod('put'));
         #permission verfy
-        // $this->webspice->permissionVerify('publisher.edit');
+        $this->webspice->permissionVerify('publisher.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
@@ -219,7 +221,7 @@ class PublisherController extends Controller
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('publisher.delete');
+        $this->webspice->permissionVerify('publisher.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);

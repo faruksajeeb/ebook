@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="login-main ">
     <div class="container-login">
       <div class="row justify-content-center">
         <div class="col-xl-10 col-lg-10 col-md-10 offset-md-1">
@@ -9,8 +9,8 @@
                 <div class="col-lg-12">
                   <div class="login-form">
                     <div class="text-center text-white">
-                      <img :src="`${publicPath}assets/img/logo/logo.png`" width="80" />
-                      <h1 class="h4 text-white-900 mb-4">LOGIN</h1>
+                      <img :src="`${publicPath}assets/img/logo/logo.png`" width="200" />
+                      <h1 class="h4 my-text-primary text-bold mb-4">LOGIN</h1>
                     </div>
                     <form class="login" @submit.prevent="login"  @keydown="form.onKeydown($event)">
                       <AlertError :form="form" message="There were some problems with your input." />
@@ -46,7 +46,7 @@
                           errors.password[0]
                         }}</small> -->
                       </div>
-                      <div class="form-group">
+                      <!-- <div class="form-group">
                         <div
                           class="custom-control custom-checkbox small"
                           style="line-height: 1.5rem"
@@ -60,7 +60,7 @@
                             >Remember Me</label
                           >
                         </div>
-                      </div>
+                      </div> -->
                       <div class="form-group">
                         <!-- <Button :form="form" class="btn btn-primary">
                         Log In
@@ -84,19 +84,18 @@
 					-->
                     </form>
                     <hr />
-                    <div class="text-center text-white">
+                    <!-- <div class="text-center text-white">
                       <router-link
                         to="/register"
                         class="font-weight-bold small text-white"
                         >Create an Account!</router-link
                       >
-                      <!-- <a class="font-weight-bold small" href="register.html">Create an Account!</a> -->
                     </div>
-                    <hr />
+                    <hr /> -->
                     <div class="text-center">
                       <router-link
                         to="/forget_password"
-                        class="font-weight-bold small text-white"
+                        class="font-weight-bold small text-black"
                         >Forget Password</router-link
                       >
                     </div>
@@ -116,8 +115,10 @@
 export default {
   name: "Login",
   created() {
+    // alert('hry');
     if (User.loggedIn()) {
-      this.$router.push({ name: "dashboard" });
+      // alert(888);
+     this.$router.push({ name: "dashboard" });
     }
   },
   data: () => ({
@@ -164,4 +165,20 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.login-main{
+  height: 100vh;
+  width: 100%;
+  /* margin-left:-1.5em; */
+
+}
+.container-fluid{
+    --bs-gutter-x: 0!important;
+    --bs-gutter-y: 0;
+    width: 100%;
+    padding-right: calc(var(--bs-gutter-x) * 0.5)!important;
+    padding-left: calc(var(--bs-gutter-x) * 0.5)!important;
+    margin-right: auto;
+    margin-left: auto;
+}
+</style>

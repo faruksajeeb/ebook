@@ -7,6 +7,7 @@ use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -98,13 +99,17 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+        $user = User::find(auth()->user()->id);   
+        $roles = $user->getRoleNames();
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => $this->guard()->factory()->getTTL() * 60,
+            // 'user' => auth()->user(),
             'user_id' => auth()->user()->id,
             'user_name' => auth()->user()->name,
             'user_email' => auth()->user()->email,
+            'user_roles' => $roles,
         ]);
     }
 

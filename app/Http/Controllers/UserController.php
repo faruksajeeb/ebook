@@ -33,7 +33,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         // #permission verfy
-        // $this->webspice->permissionVerify('user.view');
+        $this->webspice->permissionVerify('user.manage');
 
         // # Query Start
         // $fileTag = '';
@@ -111,7 +111,7 @@ class UserController extends Controller
     {
 
         #permission verfy
-        // $this->webspice->permissionVerify('user.create');
+        $this->webspice->permissionVerify('user.create');
 
         $request->validate(
             [
@@ -175,7 +175,7 @@ class UserController extends Controller
     public function show($id)
     {
          #permission verfy
-        //  $this->webspice->permissionVerify('user.view');
+        $this->webspice->permissionVerify('user.manage');
         try {
             $role = User::with('roles')->find($id);
             return $role;
@@ -211,7 +211,7 @@ class UserController extends Controller
     {
       
         #permission verfy
-        // $this->webspice->permissionVerify('user.edit');
+        $this->webspice->permissionVerify('user.update');
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 

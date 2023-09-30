@@ -28,6 +28,8 @@ class CustomerController extends Controller
 
     public function index()
     {
+        #permission verfy
+        $this->webspice->permissionVerify('customer.manage');
 
         try {
             $paginate = request('paginate', 5);
@@ -78,7 +80,7 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('customer.create');
+        $this->webspice->permissionVerify('customer.create');
 
         $request->validate(
             [
@@ -152,7 +154,7 @@ class CustomerController extends Controller
     {
         // dd($request->isMethod('put'));
         #permission verfy
-        // $this->webspice->permissionVerify('customer.edit');
+        $this->webspice->permissionVerify('customer.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
@@ -223,7 +225,7 @@ class CustomerController extends Controller
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('customer.delete');
+        $this->webspice->permissionVerify('customer.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);

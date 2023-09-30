@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use App\Lib\Webspice;
 
 // use Spatie\Permission\Models\Role;
 // use Spatie\Permission\Models\Permission;
@@ -18,18 +19,20 @@ class RoleController extends Controller
     protected $roles;
     protected $roleid;
     public $tableName;
+    protected $webspice;
 
     public function __construct(Role $roles)
     {
         $this->roles = $roles;
         $this->tableName = 'roles';
         $this->middleware('JWT');
+        $this->webspice = new Webspice();
     }
 
     public function index()
     {
         #permission verfy
-        // $this->webspice->permissionVerify('role.view');
+        $this->webspice->permissionVerify('role.manage');
 
         // $fileTag = '';
         // if ($request->get('status') == 'archived') {
@@ -114,7 +117,7 @@ class RoleController extends Controller
 
       //  dd($request->all());
         #permission verfy
-        // $this->webspice->permissionVerify('role.create');
+        $this->webspice->permissionVerify('role.create');
 
         $request->validate(
             [
@@ -210,7 +213,6 @@ class RoleController extends Controller
 
     public function update(Request $request, $id)
     {
-
         #permission verfy
         // $this->webspice->permissionVerify('role.edit');
 
@@ -235,8 +237,8 @@ class RoleController extends Controller
             if (!empty($permissions)) {
                 $role->syncPermissions($permissions);
             }
-            if (!in_array($role->name, ['superadmin', 'developer'])) {
-                $role->name = $role->name;
+            if (in_array($role->name, ['superadmin', 'developer'])) {
+                // $role->name = $role->name;
             } else {
                 $role->name = $request->name;
             }
@@ -254,7 +256,7 @@ class RoleController extends Controller
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('role.delete');
+        $this->webspice->permissionVerify('role.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);

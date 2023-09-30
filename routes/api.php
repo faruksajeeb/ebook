@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\PublisherController;
 use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\PurchaseController;
 use App\Http\Controllers\Api\SaleController;
+use App\Http\Controllers\Api\SaleReturnController;
 use App\Http\Controllers\Api\CustomerPaymentController;
 
 use App\Http\Controllers\Api\CartController;
@@ -100,6 +101,10 @@ Route::middleware('JWT')->group(function () {
     Route::apiResource('/sales',SaleController::class);
     Route::post('/sales/{id}',[SaleController::class,'update']);
     Route::get('export-sale-invoice-pdf/{id}', [SaleController::class, 'exportInvoicePdf'])->name('export-sale-invoice-pdf');
+    
+    Route::apiResource('/sale-returns',SaleReturnController::class);
+    Route::post('/sale-returns/{id}',[SaleReturnController::class,'update']);
+    Route::get('export-sale-return-invoice-pdf/{id}', [SaleReturnController::class, 'exportInvoicePdf'])->name('export-sale-return-invoice-pdf');
     
     Route::apiResource('/customer-payments',CustomerPaymentController::class);
     Route::post('/customer-payments/{id}',[CustomerPaymentController::class,'update']);

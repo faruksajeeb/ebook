@@ -28,6 +28,9 @@ class CategoryController extends Controller
     public function index()
     {
 
+        #permission verfy
+        $this->webspice->permissionVerify('category.manage');
+
         try {
             $paginate = request('paginate', 5);
             $searchTerm = request('search', '');
@@ -70,7 +73,7 @@ class CategoryController extends Controller
     {
 
         #permission verfy
-        // $this->webspice->permissionVerify('category.create');
+        $this->webspice->permissionVerify('category.create');
 
         $request->validate(
             [
@@ -122,7 +125,7 @@ class CategoryController extends Controller
        
 
         #permission verfy
-        // $this->webspice->permissionVerify('category.edit');
+        $this->webspice->permissionVerify('category.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
@@ -157,7 +160,7 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('category.delete');
+        $this->webspice->permissionVerify('category.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);

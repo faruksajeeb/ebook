@@ -1,7 +1,9 @@
 import { createWebHistory, createRouter } from "vue-router";
+import store from "./store/index";
 import User from "./Helpers/User";
 window.User = User;
 
+import PermissionDenied from "./components/PermissionDenied.vue";
 import Login from "./components/auth/Login.vue";
 import Register from "./components/auth/Register.vue";
 import ForgetPassword from "./components/auth/ForgetPassword.vue";
@@ -39,7 +41,6 @@ import CategoryForm from "./components/master_data/category/CategoryForm.vue";
 import ManageCategory from "./components/master_data/category/ManageCategory.vue";
 import ViewCategory from "./components/master_data/category/Category.vue";
 
-
 // SubCategory Files
 import SubCategoryForm from "./components/master_data/sub-category/SubCategoryForm.vue";
 import ManageSubCategory from "./components/master_data/sub-category/ManageSubCategory.vue";
@@ -69,7 +70,6 @@ import ManageBook from "./components/book/ManageBook.vue";
 import PurchaseForm from "./components/purchase/PurchaseForm.vue";
 import ManagePurchase from "./components/purchase/ManagePurchase.vue";
 
-
 // Sale Files
 import SaleForm from "./components/sale/SaleForm.vue";
 import ManageSale from "./components/sale/ManageSale.vue";
@@ -78,21 +78,50 @@ import ManageSale from "./components/sale/ManageSale.vue";
 import CustomerPaymentForm from "./components/customer_payment/CustomerPaymentForm.vue";
 import ManageCustomerPayment from "./components/customer_payment/ManageCustomerPayment.vue";
 
+// Supplier Payment Files
+import SupplierPaymentForm from "./components/supplier_payment/SupplierPaymentForm.vue";
+import ManageSupplierPayment from "./components/supplier_payment/ManageSupplierPayment.vue";
 
+// Sale Return Files
+import SaleReturnForm from "./components/sale_return/SaleReturnForm.vue";
+import ManageSaleReturn from "./components/sale_return/ManageSaleReturn.vue";
+
+// Purchase Return Files
+import PurchaseReturnForm from "./components/purchase_return/PurchaseReturnForm.vue";
+import ManagePurchaseReturn from "./components/purchase_return/ManagePurchaseReturn.vue";
+
+// Damage Item Files
+import DamageItemForm from "./components/damage_item/DamageItemForm.vue";
+import ManageDamageItem from "./components/damage_item/ManageDamageItem.vue";
 
 import ReportIndex from "./components/report/Index.vue";
 
-
-function guard(to, from, next){
-    if(User.loggedIn()) {
-        // or however you store your logged in state
-        next(); // allow to enter route
-    } else{
-        next('/'); // go to '/login';
-
+function guard(to, from, next) {
+    // or however you store your logged in state
+    if (User.loggedIn()) {
+        // Check if the route requires authentication
+        if (to.meta.requiresAuth) {
+            // Check if the user has the required permissions
+            if (store.getters.hasPermission(to.meta.requiredPermissions)) {
+                next();
+            } else {
+                // Redirect to a permission denied page or show an error
+                next("/permission-denied");
+            }
+        } else {
+            next();
+        }
+    } else {
+        next("/"); // go to '/login';
     }
 }
 export const routes = [
+    {
+        name: "permission-denied",
+        path: "/permission-denied",
+        component: PermissionDenied,
+        meta: { title: "Permission Denied!" },
+    },
     {
         name: "login",
         path: "/",
@@ -123,34 +152,50 @@ export const routes = [
         path: "/logout",
         component: Logout,
     },
-   
+
     // Role Paths
     {
         name: "roles",
         path: "/roles",
         component: ManageRole,
-        meta: { title: "Manage Roles" },
+        meta: {
+            title: "Manage Roles",
+            requiresAuth: true,
+            requiredPermissions: ["role.manage"],
+        },
         beforeEnter: guard,
     },
     {
         name: "role.create",
         path: "/roles/create",
         component: RoleForm,
-        meta: { title: "Create Role" },
+        meta: {
+            title: "Create Role",
+            requiresAuth: true,
+            requiredPermissions: ["role.create"],
+        },
         beforeEnter: guard,
     },
     {
         name: "role.edit",
         path: "/roles/:id/edit",
         component: RoleForm,
-        meta: { title: "Edit Role" },
+        meta: {
+            title: "Edit Role",
+            requiresAuth: true,
+            requiredPermissions: ["role.edit"],
+        },
         beforeEnter: guard,
     },
     {
         name: "role.view",
         path: "/roles/:id",
         component: Role,
-        meta: { title: "View Role" },
+        meta: {
+            title: "View Role",
+            requiresAuth: true,
+            requiredPermissions: ["role.view"],
+        },
         beforeEnter: guard,
     },
 
@@ -159,28 +204,44 @@ export const routes = [
         name: "users",
         path: "/users",
         component: ManageUser,
-        meta: { title: "Manage Users" },
+        meta: {
+            title: "Manage Users",
+            requiresAuth: true,
+            requiredPermissions: ["user.manage"],
+        },
         beforeEnter: guard,
     },
     {
         name: "user.create",
         path: "/users/create",
         component: UserForm,
-        meta: { title: "Add User" },
+        meta: {
+            title: "Add User",
+            requiresAuth: true,
+            requiredPermissions: ["user.create"],
+        },
         beforeEnter: guard,
     },
     {
         name: "user.edit",
         path: "/users/:id/edit",
         component: UserForm,
-        meta: { title: "Edit User" },
+        meta: {
+            title: "Edit User",
+            requiresAuth: true,
+            requiredPermissions: ["user.edit"],
+        },
         beforeEnter: guard,
     },
     {
         name: "user.view",
         path: "/users/:id",
         component: ViewUser,
-        meta: { title: "View User" },
+        meta: {
+            title: "View User",
+            requiresAuth: true,
+            requiredPermissions: ["user.view"],
+        },
         beforeEnter: guard,
     },
 
@@ -189,79 +250,123 @@ export const routes = [
         name: "add-permission",
         path: "/add-permission",
         component: AddPermission,
-        meta: { title: "Add Permission" },
+        meta: {
+            title: "Add Permission",
+            requiresAuth: true,
+            requiredPermissions: ["permission.create"],
+        },
         beforeEnter: guard,
     },
     {
         name: "edit-permission",
         path: "/edit-permission/:id",
         component: EditPermission,
-        meta: { title: "Edit Permission" },
+        meta: {
+            title: "Edit Permission",
+            requiresAuth: true,
+            requiredPermissions: ["permission.edit"],
+        },
         beforeEnter: guard,
     },
     {
         name: "manage-permission",
         path: "/manage-permission",
         component: ManagePermission,
-        meta: { title: "Manage Permission" },
+        meta: {
+            title: "Manage Permission",
+            requiresAuth: true,
+            requiredPermissions: ["permission.manage"],
+        },
         beforeEnter: guard,
     },
-// Option Group Paths
-{
-    name: "option-groups",
-    path: "/option-groups",
-    component: ManageOptionGroup,
-    meta: { title: "Manage OptionGroup" },
-    beforeEnter: guard,
-},
-{
-    name: "option-groups.create",
-    path: "/option-groups/create",
-    component: OptionGroupForm,
-    meta: { title: "Add Option Group" },
-    beforeEnter: guard,
-},
-{
-    name: "option-groups.edit",
-    path: "/option-groups/:id/edit",
-    component: OptionGroupForm,
-    meta: { title: "Edit Option Group" },
-    beforeEnter: guard,
-},
-{
-    name: "option-groups.view",
-    path: "/option-groups/:id",
-    component: ViewOptionGroup,
-    meta: { title: "View Option Group" },
-    beforeEnter: guard,
-},
+    // Option Group Paths
+    {
+        name: "option-groups",
+        path: "/option-groups",
+        component: ManageOptionGroup,
+        meta: {
+            title: "Manage Option Group",
+            requiresAuth: true,
+            requiredPermissions: ["option_group.manage"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "option-groups.create",
+        path: "/option-groups/create",
+        component: OptionGroupForm,
+        meta: {
+            title: "Add Option Group",
+            requiresAuth: true,
+            requiredPermissions: ["option_group.create"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "option-groups.edit",
+        path: "/option-groups/:id/edit",
+        component: OptionGroupForm,
+        meta: {
+            title: "Edit Option Group",
+            requiresAuth: true,
+            requiredPermissions: ["option_group.edit"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "option-groups.view",
+        path: "/option-groups/:id",
+        component: ViewOptionGroup,
+        meta: {
+            title: "View Option Group",
+            requiresAuth: true,
+            requiredPermissions: ["option_group.view"],
+        },
+        beforeEnter: guard,
+    },
     // Option Paths
     {
         name: "options",
         path: "/options",
         component: ManageOption,
-        meta: { title: "Manage Options" },
+        meta: {
+            title: "Manage Options",
+            requiresAuth: true,
+            requiredPermissions: ["option.manage"],
+        },
         beforeEnter: guard,
     },
     {
         name: "options.create",
         path: "/options/create",
         component: OptionForm,
-        meta: { title: "Add Option" },
+        meta: {
+            title: "Add Option",
+            requiresAuth: true,
+            requiredPermissions: ["option.create"],
+        },
         beforeEnter: guard,
     },
     {
         name: "options.edit",
         path: "/options/:id/edit",
         component: OptionForm,
-        meta: { title: "Edit Option" },
+        meta: {
+            title: "Edit Option",
+            requiresAuth: true,
+            requiredPermissions: ["option.edit"],
+        },
         beforeEnter: guard,
     },
     {
         name: "options.view",
         path: "/options/:id",
         component: ViewOption,
-        meta: { title: "View Option" },
+        meta: {
+            title: "View Option",
+            requiresAuth: true,
+            requiredPermissions: ["option.view"],
+        },
         beforeEnter: guard,
     },
 
@@ -270,28 +375,44 @@ export const routes = [
         name: "categories",
         path: "/categories",
         component: ManageCategory,
-        meta: { title: "Manage Category" },
+        meta: {
+            title: "Manage Category",
+            requiresAuth: true,
+            requiredPermissions: ["category.manage"],
+        },
         beforeEnter: guard,
     },
     {
         name: "categories.create",
         path: "/categories/create",
         component: CategoryForm,
-        meta: { title: "Add Category" },
+        meta: {
+            title: "Add Category",
+            requiresAuth: true,
+            requiredPermissions: ["category.create"],
+        },
         beforeEnter: guard,
     },
     {
         name: "categories.edit",
         path: "/categories/:id/edit",
         component: CategoryForm,
-        meta: { title: "Edit Category" },
+        meta: {
+            title: "Edit Category",
+            requiresAuth: true,
+            requiredPermissions: ["category.edit"],
+        },
         beforeEnter: guard,
     },
     {
         name: "categories.view",
         path: "/categories/:id",
         component: ViewCategory,
-        meta: { title: "View Category" },
+        meta: {
+            title: "View Category",
+            requiresAuth: true,
+            requiredPermissions: ["category.view"],
+        },
         beforeEnter: guard,
     },
 
@@ -300,219 +421,473 @@ export const routes = [
         name: "sub-categories",
         path: "/sub-categories",
         component: ManageSubCategory,
-        meta: { title: "Manage Sub Category" },
+        meta: {
+            title: "Manage Sub-Category",
+            requiresAuth: true,
+            requiredPermissions: ["sub_category.manage"],
+        },
         beforeEnter: guard,
     },
     {
         name: "sub-categories.create",
         path: "/sub-categories/create",
         component: SubCategoryForm,
-        meta: { title: "Add Sub-Category" },
+        meta: {
+            title: "Add Sub-Category",
+            requiresAuth: true,
+            requiredPermissions: ["sub_category.create"],
+        },
         beforeEnter: guard,
     },
     {
         name: "sub-categories.edit",
         path: "/sub-categories/:id/edit",
         component: SubCategoryForm,
-        meta: { title: "Edit Sub-Category" },
+        meta: {
+            title: "Edit Sub-Category",
+            requiresAuth: true,
+            requiredPermissions: ["sub_category.edit"],
+        },
         beforeEnter: guard,
     },
     {
         name: "sub-categories.view",
         path: "/sub-categories/:id",
         component: ViewSubCategory,
-        meta: { title: "View Sub-Category" },
+        meta: {
+            title: "View Sub-Category",
+            requiresAuth: true,
+            requiredPermissions: ["subcategory.view"],
+        },
         beforeEnter: guard,
     },
 
-// Author Paths
-{
-    name: "authors",
-    path: "/authors",
-    component: ManageAuthor,
-    meta: { title: "Manage Author" },
-    beforeEnter: guard,
-},
-{
-    name: "authors.create",
-    path: "/authors/create",
-    component: AuthorForm,
-    meta: { title: "Add Author" },
-    beforeEnter: guard,
-},
-{
-    name: "authors.edit",
-    path: "/authors/:id/edit",
-    component: AuthorForm,
-    meta: { title: "Edit Author" },
-    beforeEnter: guard,
-},
+    // Author Paths
+    {
+        name: "authors",
+        path: "/authors",
+        component: ManageAuthor,
+        meta: {
+            title: "Manage Author",
+            requiresAuth: true,
+            requiredPermissions: ["author.manage"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "authors.create",
+        path: "/authors/create",
+        component: AuthorForm,
+        meta: {
+            title: "Add Author",
+            requiresAuth: true,
+            requiredPermissions: "author.create",
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "authors.edit",
+        path: "/authors/:id/edit",
+        component: AuthorForm,
+        meta: {
+            title: "Edit Author",
+            requiresAuth: true,
+            requiredPermissions: ["author.edit"],
+        },
+        beforeEnter: guard,
+    },
 
-// Publisher Paths
-{
-    name: "publishers",
-    path: "/publishers",
-    component: ManagePublisher,
-    meta: { title: "Manage Publisher" },
-    beforeEnter: guard,
-},
-{
-    name: "publishers.create",
-    path: "/publishers/create",
-    component: PublisherForm,
-    meta: { title: "Add Publisher" },
-    beforeEnter: guard,
-},
-{
-    name: "publishers.edit",
-    path: "/publishers/:id/edit",
-    component: PublisherForm,
-    meta: { title: "Edit Publisher" },
-    beforeEnter: guard,
-},
-    
+    // Publisher Paths
+    {
+        name: "publishers",
+        path: "/publishers",
+        component: ManagePublisher,
+        meta: {
+            title: "Manage Publisher",
+            requiresAuth: true,
+            requiredPermissions: ["publisher.manage"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "publishers.create",
+        path: "/publishers/create",
+        component: PublisherForm,
+        meta: {
+            title: "Add Publisher",
+            requiresAuth: true,
+            requiredPermissions: ["publisher.create"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "publishers.edit",
+        path: "/publishers/:id/edit",
+        component: PublisherForm,
+        meta: {
+            title: "Edit Publisher",
+            requiresAuth: true,
+            requiredPermissions: ["publisher.edit"],
+        },
+        beforeEnter: guard,
+    },
+
     // Customer Paths
     {
         name: "customers",
         path: "/customers",
         component: ManageCustomer,
-        meta: { title: "Manage Customer" },
+        meta: {
+            title: "Manage Customer",
+            requiresAuth: true,
+            requiredPermissions: ["customer.manage"],
+        },
         beforeEnter: guard,
     },
     {
         name: "customers.create",
         path: "/customers/create",
         component: CustomerForm,
-        meta: { title: "Add Customer" },
+        meta: {
+            title: "Add Customer",
+            requiresAuth: true,
+            requiredPermissions: ["customer.create"],
+        },
         beforeEnter: guard,
     },
     {
         name: "customers.edit",
         path: "/customers/:id/edit",
         component: CustomerForm,
-        meta: { title: "Edit Customer" },
+        meta: {
+            title: "Edit Customer",
+            requiresAuth: true,
+            requiredPermissions: ["customer.edit"],
+        },
         beforeEnter: guard,
     },
-   
-     // Supplier Paths
-     {
+
+    // Supplier Paths
+    {
         name: "suppliers",
         path: "/suppliers",
         component: ManageSupplier,
-        meta: { title: "Manage Supplier" },
+        meta: {
+            title: "Manage Supplier",
+            requiresAuth: true,
+            requiredPermissions: ["supplier.manage"],
+        },
         beforeEnter: guard,
     },
     {
         name: "suppliers.create",
         path: "/suppliers/create",
         component: SupplierForm,
-        meta: { title: "Add Supplier" },
+        meta: {
+            title: "Add Supplier",
+            requiresAuth: true,
+            requiredPermissions: ["supplier.create"],
+        },
         beforeEnter: guard,
     },
     {
         name: "suppliers.edit",
         path: "/suppliers/:id/edit",
         component: SupplierForm,
-        meta: { title: "Edit Supplier" },
+        meta: {
+            title: "Edit Supplier",
+            requiresAuth: true,
+            requiredPermissions: ["supplier.edit"],
+        },
         beforeEnter: guard,
     },
-// Book Paths
-{
-    name: "books",
-    path: "/books",
-    component: ManageBook,
-    meta: { title: "Manage Book" },
-    beforeEnter: guard,
-},
-{
-    name: "books.create",
-    path: "/books/create",
-    component: BookForm,
-    meta: { title: "Add Book" },
-    beforeEnter: guard,
-},
-{
-    name: "books.edit",
-    path: "/books/:id/edit",
-    component: BookForm,
-    meta: { title: "Edit Book" },
-    beforeEnter: guard,
-},
-// Purchase Paths
-{
-    name: "purchases",
-    path: "/purchases",
-    component: ManagePurchase,
-    meta: { title: "Manage Purchase" },
-    beforeEnter: guard,
-},
-{
-    name: "purchases.create",
-    path: "/purchases/create",
-    component: PurchaseForm,
-    meta: { title: "Add Purchase" },
-    beforeEnter: guard,
-},
-{
-    name: "purchases.edit",
-    path: "/purchases/:id/edit",
-    component: PurchaseForm,
-    meta: { title: "Edit Purchase" },
-    beforeEnter: guard,
-},
+    // Book Paths
+    {
+        name: "books",
+        path: "/books",
+        component: ManageBook,
+        meta: {
+            title: "Manage Book",
+            requiresAuth: true,
+            requiredPermissions: ["book.manage"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "books.create",
+        path: "/books/create",
+        component: BookForm,
+        meta: {
+            title: "Add Book",
+            requiresAuth: true,
+            requiredPermissions: ["book.create"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "books.edit",
+        path: "/books/:id/edit",
+        component: BookForm,
+        meta: {
+            title: "Edit Book",
+            requiresAuth: true,
+            requiredPermissions: ["book.edit"],
+        },
+        beforeEnter: guard,
+    },
+    // Purchase Paths
+    {
+        name: "purchases",
+        path: "/purchases",
+        component: ManagePurchase,
+        meta: {
+            title: "Manage Purchase",
+            requiresAuth: true,
+            requiredPermissions: ["purchase.manage"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "purchases.create",
+        path: "/purchases/create",
+        component: PurchaseForm,
+        meta: {
+            title: "Add Purchase",
+            requiresAuth: true,
+            requiredPermissions: ["purchase.create"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "purchases.edit",
+        path: "/purchases/:id/edit",
+        component: PurchaseForm,
+        meta: {
+            title: "Edit Purchase",
+            requiresAuth: true,
+            requiredPermissions: ["purchase.edit"],
+        },
+        beforeEnter: guard,
+    },
 
+    // Sale Paths
+    {
+        name: "sales",
+        path: "/sales",
+        component: ManageSale,
+        meta: {
+            title: "Manage Sale",
+            requiresAuth: true,
+            requiredPermissions: ["sale.manage"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "sales.create",
+        path: "/sales/create",
+        component: SaleForm,
+        meta: {
+            title: "Add Sale",
+            requiresAuth: true,
+            requiredPermissions: ["sale.create"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "sales.edit",
+        path: "/sales/:id/edit",
+        component: SaleForm,
+        meta: {
+            title: "Edit Sale",
+            requiresAuth: true,
+            requiredPermissions: ["sale.edit"],
+        },
+        beforeEnter: guard,
+    },
 
-// Sale Paths
-{
-    name: "sales",
-    path: "/sales",
-    component: ManageSale,
-    meta: { title: "Manage Sale" },
-    beforeEnter: guard,
-},
-{
-    name: "sales.create",
-    path: "/sales/create",
-    component: SaleForm,
-    meta: { title: "Add Sale" },
-    beforeEnter: guard,
-},
-{
-    name: "sales.edit",
-    path: "/sales/:id/edit",
-    component: SaleForm,
-    meta: { title: "Edit Sale" },
-    beforeEnter: guard,
-},
+    // Customer Payments
+    {
+        name: "customer_payments",
+        path: "/customer_payments",
+        component: ManageCustomerPayment,
+        meta: {
+            title: "Manage Customer Payment",
+            requiresAuth: true,
+            requiredPermissions: ["customer_payment.manage"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "customer_payments.create",
+        path: "/customer_payments/create",
+        component: CustomerPaymentForm,
+        meta: {
+            title: "Add Customer Payment",
+            requiresAuth: true,
+            requiredPermissions: ["customer_payment.create"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "customer_payments.edit",
+        path: "/customer_payments/:id/edit",
+        component: CustomerPaymentForm,
+        meta: {
+            title: "Edit Customer Payment",
+            requiresAuth: true,
+            requiredPermissions: ["customer_payment.edit"],
+        },
+        beforeEnter: guard,
+    },
 
-// Customer Payments
-{
-    name: "customer_payments",
-    path: "/customer_payments",
-    component: ManageCustomerPayment,
-    meta: { title: "Manage Customer Payment" },
-    beforeEnter: guard,
-},
-{
-    name: "customer_payments.create",
-    path: "/customer_payments/create",
-    component: CustomerPaymentForm,
-    meta: { title: "Add Customer Payment" },
-    beforeEnter: guard,
-},
-{
-    name: "customer_payments.edit",
-    path: "/customer_payments/:id/edit",
-    component: CustomerPaymentForm,
-    meta: { title: "Edit Customer Payment" },
-    beforeEnter: guard,
-},
+    // Customer Payments
+    {
+        name: "supplier_payments",
+        path: "/supplier_payments",
+        component: ManageSupplierPayment,
+        meta: {
+            title: "Manage Supplier Payment",
+            requiresAuth: true,
+            requiredPermissions: ["supplier_payment.manage"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "supplier_payments.create",
+        path: "/supplier_payments/create",
+        component: SupplierPaymentForm,
+        meta: {
+            title: "Add Supplier Payment",
+            requiresAuth: true,
+            requiredPermissions: ["supplier_payment.create"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "supplier_payments.edit",
+        path: "/supplier_payments/:id/edit",
+        component: SupplierPaymentForm,
+        meta: {
+            title: "Edit Supplier Payment",
+            requiresAuth: true,
+            requiredPermissions: ["supplier_payment.edit"],
+        },
+        beforeEnter: guard,
+    },
 
-   
+    // Purchase Returns
+    {
+        name: "purchase-returns",
+        path: "/purchase-returns",
+        component: ManagePurchaseReturn,
+        meta: {
+            title: "Manage Purchase Return",
+            requiresAuth: true,
+            requiredPermissions: ["purchase_return.manage"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "purchase-returns.create",
+        path: "/purchase-returns/create",
+        component: PurchaseReturnForm,
+        meta: {
+            title: "Add Purchase Return",
+            requiresAuth: true,
+            requiredPermissions: ["purchase_return.create"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "purchase-returns.edit",
+        path: "/purchase-returns/:id/edit",
+        component: PurchaseReturnForm,
+        meta: {
+            title: "Edit Purchase Return",
+            requiresAuth: true,
+            requiredPermissions: ["purchase_return.edit"],
+        },
+        beforeEnter: guard,
+    },
+
+    // Sale Returns
+    {
+        name: "sale-returns",
+        path: "/sale-returns",
+        component: ManageSaleReturn,
+        meta: {
+            title: "Manage Sale Return",
+            requiresAuth: true,
+            requiredPermissions: ["sale_return.manage"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "sale-returns.create",
+        path: "/sale-returns/create",
+        component: SaleReturnForm,
+        meta: {
+            title: "Add Sale Return",
+            requiresAuth: true,
+            requiredPermissions: ["sale_return.create"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "sale-returns.edit",
+        path: "/sale-returns/:id/edit",
+        component: SaleReturnForm,
+        meta: {
+            title: "Edit Sale Return",
+            requiresAuth: true,
+            requiredPermissions: ["sale_return.edit"],
+        },
+        beforeEnter: guard,
+    },
+
+    // Damage Item
+    {
+        name: "damage-items",
+        path: "/damage-items",
+        component: ManageDamageItem,
+        meta: {
+            title: "Manage Damage Item",
+            requiresAuth: true,
+            requiredPermissions: ["damage_item.manage"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "damage-items.create",
+        path: "/damage-items/create",
+        component: DamageItemForm,
+        meta: {
+            title: "Add Damage Item",
+            requiresAuth: true,
+            requiredPermissions: ["damage_item.create"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        name: "damage-items.edit",
+        path: "/damage-items/:id/edit",
+        component: DamageItemForm,
+        meta: {
+            title: "Edit Damage Item",
+            requiresAuth: true,
+            requiredPermissions: ["damage_item.edit"],
+        },
+        beforeEnter: guard,
+    },
     {
         path: "/reports",
         component: ReportIndex,
         name: "ReportIndex",
+        meta: {
+            title: "Reports",
+            requiresAuth: true,
+            requiredPermissions: ["report.view"],
+        },
         beforeEnter: guard,
     },
 ];

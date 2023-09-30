@@ -388,8 +388,8 @@
                           ><i class="fa fa-edit"></i> Edit</router-link
                         >
                         <a
-                          @click="deletePurchase(purchase.id)"
-                          class="btn btn-sm btn-danger disabled px-2 disabled"
+                          @click="deletepurchase(purchase.id)"
+                          class="btn btn-sm btn-danger px-2 disabled"
                         >
                           <font color="#ffffff"
                             ><i class="fa fa-trash"></i> Delete</font
@@ -549,6 +549,13 @@ export default {
           this.isLoading = false;
           document.querySelector(".loading-section").innerText =
             error.response.data.error;
+            this.isRefreshing = false;
+          if (error.response.status == 403) {
+            Notification.error(error.response.data.message);
+            // document.getElementById("loading-section").innerHtml = `<h3>${error.response.data.message}</h3>`;
+          } else {
+            Notification.error(error.response.data.error);
+          }
         })
         .finally(() => {
           this.isLoading = false;
@@ -665,16 +672,16 @@ export default {
         .then((response) => {
           this.record = response.data;
           const fileName = response.data.purchase.attach_file;
-          if(fileName){
-            const parts = fileName.split(".");
-            if (parts.length > 1) {
-            // Get the last part as the file extension
-            this.fileExtension = parts[parts.length - 1].toLowerCase();
-            // alert(this.fileExtension);
-            } else {
-            this.fileExtension = null; // No file extension found
-            }
-          }
+		  if(fileName){
+			  const parts = fileName.split(".");
+			  if (parts.length > 1) {
+				// Get the last part as the file extension
+				this.fileExtension = parts[parts.length - 1].toLowerCase();
+				// alert(this.fileExtension);
+			  } else {
+				this.fileExtension = null; // No file extension found
+			  }
+		  }
           // Open the Bootstrap modal
           // $("#recordModal").modal("show");
         })

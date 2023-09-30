@@ -1,7 +1,7 @@
 <template lang="">
     <div>
         <footer
-        v-show="$route.path === '/' || $route.path === '/register' || $route.path === '/forget_password' ? false : true"
+        
         class="sticky-footer bg-white">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">

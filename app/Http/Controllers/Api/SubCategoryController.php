@@ -27,7 +27,8 @@ class SubCategoryController extends Controller
 
     public function index()
     {
-
+#permission verfy
+$this->webspice->permissionVerify('sub_category.manage');
         try {
             $paginate = request('paginate', 5);
             $searchTerm = request('search', '');
@@ -70,7 +71,7 @@ class SubCategoryController extends Controller
     {
 
         #permission verfy
-        // $this->webspice->permissionVerify('SubCategory_group.create');
+        $this->webspice->permissionVerify('sub_category.create');
 
         $request->validate(
             [
@@ -119,7 +120,7 @@ class SubCategoryController extends Controller
     {
 
         #permission verfy
-        // $this->webspice->permissionVerify('SubCategory_group.edit');
+        $this->webspice->permissionVerify('sub_category.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
@@ -153,7 +154,7 @@ class SubCategoryController extends Controller
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('SubCategory_group.delete');
+        $this->webspice->permissionVerify('sub_category.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);

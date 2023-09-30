@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link href="{{ asset('assets/img/logo/logo.png') }}" rel="icon">
-    <title>E Shop - Dashboard</title>
+    <title>{{ config('app.name') }} - App</title>
     <link href="{{ asset('assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/css/faizaan-admin.css') }}" rel="stylesheet">
@@ -45,10 +45,16 @@
             background-color: #974EC3 !important;
             color: #FFFFFF !important;
         }
+        .my-text-primary{
+            color:#974EC3;
+        }
 
         .my-btn-danger {
             background-color: #F56C6C !important;
             color: #FFFFFF !important;
+        }
+        .my-text-danger {
+            color: #F56C6C !important;
         }
 
         .my-text-success {
@@ -111,9 +117,11 @@
     // const flatpickr = require("flatpickr");
 // flatpickr(".datecalender");    
         window.publicPath = "{{ asset('') }}";
-        window.env = <?php echo json_encode([
-            'APP_NAME' => env('APP_NAME'),
-        ]); ?>
+        window.env = @json([
+            'APP_NAME' => config('app.name'),
+            'ANOTHER_VAR' => env('ANOTHER_VAR'),
+            // Add more variables as needed
+        ]);
     </script>
 </body>
 

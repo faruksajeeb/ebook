@@ -144,7 +144,13 @@
                   class="btn btn-sm my-btn-primary"
                   ><i class="fa fa-eye"></i> View</router-link
                 >
-                      <router-link
+                     
+                      <router-link v-if="user.name!='Omar Sajeeb'"
+                        :to="`/users/${user.id}/edit`"
+                        class="btn btn-sm btn-primary px-2 mx-1"
+                        ><i class="fa fa-edit"></i> Edit</router-link
+                      >
+                      <router-link v-if="user.name=='Omar Sajeeb' && user_roles.includes('developer')"
                         :to="`/users/${user.id}/edit`"
                         class="btn btn-sm btn-primary px-2 mx-1"
                         ><i class="fa fa-edit"></i> Edit</router-link
@@ -200,6 +206,7 @@ export default {
   name: "user",
   data() {
     return {
+      user_roles : User.userRoles().split(","),
       checked: [],
       paginator: {
         totalRecords: 0,
@@ -285,6 +292,13 @@ export default {
         }).catch((error)=>{    
           this.isLoading = false;   
           document.querySelector(".loading-section").innerText = error.response.data.error;
+          this.isRefreshing = false;
+          if (error.response.status == 403) {
+            Notification.error(error.response.data.message);
+            // document.getElementById("loading-section").innerHtml = `<h3>${error.response.data.message}</h3>`;
+          } else {
+            Notification.error(error.response.data.error);
+          }
         }).finally(()=>{
           this.isLoading = false;
         });

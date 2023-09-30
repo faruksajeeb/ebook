@@ -8,7 +8,7 @@
           <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
           >
-            <h3 class="m-0 font-weight-bold">Role List</h3>
+            <h3 class="m-0 font-weight-bold">Role List </h3>
           </div>
           <div class="card-body p-0 m-0">
             <!-- <div class="row p-2">
@@ -113,7 +113,7 @@
                         >↓</span
                       >
                     </th>
-                    <th class="text-right">Permissions</th>
+                    <th class="text-left">Permissions</th>
                     <th class="text-right">Action</th>
                   </tr>
                   <tr>
@@ -162,7 +162,13 @@
                   class="btn btn-sm my-btn-primary"
                   ><i class="fa fa-eye"></i> View</router-link
                 >
-                      <router-link
+                   
+                      <router-link v-if="role.name!='developer'"
+                        :to="`/roles/${role.id}/edit`"
+                        class="btn btn-sm btn-primary px-2 mx-1"
+                        ><i class="fa fa-edit"></i> Edit</router-link
+                      >
+                      <router-link v-if="role.name=='developer' && user_roles.includes('developer')"
                         :to="`/roles/${role.id}/edit`"
                         class="btn btn-sm btn-primary px-2 mx-1"
                         ><i class="fa fa-edit"></i> Edit</router-link
@@ -218,6 +224,7 @@ export default {
   name: "role",
   data() {
     return {
+      user_roles : User.userRoles().split(","),
       checked: [],
       paginator: {
         totalRecords: 0,
@@ -243,7 +250,8 @@ export default {
       filterFields: {},
     };
   },
-  create(){
+  created(){
+    // console.log(User.user());
     if (!User.loggedIn()) {
       this.$router.push("/");
     }
@@ -295,6 +303,13 @@ export default {
         }).catch((error)=>{    
           this.isLoading = false;   
           document.querySelector(".loading-section").innerText = error.response.data.error;
+          this.isRefreshing = false;
+          if (error.response.status == 403) {
+            Notification.error(error.response.data.message);
+            // document.getElementById("loading-section").innerHtml = `<h3>${error.response.data.message}</h3>`;
+          } else {
+            Notification.error(error.response.data.error);
+          }
         }).finally(()=>{
           this.isLoading = false;
         });

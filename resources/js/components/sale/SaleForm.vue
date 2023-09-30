@@ -2,9 +2,9 @@
   <div class="row">
     <div class="col-md-12 offset-md-0">
       <div class="card shadow-sm my-2">
-        <div class="card-header py-2 my-bg-success">
-          <h3 class="text-white-900" v-if="isNew"><i class="fa fa-plus"></i> Add Sale</h3>
-          <h3 class="text-white-900" v-else><i class="fa fa-pencil"></i> Edit Sale</h3>
+        <div class="card-header py-0 my-bg-success">
+          <!-- <h3 class="text-white-900" v-if="isNew"><i class="fa fa-plus"></i> Add Sale</h3>
+          <h3 class="text-white-900" v-else><i class="fa fa-pencil"></i> Edit Sale</h3> -->
           <!-- <p class="text-white m-0">
             ফরমের লাল তারকা (<span class="text-danger">*</span>) চিহ্নিত ঘরগুলো অবশ্যই
             পূরণ করুন। অন্যান্য ঘরগুলো পূরণ ঐচ্ছিক।
@@ -650,6 +650,8 @@ export default {
       this.courtesyCartItems = response.data.sale_courtesy_details;
       this.payAmount = response.data.sale.pay_amount;
       this.form.pay_amount = response.data.sale.pay_amount;
+      this.discountPercentage = response.data.sale.discount_percentage;
+      this.form.discount_percentage = response.data.sale.discount_percentage;
 
       if (response.data.payment_details.length > 0) {
         this.form.payment_method = response.data.payment_details[0].payment_method;
@@ -722,7 +724,7 @@ export default {
       const response = await axios.get(`/api/get-customer-discount-percentage/${customerId}`);
       // this.isLoading = false;
       this.form.discount_percentage = response.data.discount_percentage;
-      this.discountPercentage = response.data.discount_percentage;
+      this.discountPercentage = response.data.discount_percentage?response.data.discount_percentage:0;
     },
     removeSingleImage(image, index) {
       this.imageUrl = null;

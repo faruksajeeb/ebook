@@ -320,6 +320,7 @@
 <script>
 export default {  
   created() {
+    
     // if (!User.loggedIn()) {
     //   this.$router.push({ name: 'login' })
     // }
@@ -336,6 +337,7 @@ export default {
     }
   },
   mounted(){
+    
     this.TodaySale();
     this.TodayPurchase();
     this.TotalDue();

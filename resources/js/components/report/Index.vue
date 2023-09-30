@@ -18,7 +18,7 @@
             class="menu-img-settings"
             :src="`${publicPath}assets/img/report_icon/user_report.png`"
              />
-          <h5 class="menu-link-settings" >Customer Report</h5>
+          <h5 class="menu-link-settings" >Customer Payment Report</h5>
           <p class="menu-link-detail-settings" ></p></a
         ><a
           href="#/store/sales-refund-reports"
@@ -28,7 +28,7 @@
             class="menu-img-settings"
             :src="`${publicPath}assets/img/report_icon/sales_refund_report.png`"
              />
-          <h5 class="menu-link-settings" >Sales/Refund Report</h5>
+          <h5 class="menu-link-settings" >Sales Report</h5>
           <p class="menu-link-detail-settings" ></p
         ></a>
 
@@ -40,7 +40,7 @@
             class="menu-img-settings"
             :src="`${publicPath}assets/img/report_icon/stock_transfer.png?f7df416b6f5119216f29735302a4a844`"
              />
-          <h5 class="menu-link-settings" >Transfer Stock Report</h5>
+          <h5 class="menu-link-settings" >Stock Report</h5>
           <p class="menu-link-detail-settings" ></p></a
         ><a
           href="#/store/purchasing-report"
@@ -73,7 +73,7 @@
             class="menu-img-settings"
             :src="`${publicPath}assets/img/report_icon/stock.png`"
              />
-          <h5 class="menu-link-settings" >Stock Report</h5>
+          <h5 class="menu-link-settings" >Damage Report</h5>
           <p class="menu-link-detail-settings" ></p
         ></a>
         <a

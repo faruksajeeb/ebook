@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <div class="row">
@@ -141,6 +140,23 @@
                         <option value="role">Role</option>
                         <option value="permission">Permission</option>
                         <option value="category">Category</option>
+                        <option value="sub_category">Sub Category</option>
+                        <option value="option_group">Option Group</option>
+                        <option value="option">Option</option>
+                        <option value="author">Author</option>
+                        <option value="publisher">Publisher</option>
+                        <option value="customer">Customer</option>
+                        <option value="supplier">Supplier</option>
+                        <option value="book">Book</option>
+                        <option value="sale">Sale</option>
+                        <option value="purchase">Purchase</option>
+                        <option value="sale_return">Sale Return</option>
+                        <option value="purchase_return">Purchase Return</option>
+                        <option value="customer_payment">Customer Payment</option>
+                        <option value="supplier_payment">Supplier Payment</option>
+                        <option value="damage_item">Damage Item</option>
+                        <option value="report">Report</option>
+                        <option value="setting">Setting</option>
                       </select>
                     </th>
                     <th></th>
@@ -176,7 +192,11 @@
                 </tbody>
                 <tbody v-else>
                   <tr>
-                    <td colspan="5" class="text-center " id="loading-section">                   
+                    <td
+                      colspan="5"
+                      class="text-center text-danger fw-bold py-5"
+                      id="loading-section"
+                    >
                       <loader v-if="isLoading"></loader>
                       <NoRecordFound v-else />
                     </td>
@@ -241,7 +261,7 @@ export default {
       filterFields: {},
     };
   },
-  created(){
+  created() {
     if (!User.loggedIn()) {
       this.$router.push("/");
     }
@@ -291,7 +311,14 @@ export default {
           this.isRefreshing = false;
         })
         .catch((error) => {
-          // Notification.error(error);
+          this.isRefreshing = false;
+          if (error.response.status == 403) {
+            Notification.error(error.response.data.message);
+            // document.getElementById("loading-section").innerHtml = `<h3>${error.response.data.message}</h3>`;
+          } else {
+            Notification.error(error.response.data.error);
+          }
+          //  document.getElementById("loading-section").innerText = error.response.data.error;
         })
         .finally(() => {
           // always executed;

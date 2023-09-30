@@ -33,7 +33,8 @@ class CustomerPaymentController extends Controller
 
     public function index()
     {
-
+#permission verfy
+$this->webspice->permissionVerify('customer_payment.manage');
         try {
             $paginate = request('paginate', 5);
             $searchTerm = request('search', '');
@@ -92,7 +93,7 @@ class CustomerPaymentController extends Controller
     {
         // dd($request->all());
         #permission verfy
-        // $this->webspice->permissionVerify('customer_payment.create');
+        $this->webspice->permissionVerify('customer_payment.create');
         $request->validate(
             [
                 'customer_id' => 'required',
@@ -194,7 +195,7 @@ class CustomerPaymentController extends Controller
         // dd($request->file('file'));
         // dd($request->isMethod('put'));
         #permission verfy
-        // $this->webspice->permissionVerify('customer_payment.edit');
+        $this->webspice->permissionVerify('customer_payment.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
@@ -556,7 +557,7 @@ class CustomerPaymentController extends Controller
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('customer_payment.delete');
+        $this->webspice->permissionVerify('customer_payment.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);

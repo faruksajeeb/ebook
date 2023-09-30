@@ -28,7 +28,8 @@ class SupplierController extends Controller
 
     public function index()
     {
-
+#permission verfy
+$this->webspice->permissionVerify('supplier.manage');
         try {
             $paginate = request('paginate', 5);
             $searchTerm = request('search', '');
@@ -78,7 +79,7 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('supplier.create');
+        $this->webspice->permissionVerify('supplier.create');
 
         $request->validate(
             [
@@ -151,7 +152,7 @@ class SupplierController extends Controller
     {
         // dd($request->isMethod('put'));
         #permission verfy
-        // $this->webspice->permissionVerify('supplier.edit');
+        $this->webspice->permissionVerify('supplier.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
@@ -220,7 +221,7 @@ class SupplierController extends Controller
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('supplier.delete');
+        $this->webspice->permissionVerify('supplier.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);

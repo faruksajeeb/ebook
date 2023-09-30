@@ -552,6 +552,13 @@ export default {
           this.isLoading = false;
           document.querySelector(".loading-section").innerText =
             error.response.data.error;
+            this.isRefreshing = false;
+          if (error.response.status == 403) {
+            Notification.error(error.response.data.message);
+            // document.getElementById("loading-section").innerHtml = `<h3>${error.response.data.message}</h3>`;
+          } else {
+            Notification.error(error.response.data.error);
+          }
         })
         .finally(() => {
           this.isLoading = false;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Lib\Webspice;
 use App\Models\Role;
 use App\Models\User;
 use Exception;
@@ -20,9 +21,11 @@ class PermissionController extends Controller
     protected $permissions;
     protected $userid;
     public $tableName;
+    public $webspice;
 
-    public function __construct(Permission $permissions)
+    public function __construct(Permission $permissions, Webspice $webspice)
     {
+        $this->webspice = $webspice;
         $this->permissions = $permissions;
         $this->tableName = 'permissions';
         $this->middleware('JWT');
@@ -30,9 +33,9 @@ class PermissionController extends Controller
 
     public function index()
     {
-
+     
         #permission verfy
-        // $this->webspice->permissionVerify('permission.view');
+        $res = $this->webspice->permissionVerify('permission.manage');
 
         // $fileTag = '';
         // if ($request->get('status') == 'archived') {
@@ -115,9 +118,9 @@ class PermissionController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
+        //  dd($request->all());
         #permission verfy
-        // $this->webspice->permissionVerify('permission.create');
+        $this->webspice->permissionVerify('permission.create');
 
         // if ($request->is_menu == 'yes') {
 
@@ -195,7 +198,7 @@ class PermissionController extends Controller
     public function update(Request $request, $id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('permission.edit');
+        $this->webspice->permissionVerify('permission.edit');
 
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
 
@@ -322,14 +325,22 @@ class PermissionController extends Controller
 
 
     public function getPermissions(){
-        $data = Permission::where('status',1)->orderBy('group_name')->get();   
+        $this->clearPermissionCache();
+        $user = User::find(auth()->user()->id); 
+        //dd($user->getRoleNames()->toArray());  
+        $roles = $user->getRoleNames()->toArray();
+        if(in_array('developer',$roles)){
+            $data = Permission::where('status',1)->orderBy('group_name')->get();   
+        }else{
+            $data = Permission::where('status',1)->orderBy('group_name')->whereNotIn('group_name',['permission','option_group'])->get();   
+        }
         return response()->json($data);
     }
     public function getUserPermissions($userId)
 {
-   
+    $this->clearPermissionCache();
     // Get the authenticated user
-    $user = User::find(1);
+    $user = User::find($userId);
    
     $roles = $user->getRoleNames();
         $permissions = [];

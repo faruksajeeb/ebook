@@ -28,6 +28,8 @@ class AuthorController extends Controller
 
     public function index()
     {
+        #permission verfy
+        $this->webspice->permissionVerify('author.manage');
 
         try {
             $paginate = request('paginate', 5);
@@ -78,7 +80,7 @@ class AuthorController extends Controller
     public function store(Request $request)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('author.create');
+         $this->webspice->permissionVerify('author.create');
 
         $request->validate(
             [
@@ -151,7 +153,7 @@ class AuthorController extends Controller
     {
         // dd($request->isMethod('put'));
         #permission verfy
-        // $this->webspice->permissionVerify('author.edit');
+        $this->webspice->permissionVerify('author.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
@@ -220,7 +222,7 @@ class AuthorController extends Controller
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('author.delete');
+        $this->webspice->permissionVerify('author.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);

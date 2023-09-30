@@ -34,7 +34,8 @@ class SaleController extends Controller
 
     public function index()
     {
-
+#permission verfy
+$this->webspice->permissionVerify('sale.manage');
         try {
             $paginate = request('paginate', 5);
             $searchTerm = request('search', '');
@@ -99,7 +100,7 @@ class SaleController extends Controller
     {
         // dd($request->all());
         #permission verfy
-        // $this->webspice->permissionVerify('sale.create');
+        $this->webspice->permissionVerify('sale.create');
         $request->validate(
             [
                 'customer_id' => 'required',
@@ -303,7 +304,7 @@ class SaleController extends Controller
         // dd($request->file('attach_file'));
         // dd($request->isMethod('put'));
         #permission verfy
-        // $this->webspice->permissionVerify('sale.edit');
+        $this->webspice->permissionVerify('sale.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
@@ -665,7 +666,7 @@ class SaleController extends Controller
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('sale.delete');
+        $this->webspice->permissionVerify('sale.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);

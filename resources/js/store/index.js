@@ -1,9 +1,14 @@
 import { createStore } from "vuex";
 import api from "../api"; // Import your API service
+
+// Load user permissions from localStorage or sessionStorage during store initialization
+const userPermissions = JSON.parse(localStorage.getItem('userPermissions')) || [];
+
 // Create a new store instance.
 const store = createStore({
     state() {
         return {
+            pageTitle: 'Default Title', // Initial title
             message: "welcome",
             option_groups: [],
             categories: [],
@@ -15,7 +20,7 @@ const store = createStore({
             customers: [],
             payment_methods: [],
             user: {
-                permissions: [],
+                permissions: userPermissions,
             },
         };
     },
@@ -73,10 +78,18 @@ const store = createStore({
             });
             return state.payment_methods;
         },
+        hasPermission: (state) => (permission) => {
+            return state.user.permissions.includes(`${permission}`);
+        },
     },
     mutations: {
+        setPageTitle(state, title) {
+            state.pageTitle = title;
+          },
         setUserPermissions(state, permissions) {
             state.user.permissions = permissions;
+            localStorage.setItem('userPermissions', JSON.stringify(permissions));
+            // console.log('User Permissions:', permissions);
         },
         setRoles(state, roles) {
             state.user.roles = roles;
@@ -92,9 +105,14 @@ const store = createStore({
         fetchUserPermissions({ commit }) {
             // Replace this with the actual API call to fetch user permissions
             // e.g., using axios or fetch
-            api.fetchUserPermissions().then((permissions) => {
-                commit("setUserPermissions", permissions);
-            });
+            const userId = User.id();
+            if (userId) {
+                api.fetchUserPermissions().then((permissions) => {
+                    if (permissions) {
+                        commit("setUserPermissions", permissions);
+                    }
+                });
+            }
         },
         fetchRoles({ commit }) {
             // e.g., using axios or fetch

@@ -48,18 +48,25 @@ class Webspice
 	}
 	public function userVerify()
 	{
-		$this->user = Auth::guard('web')->user();
+		$this->user = auth()->user();
 		if (!$this->user || is_null($this->user)) {
-			redirect('login');
+			return response()->json(
+                [
+                    'error' => 'User not verified!',
+                ], 401);
 		}
 	}
 	public function permissionVerify(string $permissionName)
 	{
+	
 		$this->userVerify();
+		
 		if (is_null($this->user)) {
 			abort(403, 'SORRY! unauthenticated access!');
+			
 		}
 		if (!$this->user->can($permissionName)) {
+			//dd($this->user->can($permissionName));
 			abort(403, 'SORRY! unauthorized access!');
 		}
 	}

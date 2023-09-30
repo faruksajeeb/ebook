@@ -1,12 +1,12 @@
 <template>
   <div id="wrapper">
     <!-- Sidebar -->
-    <sidebar-view></sidebar-view>
+    <sidebar-view  v-if="$route.path === '/' || $route.path === '/login' || $route.path === '/register' || $route.path === '/forget_password'?false:true"></sidebar-view>
     <!-- End Sidebar -->
     <div id="content-wrapper" class="d-flex flex-column">
       <div id="content">
         <!-- TopBar -->
-        <header-view></header-view>
+        <header-view :title="PageTitle" v-if="$route.path === '/' || $route.path === '/login' || $route.path === '/register' || $route.path === '/forget_password'?false:true"></header-view>
         <!-- End Topbar -->
 
         <!-- Container Fluid-->
@@ -17,7 +17,7 @@
         <!-- End Container Fluid-->
       </div>
       <!-- Footer -->
-      <footer-view></footer-view>
+      <footer-view v-if="$route.path === '/' || $route.path === '/login' || $route.path === '/register' || $route.path === '/forget_password'?false:true"></footer-view>
       <!-- End Footer -->
     </div>
     <vue-progress-bar></vue-progress-bar>
@@ -36,6 +36,7 @@ export default {
   },
   data() {
     return {
+      PageTitle : '',
       isLoading: false, // Set this to true when loading
     };
   },

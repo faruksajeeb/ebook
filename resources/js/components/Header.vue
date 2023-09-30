@@ -1,11 +1,13 @@
 <template lang="">
     <div>
         <nav
-          v-show="$route.path === '/' || $route.path === '/register' || $route.path === '/forget_password' ? false : true"
+          
           class="navbar navbar-expand navbar-light bg-navbar topbar mb-2 static-top">
           <button id="sidebarToggleTop" class="btn btn-link rounded-circle mr-3">
             <i class="fa fa-bars text-white"></i>
           </button>
+          <span class="text-white fw-bold" style="font-size:25px"> {{pageTitle}}</span>
+        
           <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown"
@@ -194,16 +196,17 @@
 </template>
 <script>
 export default {
+ 
     name: 'Header',
-    created() {
-      // if (!User.loggedIn()) {
-      //   this.$router.push({ name: 'login' })
-      // }
-    },
     data() {
       return {
-        username: User.name(),
-		 publicPath: window.publicPath,
+        username: User.userName(),
+		    publicPath: window.publicPath,
+      }
+    },
+    computed: {
+      pageTitle(){
+        return this.$store.state.pageTitle;
       }
     }
 }

@@ -34,7 +34,8 @@ class PurchaseController extends Controller
 
     public function index()
     {
-
+#permission verfy
+$this->webspice->permissionVerify('purchase.manage');
         try {
             $paginate = request('paginate', 5);
             $searchTerm = request('search', '');
@@ -99,7 +100,7 @@ class PurchaseController extends Controller
     {
         // dd($request->all());
         #permission verfy
-        // $this->webspice->permissionVerify('purchase.create');
+        $this->webspice->permissionVerify('purchase.create');
         $validator = $request->validate(
             [
                 'supplier_id' => 'required',
@@ -300,7 +301,7 @@ class PurchaseController extends Controller
         // dd($request->file('attach_file'));
         // dd($request->isMethod('put'));
         #permission verfy
-        // $this->webspice->permissionVerify('purchase.edit');
+        $this->webspice->permissionVerify('purchase.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
@@ -648,7 +649,7 @@ class PurchaseController extends Controller
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('purchase.delete');
+        $this->webspice->permissionVerify('purchase.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);

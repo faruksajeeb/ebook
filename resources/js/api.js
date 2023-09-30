@@ -19,12 +19,23 @@ const apiClient = axios.create({
 export default {
     fetchUserPermissions() {
         const userId = User.id();
-        return apiClient.get(`/user/${userId}/permissions`).then((response) => {
-            return response.data.permissions;
-        });
+        if(userId){
+            return apiClient.get(`/user/${userId}/permissions`, {
+                params: {
+                  timestamp: Date.now(), // Add a timestamp query parameter
+                },
+              }).then((response) => {
+                console.log(response.data.permissions);
+                return response.data.permissions;
+            });
+        }
     },
     fetchPermissions() {
-        return apiClient.get("/get-permissions").then(function (response) {
+        return apiClient.get("/get-permissions", {
+            params: {
+              timestamp: Date.now(), // Add a timestamp query parameter
+            },
+          }).then(function (response) {
             return response.data;
         });
     },

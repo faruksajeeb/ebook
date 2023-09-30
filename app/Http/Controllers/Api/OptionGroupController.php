@@ -27,7 +27,8 @@ class OptionGroupController extends Controller
 
     public function index()
     {
-
+#permission verfy
+$this->webspice->permissionVerify('option_group.manage');
         try {
             $paginate = request('paginate', 5);
             $searchTerm = request('search', '');
@@ -70,7 +71,7 @@ class OptionGroupController extends Controller
     {
 
         #permission verfy
-        // $this->webspice->permissionVerify('option_group.create');
+        $this->webspice->permissionVerify('option_group.create');
 
         $request->validate(
             [
@@ -120,7 +121,7 @@ class OptionGroupController extends Controller
     {
 
         #permission verfy
-        // $this->webspice->permissionVerify('option_group.edit');
+        $this->webspice->permissionVerify('option_group.edit');
 
         # decrypt value
         // $id = $this->webspice->encryptDecrypt('decrypt', $id);
@@ -154,7 +155,7 @@ class OptionGroupController extends Controller
     public function destroy($id)
     {
         #permission verfy
-        // $this->webspice->permissionVerify('option_group.delete');
+        $this->webspice->permissionVerify('option_group.delete');
         try {
             # decrypt value
             // $id = $this->webspice->encryptDecrypt('decrypt', $id);
