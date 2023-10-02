@@ -111,7 +111,6 @@
 </template>
 
 <script>
-
 export default {
   name: "Login",
   created() {
@@ -139,7 +138,8 @@ export default {
         .then((res) => {
           User.responseAfterLogin(res);
           Notification.success("Signed in successfully");
-          this.$router.push({ name: "dashboard" });
+          // this.$router.push({ name: "dashboard" });
+          window.location.href = '/dashboard';
         })
         .catch((error) => {
           console.log(error);

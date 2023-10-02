@@ -94,7 +94,17 @@ import ManagePurchaseReturn from "./components/purchase_return/ManagePurchaseRet
 import DamageItemForm from "./components/damage_item/DamageItemForm.vue";
 import ManageDamageItem from "./components/damage_item/ManageDamageItem.vue";
 
+// Report Files
 import ReportIndex from "./components/report/Index.vue";
+import SupplierPaymentReport from "./components/report/supplier_payment/Index.vue";
+import CustomerPaymentReport from "./components/report/customer_payment/Index.vue";
+import SaleReport from "./components/report/sale/Index.vue";
+import PurchaseReport from "./components/report/purchase/Index.vue";
+import StockReport from "./components/report/stock/Index.vue";
+import StockAlertReport from "./components/report/stock_alert/Index.vue";
+import DamageItemReport from "./components/report/damage_item/Index.vue";
+import IncomeStatementReport from "./components/report/income_statement/Index.vue";
+import ActivityLogReport from "./components/report/activity_log/Index.vue";
 
 function guard(to, from, next) {
     // or however you store your logged in state
@@ -882,11 +892,110 @@ export const routes = [
     {
         path: "/reports",
         component: ReportIndex,
-        name: "ReportIndex",
+        name: "reports",
         meta: {
             title: "Reports",
             requiresAuth: true,
             requiredPermissions: ["report.view"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        path: "/reports/customer-payment",
+        component: CustomerPaymentReport,
+        name: "reports/customer_payment",
+        meta: {
+            title: "Report | Customer Payment",
+            requiresAuth: true,
+            requiredPermissions: ["report.customer_payment"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        path: "/reports/supplier-payment",
+        component: SupplierPaymentReport,
+        name: "reports/supplier_payment",
+        meta: {
+            title: "Report | Supplier Payment",
+            requiresAuth: true,
+            requiredPermissions: ["report.supplier_payment"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        path: "/reports/sale",
+        component: SaleReport,
+        name: "reports/sale",
+        meta: {
+            title: "Report | Sale",
+            requiresAuth: true,
+            requiredPermissions: ["report.sale"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        path: "/reports/purchase",
+        component: PurchaseReport,
+        name: "reports/purchase",
+        meta: {
+            title: "Report | Purchase",
+            requiresAuth: true,
+            requiredPermissions: ["report.purchase"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        path: "/reports/stock",
+        component: StockReport,
+        name: "reports/stock",
+        meta: {
+            title: "Report | Stock",
+            requiresAuth: true,
+            requiredPermissions: ["report.stock"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        path: "/reports/stock-alert",
+        component: StockAlertReport,
+        name: "reports/stock-alert",
+        meta: {
+            title: "Report | Stock Alert",
+            requiresAuth: true,
+            requiredPermissions: ["report.stock_alert"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        path: "/reports/damage-item",
+        component: DamageItemReport,
+        name: "reports/damage-item",
+        meta: {
+            title: "Report | Damage Item",
+            requiresAuth: true,
+            requiredPermissions: ["report.damage_item"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        path: "/reports/income-statement",
+        component: IncomeStatementReport,
+        name: "reports/income-statement",
+        meta: {
+            title: "Report | Income Statement",
+            requiresAuth: true,
+            requiredPermissions: ["report.income_statement"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        path: "/reports/activity-log",
+        component: ActivityLogReport,
+        name: "reports/activity-log",
+        meta: {
+            title: "Report | Activity Log",
+            requiresAuth: true,
+            requiredPermissions: ["report.activity_log"],
         },
         beforeEnter: guard,
     },

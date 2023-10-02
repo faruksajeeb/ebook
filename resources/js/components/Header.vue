@@ -2,7 +2,7 @@
     <div>
         <nav
           
-          class="navbar navbar-expand navbar-light bg-navbar topbar mb-2 static-top">
+          class="navbar navbar-expand navbar-light  my-bg-primary py-0 topbar mb-2 static-top">
           <button id="sidebarToggleTop" class="btn btn-link rounded-circle mr-3">
             <i class="fa fa-bars text-white"></i>
           </button>

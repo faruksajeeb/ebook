@@ -5,7 +5,7 @@ const token = localStorage.getItem("token");
 if (!token) {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    if (window.location.href != "http://127.0.0.1:8000/") {
+    if (window.location.href != "http://localhost:8000/") {
         window.location.replace("/"); // go to '/login';
         // this.$router.push({ name: 'login'})
     }
@@ -18,13 +18,15 @@ const apiClient = axios.create({
 
 export default {
     fetchUserPermissions() {
-        const userId = User.id();
+        const userId = User.userId();
         if(userId){
-            return apiClient.get(`/user/${userId}/permissions`, {
+            return apiClient.get(`/user/${userId}/permissions`,
+             {
                 params: {
                   timestamp: Date.now(), // Add a timestamp query parameter
                 },
-              }).then((response) => {
+              }
+              ).then((response) => {
                 console.log(response.data.permissions);
                 return response.data.permissions;
             });

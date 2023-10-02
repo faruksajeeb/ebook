@@ -441,8 +441,11 @@ export default {
 		publicPath: window.publicPath,
 	 }
 	},
+  created(){
+    
+  },
     mounted() {
-    this.fetchUserPermissions(); // Fetch user permissions when the component is mounted
+      this.fetchUserPermissions(); // Fetch user permissions when the component is mounted
     },
     methods: {
       ...mapActions(['fetchUserPermissions']),

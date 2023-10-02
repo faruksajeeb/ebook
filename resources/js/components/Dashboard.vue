@@ -136,7 +136,7 @@
                         <th>Quantity</th>                        
                       </tr>
                       </thead>
-                      <tbody>
+                      <tbody v-if="out_of_stocks.length>0">
                         <tr v-for="product in out_of_stocks" :key="product.id">
                         <td> {{ product.title }} </td>
                         <td><img
@@ -153,6 +153,13 @@
    <td v-else=" "><span class="badge badge-danger">Stock Out </span></td>
                          <td>{{ product.stock_quantity }}</td>
              
+                      </tr>
+                      </tbody>
+                      <tbody v-else>
+                      <tr>
+                        <td colspan="5">
+                          <LoadingSpinner/>
+                        </td>
                       </tr>
                       </tbody>
                     </table>
@@ -195,11 +202,18 @@
                         <th>Name</th>
                         <th>Qty.</th>
                       </thead>
-                      <tbody>
+                      <tbody  v-if="stock_alerts.length>0">
                         <tr v-for="item in stock_alerts">
                             <td>{{item.title}}</td>  
                             <td class="text-center">{{item.stock_quantity}}</td>  
                         </tr>
+                      </tbody>
+                      <tbody v-else>
+                      <tr>
+                        <td colspan="2">
+                          <LoadingSpinner/>
+                        </td>
+                      </tr>
                       </tbody>
                     </table>
                   </div>
@@ -318,13 +332,9 @@
     </div>
 </template>
 <script>
+
 export default {  
-  created() {
-    
-    // if (!User.loggedIn()) {
-    //   this.$router.push({ name: 'login' })
-    // }
-  },
+  
   data(){
     return{
       publicPath: window.publicPath,
@@ -336,44 +346,46 @@ export default {
       stock_alerts:[],
     }
   },
-  mounted(){
-    
+  created() {
     this.TodaySale();
     this.TodayPurchase();
     this.TotalDue();
     this.TotalCustomer();
     this.OutOfStock();
     this.StockAlerts();
+  },
+  mounted(){    
+    
  },
   methods:{
-    TodaySale(){
-      axios.get('/api/report/today-sale')
+    async TodaySale(){
+      await axios.get('/api/report/today-sale')
         .then(({data}) => (this.todaySale = data))
         .catch()
      },
-     TodayPurchase(){
-      axios.get('/api/report/today-purchase')
+     async TodayPurchase(){
+      await axios.get('/api/report/today-purchase')
         .then(({data}) => (this.todayPurchase = data))
         .catch()
      },
-     TotalDue(){
-      axios.get('/api/report/total-due')
+     async TotalDue(){
+      await axios.get('/api/report/total-due')
         .then(({data}) => (this.totalDue = data))
         .catch()
      },
-     TotalCustomer(){
-      axios.get('/api/report/total-customer')
+     async TotalCustomer(){
+      await axios.get('/api/report/total-customer')
         .then(({data}) => (this.totalCustomer = data))
         .catch()
      },
 
-     OutOfStock(){
-      axios.get('/api/report/out-of-stock')
+     async OutOfStock(){
+      await axios.get('/api/report/out-of-stock')
         .then(({data}) => (this.out_of_stocks = data))
         .catch()
      },
-     StockAlerts(){
-      axios.get('/api/report/stock-alerts')
+     async StockAlerts(){
+      await axios.get('/api/report/stock-alerts')
         .then(({data}) => (this.stock_alerts = data))
         .catch()
      },
