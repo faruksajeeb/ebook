@@ -8,6 +8,8 @@ use App\Models\Category;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CategoryExport;
 
 class CategoryController extends Controller
 {
@@ -221,6 +223,49 @@ class CategoryController extends Controller
         }
         return redirect()->route('categories.index');
         // return redirect()->route('categories.index')->withSuccess(__('All categories restored successfully.'));
+    }
+
+
+    
+    public function export()
+    {
+        try {
+            // dd('hello');
+            ini_set('max_execution_time', 30 * 60); //30 min
+            ini_set('memory_limit', '2048M');
+            return Excel::download(new CategoryExport, 'category.xlsx');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+
+    }
+    public function exportPdf()
+    {
+        try {
+            // dd('hello');
+            ini_set('max_execution_time', 30 * 60); //30 min
+            ini_set('memory_limit', '2048M');
+            $data = [];
+            $pdf = PDF::loadView('pdf-export.category', ['data' => $data]);
+            return $pdf->output();
+            // return $pdf->download('itsolutionstuff.pdf');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+
+    }
+
+    public function import()
+    {
+        // Excel::import(new CategoryImport, request()->file('file'));
+
+        return back();
     }
 
 

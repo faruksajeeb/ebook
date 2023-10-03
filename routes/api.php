@@ -26,6 +26,7 @@ use App\Http\Controllers\Api\PosController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SalaryController;
 use App\Http\Controllers\Api\SupplierController;
+use App\Http\Controllers\Api\ReportController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -156,4 +157,8 @@ Route::middleware('JWT')->group(function () {
     Route::get('/report/total-customer', [DashboardController::class, 'totalCustomer']);
     Route::get('/report/out-of-stock', [DashboardController::class, 'outOfStock']);
     Route::get('/report/stock-alerts', [DashboardController::class, 'stockAlerts']);
+
+    # Report Routes    
+    Route::post('/report/customer-payment', [ReportController::class, 'customerPayment']);
+    Route::post('/report/customer-payment-export-excel', [ReportController::class, 'customerPaymentExportExcel']);
 });

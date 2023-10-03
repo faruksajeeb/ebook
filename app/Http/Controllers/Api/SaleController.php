@@ -34,8 +34,8 @@ class SaleController extends Controller
 
     public function index()
     {
-#permission verfy
-$this->webspice->permissionVerify('sale.manage');
+        #permission verfy
+        $this->webspice->permissionVerify('sale.manage');
         try {
             $paginate = request('paginate', 5);
             $searchTerm = request('search', '');
