@@ -227,7 +227,7 @@
                     </td>
                     <td class="text-nowrap">{{ customer_payment.customer.customer_name }}</td>
                     <td class="text-nowrap text-right">{{ customer_payment.payment_amount }}</td>
-                    <td class="text-nowrap">{{ customer_payment.payment_method.name }}</td>
+                    <td class="text-nowrap">{{ customer_payment.paymentmethod.name }}</td>
                     <td class="text-nowrap">{{ customer_payment.paid_by }}</td>
 
                     <td class="text-right text-nowrap">

@@ -53,7 +53,7 @@ class CustomerPayment extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function payment_method()
+    public function paymentmethod()
     {
     //    return $this->belongsTo(Option::class,  'payment_method','id')->withTrashed()->withDefault(['name' => '']);
        return $this->hasOne(Option::class, 'id', 'payment_method')->withTrashed()->withDefault(['name' => '']);

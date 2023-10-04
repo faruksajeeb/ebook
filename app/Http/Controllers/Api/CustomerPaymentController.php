@@ -33,8 +33,8 @@ class CustomerPaymentController extends Controller
 
     public function index()
     {
-#permission verfy
-$this->webspice->permissionVerify('customer_payment.manage');
+        #permission verfy
+        $this->webspice->permissionVerify('customer_payment.manage');
         try {
             $paginate = request('paginate', 5);
             $searchTerm = request('search', '');
@@ -62,7 +62,7 @@ $this->webspice->permissionVerify('customer_payment.manage');
                 'discount_percentage',
             ]));
 
-            $customer_payments = CustomerPayment::with(['customer','payment_method'])->when(count($filled) > 0, function ($query) use ($filled) {
+            $customer_payments = CustomerPayment::with(['customer','paymentmethod'])->when(count($filled) > 0, function ($query) use ($filled) {
                 foreach ($filled as $column => $value) {
                     if ($column == 'payment_date') {
                         $dateExplode = explode(" to ", $value);
