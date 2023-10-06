@@ -7,6 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Sale Invoice</title>
     <style>
+           @page  {
+        margin: 5em;
+        size: A4; /*or width then height 150mm 50mm*/
+        }
         * {
             font-family: 'Courier New', Courier, monospace;
         }
@@ -58,10 +62,10 @@
     <table style="width:100%; margin-top:50px" border="1" cellspacing="0" cellpadding="5">
 
         <tr>
-            <td>Customer Name:</td>
-            <td colspan="{{ $customer->customer_name == 'All' ? 2 : 1 }}">{{ $customer->customer_name }}</td>
-            <td>Customer Phone:</td>
-            <td>{{ $customer->customer_phone }}</td>
+            <td style="width:25%">Customer Name:</td>
+            <td style="width:25%" colspan="{{ $customer->customer_name == 'All' ? 2 : 1 }}">{{ $customer->customer_name }}</td>
+            <td style="width:25%">Customer Phone:</td>
+            <td style="width:25%">{{ $customer->customer_phone }}</td>
         </tr>
         <tr>
             <td>Customer Address:</td>
@@ -73,40 +77,58 @@
     <br>
     <table width="100%" border="1" cellspacing="0" cellpadding="5">
         <thead>
-            <th class="thead_label">Payment Date</th>
+            <th class="thead_label">Sale Date</th>
 
             @if ($customer->customer_name == 'All')
                 <th class="thead_label">Customer Name</th>
             @endif
 
-            <th class="thead_label">Payment Method</th>
-            <th class="thead_label">Payment Description</th>
-            <th class="thead_label">Paid By</th>
-            <th class="thead_label">Amount</th>
+            <th class="thead_label">Total Amount</th>
+            <th class="thead_label">Discount Perct.</th>
+            <th class="thead_label">Discount Amt.</th>
+            <th class="thead_label">Net Amount</th>
+            <th class="thead_label">Pay Amount</th>
+            <th class="thead_label">Due Amount</th>
         </thead>
         <tbody>
             @php
                 $total = 0;
+                $discountTotal = 0;
+                $netTotal = 0;
+                $payTotal = 0;
+                $dueTotal = 0;
             @endphp
-            @foreach ($customer_payments as $key => $customer_payment)
+            @foreach ($sales as $key => $sale)
                 <tr>
-                    <td class="text-center">{{ $customer_payment->payment_date }}</td>
+                    <td class="text-center">{{ $sale->sale_date }}</td>
 
                     @if ($customer->customer_name == 'All')
-                        <td class="text-center">{{ $customer_payment->customer->customer_name }}</td>
+                        <td class="text-center">{{ $sale->customer->customer_name }}</td>
                     @endif
-                    <td class="text-center">{{ $customer_payment->paymentmethod->name }}</td>
-                    <td class="text-left">{{ $customer_payment->payment_description }}</td>
-                    <td class="text-left">{{ $customer_payment->paid_by }}</td>
-                    <td class="text-right">{{ number_format($customer_payment->payment_amount, 2) }}</td>
+                    <td class="text-right">{{ number_format($sale->total_amount, 2) }}</td>
+                    <td class="text-center">{{ $sale->discount_percentage }}</td>
+                    <td class="text-right">{{ $sale->discount_amount }}</td>
+                    <td class="text-right">{{ $sale->net_amount }}</td>
+                    <td class="text-right">{{ $sale->pay_amount }}</td>
+                    <td class="text-right">{{ $sale->due_amount }}</td>
                 </tr>
                 @php
-                    $total += $customer_payment->payment_amount;
+                    $total += $sale->payment_amount;
+                    $discountTotal += $sale->discount_amount;
+                    $netTotal += $sale->net_amount;
+                    $payTotal += $sale->pay_amount;
+                    $dueTotal += $sale->due_amount;
                 @endphp
             @endforeach
             <tr>
-                <td colspan="{{ $customer->customer_name == 'All' ? 5 : 4 }}">Payment Total</td>
+                <td colspan="{{ $customer->customer_name == 'All' ? 2 : 1 }}">Payment Total</td>
+                
                 <td class="text-right">{{ number_format($total, 2) }}</td>
+                <td class="text-right"></td>
+                <td class="text-right">{{ number_format($discountTotal, 2) }}</td>                
+                <td class="text-right">{{ number_format($netTotal, 2) }}</td>
+                <td class="text-right">{{ number_format($payTotal, 2) }}</td>
+                <td class="text-right">{{ number_format($dueTotal, 2) }}</td>
             </tr>
 
         </tbody>

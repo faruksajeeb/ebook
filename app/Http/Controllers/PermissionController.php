@@ -330,11 +330,11 @@ class PermissionController extends Controller
         //dd($user->getRoleNames()->toArray());  
         $roles = $user->getRoleNames()->toArray();
         if(in_array('developer',$roles)){
-            $data = Permission::where('status',1)->orderBy('group_name')->get();   
+            $groupedPermissions = Permission::where('status',1)->orderBy('group_name')->get()->groupBy('group_name');   
         }else{
-            $data = Permission::where('status',1)->orderBy('group_name')->whereNotIn('group_name',['permission','option_group'])->get();   
+            $groupedPermissions = Permission::where('status',1)->orderBy('group_name')->whereNotIn('group_name',['permission','option_group'])->get()->groupBy('group_name');   
         }
-        return response()->json($data);
+        return response()->json($groupedPermissions);
     }
     public function getUserPermissions($userId)
 {
@@ -353,4 +353,13 @@ class PermissionController extends Controller
 
     return response()->json(['permissions' => $permissions]);
 }
+public function groupedPermissions()
+{
+    $groupedPermissions = Permission::orderBy('group_name')
+    ->get()
+    ->groupBy('group_name');
+
+return response()->json($groupedPermissions);
+}
+
 }

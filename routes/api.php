@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ServerController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -42,6 +43,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
  */
+Route::get('/check-server', [ServerController::class,'checkServer']);
 Route::group([
 
     'middleware' => 'api',
@@ -81,6 +83,7 @@ Route::middleware('JWT')->group(function () {
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/roles', RoleController::class);    
     Route::apiResource('/manage-permission', PermissionController::class);
+    Route::get('/permissions/grouped', [PermissionController::class,'groupedPermissions']);
 
     Route::apiResource('/authors', AuthorController::class);
     Route::post('/authors/{id}',[AuthorController::class,'update']);
@@ -162,5 +165,6 @@ Route::middleware('JWT')->group(function () {
 
     # Report Routes    
     Route::post('/report/customer-payment',[CustomerPaymentReportController::class,'index']);
-    Route::post('/report/sale',[SaleReportController::class,'index']);
+    Route::post('/report/customer-wise-sale',[SaleReportController::class,'customerWiseSale']);
+    Route::post('/report/category-wise-sale',[SaleReportController::class,'categoryWiseSale']);
 });

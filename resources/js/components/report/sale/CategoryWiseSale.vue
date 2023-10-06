@@ -4,11 +4,71 @@
       <div class="card mt-3">
         <div class="card-header">
           <h3 class="text-center fw-bold">
-            <i class="fa fa-chart-pie"></i> Customer Payment Report
+            <i class="fa fa-chart-pie"></i> Category Wise Sale Report
           </h3>
         </div>
         <form id="form" @submit.prevent="submitForm">
           <div class="card-body">
+            <div class="form-group">
+              <label for=""
+                >Category <span class="my-text-danger fw-bold"> *</span></label
+              >
+              <select
+                name=""
+                id=""
+                class="form-select"
+                v-model="form.category_id"
+                @change="selectedCategory"
+                :class="{ 'is-invalid': form.errors.has('category_id') }"
+              >
+                <option value="">--select category--</option>
+                <option value="all">All Category</option>
+                <option :value="category.id" v-for="category in categories">
+                  {{ category.category_name }}
+                </option>
+              </select>
+              <HasError :form="form" field="category_id" />
+            </div>
+            <div class="form-group">
+              <label for=""
+                >Publisher <span class="my-text-danger fw-bold"> *</span></label
+              >
+              <select
+                name=""
+                id=""
+                class="form-select"
+                v-model="form.publisher_id"
+                @change="selectedPublisher"
+                :class="{ 'is-invalid': form.errors.has('publisher_id') }"
+              >
+                <!-- <option value="">--select publisher--</option> -->
+                <option value="all" selected>All Publisher</option>
+                <option :value="publisher.id" v-for="publisher in publishers">
+                  {{ publisher.publisher_name }}
+                </option>
+              </select>
+              <HasError :form="form" field="publisher_id" />
+            </div>
+            <div class="form-group">
+              <label for=""
+                >Author <span class="my-text-danger fw-bold"> *</span></label
+              >
+              <select
+                name=""
+                id=""
+                class="form-select"
+                v-model="form.author_id"
+                @change="selectedAuthor"
+                :class="{ 'is-invalid': form.errors.has('author_id') }"
+              >
+                <!-- <option value="">--select author--</option> -->
+                <option value="all" selected>All Author</option>
+                <option :value="author.id" v-for="author in authors">
+                  {{ author.author_name }}
+                </option>
+              </select>
+              <HasError :form="form" field="author_id" />
+            </div>
             <div class="form-group">
               <label for=""
                 >Customer <span class="my-text-danger fw-bold"> *</span></label
@@ -21,8 +81,8 @@
                 @change="selectCustomer"
                 :class="{ 'is-invalid': form.errors.has('customer_id') }"
               >
-                <option value="">--select customer--</option>
-                <option value="all">All Customer</option>
+                <!-- <option value="">--select customer--</option> -->
+                <option value="all" selected>All Customer</option>
                 <option :value="customer.id" v-for="customer in customers">
                   {{ customer.customer_name }}
                 </option>
@@ -86,58 +146,37 @@
   </div>
   <div ref="targetDiv" class="scroll-target">
     <hr />
-    <div class="row" v-if="payments.length > 0">
+
+    <div class="row" v-if="sales.length > 0">
       <div id="printableContent" class="col-md-10 offset-md-1 border my-3 rounded-sm">
-        <table class="table">
-          <tr>
-            <td :colspan="customer.customer_name == 'All' ? 6 : 5">
-              <h3>Customer Payment</h3>
-            </td>
-          </tr>
-          <tr v-if="customer">
-            <td class="fw-bold">Customer Name:</td>
-            <td class="fw-bold" :colspan="customer.customer_name == 'All' ? 2 : 1">
-              {{ customer.customer_name }}
-            </td>
-            <td class="fw-bold">Customer Phone:</td>
-            <td class="fw-bold" colspan="2">{{ customer.customer_phone }}</td>
-          </tr>
-          <tr v-if="customer">
-            <td class="fw-bold">Customer Address:</td>
-            <td class="fw-bold" :colspan="customer.customer_name == 'All' ? 2 : 1">
-              {{ customer.customer_address }}
-            </td>
-            <td class="fw-bold">Date :</td>
-            <td class="fw-bold" colspan="2">{{ date_range }}</td>
-          </tr>
+        <h3 class="my-2">Sales</h3>
+     
+        <table class="table table-sm">
           <tr class="bg-secondary">
-            <td class="fw-bold text-white">Payment Date</td>
-            <td class="fw-bold text-white" v-if="customer.customer_name == 'All'">
-              Customer Name
-            </td>
-            <td class="fw-bold text-white">Payment Method</td>
-            <td class="fw-bold text-white">Payment Description</td>
-            <td class="fw-bold text-white">Paid By</td>
-            <td class="fw-bold text-white">Amount</td>
+            <td class="fw-bold text-white text-center">Sale Date</td>
+            <td class="fw-bold text-white text-left">Book Name</td>
+            <td class="fw-bold text-white text-left">Author Name</td>
+            <td class="fw-bold text-white text-left">Publisher Name</td>
+            <td class="fw-bold text-white text-left">Customer Name</td>
+            <td class="fw-bold text-white text-right">Quantity</td>
+            <td class="fw-bold text-white text-right">Amount</td>
           </tr>
-          <tr v-for="payment in payments">
-            <td>{{ payment.payment_date }}</td>
-            <td v-if="customer.customer_name == 'All'">
-              {{ payment.customer.customer_name }}
-            </td>
-            <td>{{ payment.paymentmethod.name }}</td>
-            <td>{{ payment.payment_description }}</td>
-            <td>{{ payment.paid_by }}</td>
-            <td class="text-right">{{ payment.payment_amount }}</td>
+          <tr v-for="sale in sales">
+            <td class="text-center">{{ sale.sale_date }}</td>
+            <td class="text-right">{{ sale.book_name }}</td>
+            <td class="text-center">{{ sale.author_name }}</td>
+            <td class="text-right">{{ sale.publisher_name }}</td>
+            <td class="text-right">{{ sale.customer_name }}</td>
+            <td class="text-right">{{ sale.quantity }}</td>
+            <td class="text-right">{{ sale.sub_total }}</td>
           </tr>
           <tr>
             <td
-              class="fw-bold text-left"
-              :colspan="customer.customer_name == 'All' ? 5 : 4"
+              class="fw-bold text-left" colsapn="6"
             >
-              Payment Total
+              Sale Total
             </td>
-            <td class="fw-bold text-right">{{ calculateTotalPayment() }}</td>
+            <td class="fw-bold text-right">{{ calculateSubTotalAmount() }}</td>
           </tr>
         </table>
       </div>
@@ -153,18 +192,24 @@ import axios from "axios";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.css";
 
+import { mapActions } from "vuex";
 export default {
   data() {
     return {
+      serverStatus: null,
       isSubmitting: false,
       isResponsed: false,
-      customer: {},
       date_range: "",
+      authors: [],
+      publishers: [],
       customers: [],
-      payments: [],
-
+      categories: [],
+      sales: [],
       form: new Form({
-        customer_id: "",
+        author_id:'all',
+        publisher_id:'all',
+        category_id: "",
+        customer_id:'all',
         date_range: "",
         btn_type: null,
       }),
@@ -176,6 +221,21 @@ export default {
       const response = await axios.get("/api/get-customers");
       this.customers = response.data;
     }
+    this.authors = this.$store.getters.getAuthors;
+    if (this.authors.length == 0) {
+      const response = await axios.get("/api/get-authors");
+      this.authors = response.data;
+    }
+    this.publishers = this.$store.getters.getPublishers;
+    if (this.publishers.length == 0) {
+      const response = await axios.get("/api/get-publishers");
+      this.publishers = response.data;
+    }
+  },
+  computed: {
+    categories() {
+      return this.$store.state.categories;
+    },
   },
   mounted() {
     flatpickr(".datecalander", {
@@ -185,6 +245,7 @@ export default {
     });
   },
   methods: {
+    ...mapActions(["fetchCategories"]),
     selectCustomer() {
       this.form.errors.clear("customer_id");
     },
@@ -199,8 +260,8 @@ export default {
       }
     },
     async submitForm() {
-      if (!this.form.customer_id) {
-        this.form.errors.set("customer_id", "Please fill out the customer field.");
+      if (!this.form.category_id) {
+        this.form.errors.set("category_id", "Please fill out the category field.");
         return false;
       }
       if (!this.form.date_range) {
@@ -232,7 +293,7 @@ export default {
         document.querySelector(".export-btn-print").innerHTML = loader;
       }
       await this.form
-        .post("/api/report/customer-payment", {
+        .post("/api/report/category-wise-sale", {
           params: {
             ...this.form,
           },
@@ -243,15 +304,14 @@ export default {
             this.isResponsed = true;
             this.date_range = response.data.date_range;
             this.customer = response.data.customer;
-            this.payments = response.data.customer_payments;
+            this.sales = response.data.sales;
           } else {
             if (this.form.btn_type == "excel") {
-           
               Notification.success("Exported Successfully");
               var fileURL = window.URL.createObjectURL(new Blob([response.data]));
               var fileLink = document.createElement("a");
               fileLink.href = fileURL;
-              fileLink.setAttribute("download", "customer-payment-report.xlsx");
+              fileLink.setAttribute("download", "sale-report.xlsx");
               document.body.appendChild(fileLink);
               fileLink.click();
             } else if (this.form.btn_type == "pdf") {
@@ -292,7 +352,6 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error);
           if (error.response.status === 422) {
             this.errors = error.response.data;
             Notification.error("Validation Errors!" + this.errors);
@@ -320,11 +379,8 @@ export default {
           }
         });
     },
-    calculateTotalPayment() {
-      return this.payments.reduce(
-        (total, payment) => total + Number(payment.payment_amount),
-        0
-      );
+    calculateSubTotalAmount() {
+      return this.sales.reduce((total, sale) => total + Number(sale.sub_total), 0);
     },
     clearError(fieldName) {
       this.form.errors.clear(fieldName);

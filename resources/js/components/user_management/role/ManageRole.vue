@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <div class="row">
@@ -8,27 +7,10 @@
           <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
           >
-            <h3 class="m-0 font-weight-bold">Role List </h3>
+            <h3 class="m-0 font-weight-bold">Role List</h3>
           </div>
+        
           <div class="card-body p-0 m-0">
-            <!-- <div class="row p-2">
-              <div class="col-md-6">
-                <input
-                  type="text"
-                  v-model="searchTerm"
-                  class="form-control"
-                  style="width: 300px"
-                  placeholder="Search Here"
-                />
-              </div>
-              <div class="col-md-6">
-                <router-link to="/add-role" class="btn btn-primary float-right">
-                  <i class="fa fa-solid fa-plus"></i>
-                  Add role
-                </router-link>
-              </div>
-            </div> -->
-            <!-- <div class="row justify-content-between"> -->
             <div class="row p-2">
               <div class="input-group">
                 <div class="col-md-2">
@@ -148,37 +130,89 @@
                         class="form-check-input"
                       />
                     </td>
-                    <td class="text-nowrap">{{ role.id }}</td>
+                    <td style="width: 20px" class="text-nowrap">{{ role.id }}</td>
                     <td>{{ role.name }}</td>
                     <td>
-                        <span class=" badge bg-info text-dark text-start p-1 m-1" v-for="permission in role.permissions" :key="permission.id">
+                      <transition name="fade" mode="out-in">
+                      <div class="text-dark text-start p-1 m-1">
+                        <!-- {{
+                          role.permissions
+                            .slice(0, 5)
+                            .map((permission) => permission.name)
+                            .join(", ")
+                        }} -->
+                        <span
+                          class="badge bg-info text-dark text-start p-1 m-1"
+                          v-for="permission in role.permissions.slice(0, 5)"
+                          :key="permission.id"
+                        >
                           {{ permission.name }}
                         </span>
+                        <div
+                          v-if="role.permissions.length > 5 && !role.showAllPermissions"
+                        >
+                          <!-- Show More button -->
+                          <a href="#" @click="toggleShowPermissions(role)">Show More</a>
+                        </div>
+                        <div v-else-if="role.showAllPermissions">
+                          <!-- {{
+                            role.permissions
+                              .slice(5)
+                              .map((permission) => permission.name)
+                              .join(", ")
+                          }} -->
+                         
+                            <span
+                              class="badge bg-info text-dark text-start p-1 m-1"
+                              v-for="permission in role.permissions.slice(5)"
+                              :key="permission.id"
+                            >
+                              {{ permission.name }}
+                            </span>
+                        
+                          <!-- Show Less button -->
+                          <a href="#" @click="toggleShowPermissions(role)">Show Less</a>
+                        </div>
+                      </div>
+                    </transition>
+                      <!-- <span
+                        class="badge bg-info text-dark text-start p-1 m-1"
+                        v-for="permission in role.permissions"
+                        :key="permission.id"
+                      >
+                        {{ permission.name }}
+                      </span> -->
                     </td>
                     <td class="text-right text-nowrap">
-                      <div  class="btn-group" role="group" >
-                      <router-link
-                  :to="`/roles/${role.id}`"
-                  class="btn btn-sm my-btn-primary"
-                  ><i class="fa fa-eye"></i> View</router-link
-                >
-                   
-                      <router-link v-if="role.name!='developer'"
-                        :to="`/roles/${role.id}/edit`"
-                        class="btn btn-sm btn-primary px-2 mx-1"
-                        ><i class="fa fa-edit"></i> Edit</router-link
-                      >
-                      <router-link v-if="role.name=='developer' && user_roles.includes('developer')"
-                        :to="`/roles/${role.id}/edit`"
-                        class="btn btn-sm btn-primary px-2 mx-1"
-                        ><i class="fa fa-edit"></i> Edit</router-link
-                      >
-                      <a
-                        @click="deleterole(role.id)"
-                        class="btn btn-sm btn-danger disabled px-2 mx-1"
-                      >
-                        <font color="#ffffff"><i class="fa fa-trash"></i> Delete</font></a
-                      >
+                      <div class="btn-group" role="group">
+                        <router-link
+                          :to="`/roles/${role.id}`"
+                          class="btn btn-sm my-btn-primary"
+                          ><i class="fa fa-eye"></i> View</router-link
+                        >
+
+                        <router-link
+                          v-if="role.name != 'developer'"
+                          :to="`/roles/${role.id}/edit`"
+                          class="btn btn-sm btn-primary px-2 mx-1"
+                          ><i class="fa fa-edit"></i> Edit</router-link
+                        >
+                        <router-link
+                          v-if="
+                            role.name == 'developer' && user_roles.includes('developer')
+                          "
+                          :to="`/roles/${role.id}/edit`"
+                          class="btn btn-sm btn-primary px-2 mx-1"
+                          ><i class="fa fa-edit"></i> Edit</router-link
+                        >
+                        <a
+                          @click="deleterole(role.id)"
+                          class="btn btn-sm btn-danger disabled px-2 mx-1"
+                        >
+                          <font color="#ffffff"
+                            ><i class="fa fa-trash"></i> Delete</font
+                          ></a
+                        >
                       </div>
                     </td>
                   </tr>
@@ -224,7 +258,8 @@ export default {
   name: "role",
   data() {
     return {
-      user_roles : User.userRoles().split(","),
+      showPermissions: false,
+      user_roles: User.userRoles().split(","),
       checked: [],
       paginator: {
         totalRecords: 0,
@@ -250,7 +285,7 @@ export default {
       filterFields: {},
     };
   },
-  created(){
+  created() {
     // console.log(User.user());
     if (!User.loggedIn()) {
       this.$router.push("/");
@@ -275,6 +310,9 @@ export default {
   },
   computed: {},
   methods: {
+    toggleShowPermissions(role) {
+      role.showAllPermissions = !role.showAllPermissions;
+    },
     async getRoles(page = 1) {
       this.isLoading = true;
       await axios
@@ -300,9 +338,11 @@ export default {
           this.paginator.current_page = response.data.current_page;
           this.paginator.per_page = response.data.per_page;
           this.isRefreshing = false;
-        }).catch((error)=>{    
-          this.isLoading = false;   
-          document.querySelector(".loading-section").innerText = error.response.data.error;
+        })
+        .catch((error) => {
+          this.isLoading = false;
+          document.querySelector(".loading-section").innerText =
+            error.response.data.error;
           this.isRefreshing = false;
           if (error.response.status == 403) {
             Notification.error(error.response.data.message);
@@ -310,7 +350,8 @@ export default {
           } else {
             Notification.error(error.response.data.error);
           }
-        }).finally(()=>{
+        })
+        .finally(() => {
           this.isLoading = false;
         });
     },
@@ -329,7 +370,7 @@ export default {
       }
       // this.getProducts();
     },
-    deleterole(id) {
+    deleteRole(id) {
       Swal.fire({
         allowOutsideClick: false,
         title: "Are you sure?",
@@ -414,5 +455,11 @@ export default {
 #em_photo {
   height: 40px;
   width: 40px;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 </style>

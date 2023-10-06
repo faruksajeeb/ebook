@@ -1,13 +1,13 @@
 <template>
   <div>
     <div class="row">
-      <div class="col-md-6 offset-md-3">
+      <div class="col-md-12">
         <div class="card shadow-sm my-4">
-          <div class="card-header py-2 my-bg-success">
-            <h3 class="text-white-900" v-if="isNew">
+          <div class="card-header py-1 my-bg-success">
+            <!-- <h3 class="text-white-900" v-if="isNew">
               <i class="fa fa-plus"></i> Add Role
             </h3>
-            <h3 class="text-white-900" v-else><i class="fa fa-pencil"></i> Edit Role</h3>
+            <h3 class="text-white-900" v-else><i class="fa fa-pencil"></i> Edit Role</h3> -->
           </div>
           <div class="card-body p-3">
             <div class="form">
@@ -37,25 +37,34 @@
                     <div class="available-permissions">
                       <h5>Available Permissions <span class="text-danger">*</span></h5>
                       <HasError :form="form" field="selectedPermissions" />
-                      <div v-if="permissions.length > 0">
-                        <ul>
-                          <li v-for="permission in permissions" :key="permission.id">
-                            <input
-                              type="checkbox"
-                              :id="permission.id"
-                              v-model="form.selectedPermissions"
-                              :value="permission.id"
-                            />
-                            <label :for="permission.id" class="mx-2">{{
-                              permission.name
-                            }}</label>
-                          </li>
-                        </ul>
+                      <div class="row">
+                        <!-- <div v-if="permissions.length > 0"> -->
+                        <div
+                          class="col-md-3 py-2"
+                          v-for="(group, groupName) in permissions"
+                          :key="groupName"
+                        >
+                          <h5>{{ groupName.replace("_", " ").toUpperCase() }}</h5>
+                          <ul>
+                            <li v-for="(permission, index) in group" :key="permission.id">
+                              <input
+                                type="checkbox"
+                                :id="permission.id"
+                                v-model="form.selectedPermissions"
+                                :value="permission.id"
+                              />
+                              <label :for="permission.id" class="mx-2">{{
+                                permission.name
+                              }}</label>
+                            </li>
+                          </ul>
+                        </div>
+                        <!-- </div> -->
                       </div>
 
-                      <div v-else>
+                      <!-- <div v-else>
                         <LoadingSpinner />
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                 </div>
@@ -78,7 +87,7 @@ export default {
   data: () => ({
     isSubmitting: false,
     role: null,
-    permissions: [],
+    permissions: {},
     form: new Form({
       name: "",
       selectedPermissions: [], // Store selected permissions
@@ -95,10 +104,11 @@ export default {
     }
     try {
       this.permissions = this.$store.getters.getPemissions;
+      console.log(this.permissions);
       if (this.permissions.length == 0) {
         const response = await axios.get("/api/get-permissions");
         this.permissions = response.data;
-        // console.log(this.permissions);
+        console.log(this.permissions);
       }
     } catch (error) {
       console.error("Error fetching roles:", error);

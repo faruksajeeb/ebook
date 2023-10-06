@@ -13,7 +13,7 @@ use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 use Carbon\Carbon;
 
 
-class SaleReportExport implements FromArray, WithHeadings, Responsable, ShouldAutoSize, WithStyles, WithCustomStartCell
+class CustomerWiseSaleReportExport implements FromArray, WithHeadings, Responsable, ShouldAutoSize, WithStyles, WithCustomStartCell
 {
     use Exportable;
     public $data;
@@ -31,7 +31,7 @@ class SaleReportExport implements FromArray, WithHeadings, Responsable, ShouldAu
     {
         $sheet->setCellValue('A1', $this->title);
         $sheet->getStyle('A1')->getFont()->setBold(true);
-        $sheet->mergeCells('A1:F2');
+        $sheet->mergeCells('A1:H2');
         $sheet->setCellValue('A3', "Customer Name");
         $sheet->setCellValue('B3', $this->customer->customer_name);
         $sheet->setCellValue('C3', "Customer Phone");
@@ -57,8 +57,8 @@ class SaleReportExport implements FromArray, WithHeadings, Responsable, ShouldAu
             //     ],
             // ],
             'fill' => [
-                // 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_GRADIENT_LINEAR,
-                // 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                // 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::HILL_GRADIENT_LINEAR,
+                // 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::HILL_SOLID,
                 'rotation' => 90,
                 'startColor' => [
                     'argb' => 'FFA0A0A0',
@@ -68,23 +68,25 @@ class SaleReportExport implements FromArray, WithHeadings, Responsable, ShouldAu
                 ],
             ],
         ];
-        $sheet->getStyle('A1:F1')->applyFromArray($styleArray);
+        $sheet->getStyle('A1:H1')->applyFromArray($styleArray);
         $headerStyleArray = [
             'font' => [
                 'bold' => true,
             ]];
-        $sheet->getStyle('A5:F5')->applyFromArray($headerStyleArray);
+        $sheet->getStyle('A5:H5')->applyFromArray($headerStyleArray);
     }
     public function headings(): array
     {
         return [
             [
-                "Payment Date",
+                "Sale Date",
                 "Customer Name",
-                "Payment Method",
-                "Payment Description",
-                "Paid By",
-                "Amount"
+                "Total Amount",
+                "Discount",
+                "Discount Amount",
+                "Net Payment",
+                "Pay Amount",
+                "Due Amount"
             ]
         ];
     }
@@ -95,20 +97,30 @@ class SaleReportExport implements FromArray, WithHeadings, Responsable, ShouldAu
     public function array(): array
     {
         $total = 0;
+        $discountTotal = 0;
+        $netTotal = 0;
+        $payTotal = 0;
+        $dueTotal = 0;
         $customArray = array();
         foreach ($this->data as $k=>$val) {
             $customArray[] = array(
-                $val->payment_date,
+                $val->sale_date,
                 $val->customer->customer_name,
-                $val->paymentmethod->name,
-                $val->payment_description,
-                $val->paid_by,
-                $val->payment_amount,
+                $val->total_amount,
+                $val->discount_percentage,
+                $val->discount_amount,
+                $val->net_amount,
+                $val->pay_amount,
+                $val->due_amount,
             );
-            $total +=  $val->payment_amount;
+            $total +=  $val->total_amount;
+            $discountTotal += $val->discount_amount;
+            $netTotal += $val->net_amount;
+            $payTotal += $val->pay_amount;
+            $dueTotal += $val->due_amount;
         }
          $data = $customArray;
-        $data[] = ['Payment Total','','','','', $total];
+        $data[] = ['Sale Total','',$total,'',$discountTotal,$netTotal ,$payTotal, $dueTotal];
         return $data;
     }
 }

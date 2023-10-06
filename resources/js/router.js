@@ -98,7 +98,11 @@ import ManageDamageItem from "./components/damage_item/ManageDamageItem.vue";
 import ReportIndex from "./components/report/Index.vue";
 import SupplierPaymentReport from "./components/report/supplier_payment/Index.vue";
 import CustomerPaymentReport from "./components/report/customer_payment/Index.vue";
+
 import SaleReport from "./components/report/sale/Index.vue";
+import CategoryWiseSaleReport from "./components/report/sale/CategoryWiseSale.vue";
+import CustomerWiseSaleReport from "./components/report/sale/CustomerWiseSale.vue";
+
 import PurchaseReport from "./components/report/purchase/Index.vue";
 import StockReport from "./components/report/stock/Index.vue";
 import StockAlertReport from "./components/report/stock_alert/Index.vue";
@@ -928,6 +932,28 @@ export const routes = [
         name: "reports/sale",
         meta: {
             title: "Report | Sale",
+            requiresAuth: true,
+            requiredPermissions: ["report.sale"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        path: "/reports/sale/customer-wise-sale",
+        component: CustomerWiseSaleReport,
+        name: "reports/sale/customer-wise-sale",
+        meta: {
+            title: "Report | Customer Wise Sale",
+            requiresAuth: true,
+            requiredPermissions: ["report.sale"],
+        },
+        beforeEnter: guard,
+    },
+    {
+        path: "/reports/sale/category-wise-sale",
+        component: CategoryWiseSaleReport,
+        name: "reports/sale/category-wise-sale",
+        meta: {
+            title: "Report | Category Wise Sale",
             requiresAuth: true,
             requiredPermissions: ["report.sale"],
         },
