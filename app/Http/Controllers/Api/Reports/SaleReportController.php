@@ -121,8 +121,9 @@ class SaleReportController extends Controller
             $query->leftJoin('sales', 'sales.id', '=', 'sale_details.sale_id');
             $query->leftJoin('customers', 'customers.id', '=', 'sales.customer_id');
             $query->leftJoin('books', 'books.id', '=', 'sale_details.book_id');
-            $query->leftJoin('authors', 'authors.id', '=', 'books.sale_id');
+            $query->leftJoin('authors', 'authors.id', '=', 'books.author_id');
             $query->leftJoin('publishers', 'publishers.id', '=', 'books.publisher_id');
+            $query->leftJoin('categories', 'categories.id', '=', 'books.category_id');
             if (strpos($request->date_range, 'to')) {  
                 $dateExplode = explode(" to ", $request->date_range);
                 $startDate = $dateExplode[0];
@@ -151,9 +152,7 @@ class SaleReportController extends Controller
                     ], 404);
             }
             if($request->btn_type=='excel'){
-                // ini_set('max_execution_time', 10 * 60); //10 min
-                // ini_set('memory_limit', '2048M');
-                return Excel::download(new SaleReportExport($sales,$customer,"Sale",$request->date_range), 'category.xlsx',\Maatwebsite\Excel\Excel::XLSX);
+                return Excel::download(new CategoryWiseSaleReportExport($sales,"Sale report",$request->date_range), 'category.xlsx',\Maatwebsite\Excel\Excel::XLSX);
             }else if($request->btn_type=='pdf'){
                
                 $pdf = PDF::loadView('pdf-export.report.sale.category_wise_sale_report_pdf', [

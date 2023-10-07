@@ -55,8 +55,7 @@
     </div>
     <div class="text-center">
 
-        <span style="background-color:#57375D; color:#FFFFFF;padding:5px;border-radius:5px">Customer Payment
-            History</span>
+        <span style="background-color:#57375D; color:#FFFFFF;padding:5px;border-radius:5px">Customer Wise Sale Report</span>
 
     </div>
     <table style="width:100%; margin-top:50px" border="1" cellspacing="0" cellpadding="5">

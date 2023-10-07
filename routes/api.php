@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\SupplierController;
 
 use App\Http\Controllers\Api\Reports\CustomerPaymentReportController;
 use App\Http\Controllers\Api\Reports\SaleReportController;
+use App\Http\Controllers\Api\Reports\StockReportController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -167,4 +168,6 @@ Route::middleware('JWT')->group(function () {
     Route::post('/report/customer-payment',[CustomerPaymentReportController::class,'index']);
     Route::post('/report/customer-wise-sale',[SaleReportController::class,'customerWiseSale']);
     Route::post('/report/category-wise-sale',[SaleReportController::class,'categoryWiseSale']);
+    Route::post('/report/stock',[StockReportController::class,'stockReport']);
+    Route::post('/report/stock-alert',[StockReportController::class,'stockAlertReport']);
 });

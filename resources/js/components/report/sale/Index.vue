@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-      <h1 class="text-center my-5">Sale Report</h1>
+      <h1 class="text-center my-5 text-bold">Sale Report</h1>
       <hr>
       <router-link
           to="/reports/sale/customer-wise-sale"

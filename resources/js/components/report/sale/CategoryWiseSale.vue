@@ -163,16 +163,16 @@
           </tr>
           <tr v-for="sale in sales">
             <td class="text-center">{{ sale.sale_date }}</td>
-            <td class="text-right">{{ sale.book_name }}</td>
-            <td class="text-center">{{ sale.author_name }}</td>
-            <td class="text-right">{{ sale.publisher_name }}</td>
-            <td class="text-right">{{ sale.customer_name }}</td>
-            <td class="text-right">{{ sale.quantity }}</td>
+            <td class="text-left">{{ sale.book_name }}</td>
+            <td class="text-left">{{ sale.author_name }}</td>
+            <td class="text-left">{{ sale.publisher_name }}</td>
+            <td class="text-left">{{ sale.customer_name }}</td>
+            <td class="text-center">{{ sale.quantity }}</td>
             <td class="text-right">{{ sale.sub_total }}</td>
           </tr>
           <tr>
             <td
-              class="fw-bold text-left" colsapn="6"
+              class="fw-bold text-left" colspan="6"
             >
               Sale Total
             </td>
