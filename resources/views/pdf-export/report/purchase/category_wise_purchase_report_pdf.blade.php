@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Sale Invoice</title>
+    <title>Purchase Report</title>
     <style>
         @page {
             margin: 5em;
@@ -60,42 +60,42 @@
     </div>
     <div class="text-center">
 
-        <span style="background-color:#57375D; color:#FFFFFF;padding:5px;border-radius:5px">Sale Report (Category Wise)</span>
+        <span style="background-color:#57375D; color:#FFFFFF;padding:5px;border-radius:5px">Purchase Report (Category Wise)</span>
 
     </div>
     <table style="width:100%; margin-top:50px" border="0" cellspacing="0" cellpadding="5">
 
         <tr>
-            <td>Date: {{ $date_range }}</td>
+            <td>Date:{{ $date_range }}</td>
         </tr>
     </table>
     <br>
-    <table  id="datatable"  width="100%" border="1" cellspacing="0" cellpadding="5">
+    <table id="datatable" width="100%" border="1" cellspacing="0" cellpadding="2">
         <thead>
-            <th class="thead_label">Sale Date</th>
+            <th class="thead_label">Purchase Date</th>
             <th class="thead_label">Book Name</th>
             <th class="thead_label">Publisher Name</th>
             <th class="thead_label">Author Name</th>
             <th class="thead_label">Category Name</th>
-            <th class="thead_label">Customer Name</th>
+            <th class="thead_label">Supplier Name</th>
             <th class="thead_label">Amount</th>
         </thead>
         <tbody>
             @php
                 $total = 0;
             @endphp
-            @foreach ($sales as $key => $sale)
+            @foreach ($purchases as $key => $purchase)
                 <tr>
-                    <td class="text-center">{{ $sale->sale_date }}</td>
-                    <td class="text-center">{{ $sale->book_name }}</td>
-                    <td class="text-center">{{ $sale->publisher_name }}</td>
-                    <td class="text-center">{{ $sale->author_name }}</td>
-                    <td class="text-center">{{ $sale->category_name }}</td>
-                    <td class="text-center">{{ $sale->customer_name }}</td>
-                    <td class="text-right">{{ number_format($sale->sub_total, 2) }}</td>
+                    <td class="text-center">{{ $purchase->purchase_date }}</td>
+                    <td class="text-center">{{ $purchase->book_name }}</td>
+                    <td class="text-center">{{ $purchase->publisher_name }}</td>
+                    <td class="text-center">{{ $purchase->author_name }}</td>
+                    <td class="text-center">{{ $purchase->category_name }}</td>
+                    <td class="text-center">{{ $purchase->customer_name }}</td>
+                    <td class="text-right">{{ number_format($purchase->sub_total, 2) }}</td>
                 </tr>
                 @php
-                    $total += $sale->sub_total;
+                    $total += $purchase->sub_total;
                 @endphp
             @endforeach
             <tr>

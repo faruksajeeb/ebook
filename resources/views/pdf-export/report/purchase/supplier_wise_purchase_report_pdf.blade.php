@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Sale Invoice</title>
+    <title>Purchase Invoice</title>
     <style>
            @page  {
         margin: 5em;
@@ -58,31 +58,31 @@
     </div>
     <div class="text-center">
 
-        <span style="background-color:#57375D; color:#FFFFFF;padding:5px;border-radius:5px">Customer Wise Sale Report</span>
+        <span style="background-color:#57375D; color:#FFFFFF;padding:5px;border-radius:5px">Supplier Wise Purchase Report</span>
 
     </div>
-    <table style="width:100%; margin-top:50px" border="1" cellspacing="0" cellpadding="5">
+    <table style="width:100%; margin-top:50px" border="1" cellspacing="0" cellpadding="2">
 
         <tr>
-            <td style="width:25%">Customer Name:</td>
-            <td style="width:25%" colspan="{{ $customer->customer_name == 'All' ? 2 : 1 }}">{{ $customer->customer_name }}</td>
-            <td style="width:25%">Customer Phone:</td>
-            <td style="width:25%">{{ $customer->customer_phone }}</td>
+            <td style="width:25%">Supplier Name:</td>
+            <td style="width:25%" colspan="{{ $supplier->supplier_name == 'All' ? 2 : 1 }}">{{ $supplier->supplier_name }}</td>
+            <td style="width:25%">Supplier Phone:</td>
+            <td style="width:25%">{{ $supplier->supplier_phone }}</td>
         </tr>
         <tr>
-            <td>Customer Address:</td>
-            <td colspan="{{ $customer->customer_name == 'All' ? 2 : 1 }}">{{ $customer->customer_address }}</td>
+            <td>Supplier Address:</td>
+            <td colspan="{{ $supplier->supplier_name == 'All' ? 2 : 1 }}">{{ $supplier->supplier_address }}</td>
             <td>Date:</td>
             <td>{{ $date_range }}</td>
         </tr>
     </table>
     <br>
-    <table  id="datatable"  width="100%" border="1" cellspacing="0" cellpadding="5">
+    <table id="datatable" width="100%" border="1" cellspacing="0" cellpadding="5">
         <thead>
-            <th class="thead_label">Sale Date</th>
+            <th class="thead_label">Purchase Date</th>
 
-            @if ($customer->customer_name == 'All')
-                <th class="thead_label">Customer Name</th>
+            @if ($supplier->supplier_name == 'All')
+                <th class="thead_label">Supplier Name</th>
             @endif
 
             <th class="thead_label">Total Amount</th>
@@ -100,30 +100,30 @@
                 $payTotal = 0;
                 $dueTotal = 0;
             @endphp
-            @foreach ($sales as $key => $sale)
+            @foreach ($purchases as $key => $purchase)
                 <tr>
-                    <td class="text-center">{{ $sale->sale_date }}</td>
+                    <td class="text-center">{{ $purchase->purchase_date }}</td>
 
-                    @if ($customer->customer_name == 'All')
-                        <td class="text-center">{{ $sale->customer->customer_name }}</td>
+                    @if ($supplier->supplier_name == 'All')
+                        <td class="text-center">{{ $purchase->supplier->supplier_name }}</td>
                     @endif
-                    <td class="text-right">{{ number_format($sale->total_amount, 2) }}</td>
-                    <td class="text-center">{{ $sale->discount_percentage }}</td>
-                    <td class="text-right">{{ $sale->discount_amount }}</td>
-                    <td class="text-right">{{ $sale->net_amount }}</td>
-                    <td class="text-right">{{ $sale->pay_amount }}</td>
-                    <td class="text-right">{{ $sale->due_amount }}</td>
+                    <td class="text-right">{{ number_format($purchase->total_amount, 2) }}</td>
+                    <td class="text-center">{{ $purchase->discount_percentage }}</td>
+                    <td class="text-right">{{ $purchase->discount_amount }}</td>
+                    <td class="text-right">{{ $purchase->net_amount }}</td>
+                    <td class="text-right">{{ $purchase->pay_amount }}</td>
+                    <td class="text-right">{{ $purchase->due_amount }}</td>
                 </tr>
                 @php
-                    $total += $sale->payment_amount;
-                    $discountTotal += $sale->discount_amount;
-                    $netTotal += $sale->net_amount;
-                    $payTotal += $sale->pay_amount;
-                    $dueTotal += $sale->due_amount;
+                    $total += $purchase->payment_amount;
+                    $discountTotal += $purchase->discount_amount;
+                    $netTotal += $purchase->net_amount;
+                    $payTotal += $purchase->pay_amount;
+                    $dueTotal += $purchase->due_amount;
                 @endphp
             @endforeach
             <tr>
-                <td colspan="{{ $customer->customer_name == 'All' ? 2 : 1 }}">Payment Total</td>
+                <td colspan="{{ $supplier->supplier_name == 'All' ? 2 : 1 }}">Payment Total</td>
                 
                 <td class="text-right">{{ number_format($total, 2) }}</td>
                 <td class="text-right"></td>

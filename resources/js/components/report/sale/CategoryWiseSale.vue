@@ -237,6 +237,9 @@ export default {
       return this.$store.state.categories;
     },
   },
+  created(){
+    this.fetchCategories();
+  },
   mounted() {
     flatpickr(".datecalander", {
       mode: "range",
@@ -321,7 +324,7 @@ export default {
               );
               var fileLink = document.createElement("a");
               fileLink.href = fileURL;
-              fileLink.setAttribute("download", "customer_payment_list.pdf");
+              fileLink.setAttribute("download", "category_wise_sale_report.pdf");
               document.body.appendChild(fileLink);
               fileLink.click();
             } else if (this.form.btn_type == "print") {

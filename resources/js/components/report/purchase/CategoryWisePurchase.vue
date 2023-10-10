@@ -1,15 +1,15 @@
 <template>
   <div class="row">
     <div class="col-md-6 offset-md-3">
-      <div class="card mt-3 py-1">
-        <div class="card-header py-1">
+      <div class="card mt-3">
+        <div class="card-header">
           <h3 class="text-center fw-bold">
-            <i class="fa fa-chart-pie"></i> Stock Alert Report
+            <i class="fa fa-chart-pie"></i> Category Wise Purchase Report
           </h3>
         </div>
         <form id="form" @submit.prevent="submitForm">
-          <div class="card-body py-1">
-            <div class="form-group py-0 my-0">
+          <div class="card-body">
+            <div class="form-group">
               <label for=""
                 >Category <span class="my-text-danger fw-bold"> *</span></label
               >
@@ -21,14 +21,15 @@
                 @change="selectedCategory"
                 :class="{ 'is-invalid': form.errors.has('category_id') }"
               >
-                <option value="all" selected>All Category</option>
+                <option value="">--select category--</option>
+                <option value="all">All Category</option>
                 <option :value="category.id" v-for="category in categories">
                   {{ category.category_name }}
                 </option>
               </select>
               <HasError :form="form" field="category_id" />
             </div>
-            <div class="form-group py-0 my-0">
+            <div class="form-group">
               <label for=""
                 >Publisher <span class="my-text-danger fw-bold"> *</span></label
               >
@@ -48,8 +49,10 @@
               </select>
               <HasError :form="form" field="publisher_id" />
             </div>
-            <div class="form-group py-0 my-0">
-              <label for="">Author <span class="my-text-danger fw-bold"> *</span></label>
+            <div class="form-group">
+              <label for=""
+                >Author <span class="my-text-danger fw-bold"> *</span></label
+              >
               <select
                 name=""
                 id=""
@@ -66,22 +69,42 @@
               </select>
               <HasError :form="form" field="author_id" />
             </div>
-
             <div class="form-group">
               <label for=""
-                >Stock Less Than <span class="my-text-danger fw-bold"> *</span></label
+                >Supplier <span class="my-text-danger fw-bold"> *</span></label
               >
-              <input
-                type="number"
+              <select
                 name=""
                 id=""
-                v-model="form.stock_less_than"
-                class="form-control"
+                class="form-select"
+                v-model="form.supplier_id"
+                @change="selectSupplier"
+                :class="{ 'is-invalid': form.errors.has('supplier_id') }"
+              >
+                <!-- <option value="">--select supplier--</option> -->
+                <option value="all" selected>All Supplier</option>
+                <option :value="supplier.id" v-for="supplier in suppliers">
+                  {{ supplier.supplier_name }}
+                </option>
+              </select>
+              <HasError :form="form" field="supplier_id" />
+            </div>
+            <div class="form-group">
+              <label for=""
+                >Date Range <span class="my-text-danger fw-bold"> *</span></label
+              >
+              <input
+                type="text"
+                v-model="form.date_range"
+                placeholder="Search By Date Range"
+                class="form-control datecalander"
+                @input="clearError('date_range')"
+                :class="{ 'is-invalid': form.errors.has('date_range') }"
               />
-              <HasError :form="form" field="stock_less_than" />
+              <HasError :form="form" field="date_range" />
             </div>
           </div>
-          <div class="card-footer py-1">
+          <div class="card-footer">
             <div class="form-group text-center">
               <button
                 type="submit"
@@ -124,28 +147,36 @@
   <div ref="targetDiv" class="scroll-target">
     <hr />
 
-    <div class="row" v-if="stocks.length > 0">
+    <div class="row" v-if="purchases.length > 0">
       <div id="printableContent" class="col-md-10 offset-md-1 border my-3 rounded-sm">
-        <h3 class="my-2">Stock Alert</h3>
-
+        <h3 class="my-2">Purchases</h3>
+     
         <table class="table table-sm">
           <tr class="bg-secondary">
+            <td class="fw-bold text-white text-center">Purchase Date</td>
             <td class="fw-bold text-white text-left">Book Name</td>
             <td class="fw-bold text-white text-left">Author Name</td>
             <td class="fw-bold text-white text-left">Publisher Name</td>
-            <td class="fw-bold text-white text-left">Category Name</td>
-            <td class="fw-bold text-white text-right">Stock Quantity</td>
+            <td class="fw-bold text-white text-left">Supplier Name</td>
+            <td class="fw-bold text-white text-right">Quantity</td>
+            <td class="fw-bold text-white text-right">Amount</td>
           </tr>
-          <tr v-for="stock in stocks">
-            <td class="text-left">{{ stock.title }}</td>
-            <td class="text-left">{{ stock.author.author_name }}</td>
-            <td class="text-left">{{ stock.publisher.publisher_name }}</td>
-            <td class="text-left">{{ stock.category.category_name }}</td>
-            <td class="text-center">{{ stock.stock_quantity }}</td>
+          <tr v-for="purchase in purchases">
+            <td class="text-center">{{ purchase.purchase_date }}</td>
+            <td class="text-left">{{ purchase.book_name }}</td>
+            <td class="text-left">{{ purchase.author_name }}</td>
+            <td class="text-left">{{ purchase.publisher_name }}</td>
+            <td class="text-left">{{ purchase.supplier_name }}</td>
+            <td class="text-center">{{ purchase.quantity }}</td>
+            <td class="text-right">{{ purchase.sub_total }}</td>
           </tr>
           <tr>
-            <td class="fw-bold text-left" colspan="4">Stock Alert Total Items</td>
-            <td class="fw-bold text-center">{{ calculateStockTotal() }}</td>
+            <td
+              class="fw-bold text-left" colspan="6"
+            >
+              Purchase Total
+            </td>
+            <td class="fw-bold text-right">{{ calculateSubTotalAmount() }}</td>
           </tr>
         </table>
       </div>
@@ -171,20 +202,25 @@ export default {
       date_range: "",
       authors: [],
       publishers: [],
-      customers: [],
+      suppliers: [],
       categories: [],
-      stocks: [],
+      purchases: [],
       form: new Form({
-        author_id: "all",
-        publisher_id: "all",
-        category_id: "all",
-        stock_less_than: 5,
+        author_id:'all',
+        publisher_id:'all',
+        category_id: "",
+        supplier_id:'all',
+        date_range: "",
         btn_type: null,
       }),
     };
   },
   async created() {
-    this.fetchCategories();
+    this.suppliers = this.$store.getters.getSuppliers;
+    if (this.suppliers.length == 0) {
+      const response = await axios.get("/api/get-suppliers");
+      this.suppliers = response.data;
+    }
     this.authors = this.$store.getters.getAuthors;
     if (this.authors.length == 0) {
       const response = await axios.get("/api/get-authors");
@@ -201,6 +237,9 @@ export default {
       return this.$store.state.categories;
     },
   },
+  created(){
+    this.fetchCategories();
+  },
   mounted() {
     flatpickr(".datecalander", {
       mode: "range",
@@ -210,8 +249,8 @@ export default {
   },
   methods: {
     ...mapActions(["fetchCategories"]),
-    selectCustomer() {
-      this.form.errors.clear("customer_id");
+    selectSupplier() {
+      this.form.errors.clear("supplier_id");
     },
     getReport(btnType) {
       this.form.btn_type = btnType;
@@ -224,37 +263,40 @@ export default {
       }
     },
     async submitForm() {
-      if (!this.form.stock_less_than) {
-        this.form.errors.set(
-          "stock_less_than",
-          "Please fill out the 'stock less than' field."
-        );
+      if (!this.form.category_id) {
+        this.form.errors.set("category_id", "Please fill out the category field.");
         return false;
       }
+      if (!this.form.date_range) {
+        this.form.errors.set("date_range", "Please fill out the date_range field.");
+        return false;
+      }
+      // Disable the button when clicked
+
       this.isSubmitting = true;
       let resType = "";
       if (this.form.btn_type == "view") {
         let loader =
-          '<span class="spinner-border spinner-border-sm" sale="status" aria-hidden="true" ></span> Generating...';
+          '<span class="spinner-border spinner-border-sm" supplier_payment="status" aria-hidden="true" ></span> Generating...';
         document.querySelector(".export-btn-view").innerHTML = loader;
       } else if (this.form.btn_type == "excel") {
         let loader =
-          '<span class="spinner-border spinner-border-sm" sale="status" aria-hidden="true" ></span> Exporting...';
+          '<span class="spinner-border spinner-border-sm" supplier_payment="status" aria-hidden="true" ></span> Exporting...';
         document.querySelector(".export-btn-excel").innerHTML = loader;
         resType = "arraybuffer";
       } else if (this.form.btn_type == "pdf") {
         let loader =
-          '<span class="spinner-border spinner-border-sm" sale="status" aria-hidden="true" ></span> Exporting...PDF';
+          '<span class="spinner-border spinner-border-sm" supplier_payment="status" aria-hidden="true" ></span> Exporting...PDF';
         document.querySelector(".export-btn-pdf").innerHTML = loader;
         resType = "blob";
       } else if (this.form.btn_type == "print") {
         resType = "blob";
         let loader =
-          '<span class="spinner-border spinner-border-sm" sale="status" aria-hidden="true" ></span> Printing...';
+          '<span class="spinner-border spinner-border-sm" supplier_payment="status" aria-hidden="true" ></span> Printing...';
         document.querySelector(".export-btn-print").innerHTML = loader;
       }
       await this.form
-        .post("/api/report/stock-alert", {
+        .post("/api/report/category-wise-purchase", {
           params: {
             ...this.form,
           },
@@ -263,14 +305,16 @@ export default {
         .then((response) => {
           if (response.data.report_type == "view") {
             this.isResponsed = true;
-            this.stocks = response.data.stocks;
+            this.date_range = response.data.date_range;
+            this.supplier = response.data.supplier;
+            this.purchases = response.data.purchases;
           } else {
             if (this.form.btn_type == "excel") {
               Notification.success("Exported Successfully");
               var fileURL = window.URL.createObjectURL(new Blob([response.data]));
               var fileLink = document.createElement("a");
               fileLink.href = fileURL;
-              fileLink.setAttribute("download", "stock-alert-report.xlsx");
+              fileLink.setAttribute("download", "category-wise-purchase-report.xlsx");
               document.body.appendChild(fileLink);
               fileLink.click();
             } else if (this.form.btn_type == "pdf") {
@@ -280,7 +324,7 @@ export default {
               );
               var fileLink = document.createElement("a");
               fileLink.href = fileURL;
-              fileLink.setAttribute("download", "stock-alert-report.pdf");
+              fileLink.setAttribute("download", "category_wise_purchase_report.pdf");
               document.body.appendChild(fileLink);
               fileLink.click();
             } else if (this.form.btn_type == "print") {
@@ -338,13 +382,8 @@ export default {
           }
         });
     },
-    calculateStockTotal() {
-    //   return this.stocks.reduce(
-    //     (total, stock) => total + Number(stock.stock_quantity),
-    //     0
-    //   );
-
-    return this.stocks.length;
+    calculateSubTotalAmount() {
+      return this.purchases.reduce((total, purchase) => total + Number(purchase.sub_total), 0);
     },
     clearError(fieldName) {
       this.form.errors.clear(fieldName);
