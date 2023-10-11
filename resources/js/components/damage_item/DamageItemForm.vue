@@ -1,9 +1,9 @@
 <template>
   <div class="row">
-    <div class="col-md-8 offset-md-2">
+    <div class="col-md-6 offset-md-3">
       <div class="card shadow-sm my-2">
         <div class="card-header py-2 my-bg-success">
-          <h3 class="text-white-900" v-if="isNew"><i class="fa fa-plus"></i> Add Damange Item </h3>
+          <h3 class="text-white-900" v-if="isNew"><i class="fa fa-plus"></i> Add Damage Item </h3>
           <h3 class="text-white-900" v-else><i class="fa fa-pencil"></i> Edit Damange Item</h3>
           <p class="text-white m-0">ফরমের লাল তারকা (<span class="text-danger">*</span>) চিহ্নিত ঘরগুলো অবশ্যই পূরণ করুন। অন্যান্য ঘরগুলো পূরণ ঐচ্ছিক।</p>
         </div>
@@ -21,13 +21,23 @@
                 <LoadingSpinner />
               </div>
               <div class="row">
-                
+                <div class="form-group">
+                  <label for="">Damage Item <span class="text-danger">**</span></label>
+                  <select name="" id="" class="form-select">
+                    <option value="" selected>--select item--</option>
+                    <option value="item.id" v-for="item in items">{{ item.title }}</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="">Damage Quantity <span class="text-danger">**</span> </label>
+                  <input type="text" class="form-control"/>
+                </div>
               </div>
 
               <hr />
               <div class="form-group">
                 <!-- <div v-if="form.progress">Progress: {{ form.progress.percentage }}%</div> -->
-                <router-link to="/damage-items" class="btn btn-lg btn-outline-primary"> &lt;&lt; Manage Damage Item </router-link>
+                <router-link to="/damage-items" class="btn btn-lg btn-outline-primary"> &lt;&lt; Damage Items </router-link>
                 <save-button v-if="isNew" :is-submitting="isSubmitting"></save-button>
                 <save-changes-button
                   v-else
